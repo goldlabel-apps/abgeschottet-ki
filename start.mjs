@@ -1,30 +1,34 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/start.mjs
+// start.mjs (in your project root)
 import { exec } from 'child_process';
-import open from 'open'; // install with: yarn add open
+import open from 'open'; // yarn add open
 
-// 1. Open browser
-const targetUrl = 'http://localhost:1975';
-console.log(`Opening ${targetUrl} in your default browser...`);
-open(targetUrl);
+// Absolute path to your project root
+const projectPath = '/Users/goldlabel/GitHub/abgeschottet-ki';
 
-// 2. Spawn a new terminal window and run a command
-// On macOS we can use AppleScript via `osascript`
-const commandToRun = 'echo OK'; // replace with your actual command later
+// Helper: run a command in a new Terminal window/tab with proper cwd
+function runInNewTerminal(command) {
+  const fullCommand = `cd ${projectPath} && ${command}`;
+  const script = `tell application "Terminal"
+    activate
+    do script "${fullCommand}"
+  end tell`;
+  exec(`osascript -e '${script}'`, (err, stdout, stderr) => {
+    if (err) {
+      console.error(`Error starting "${command}":`, err);
+    }
+    if (stderr) console.error(stderr);
+    if (stdout) console.log(stdout);
+  });
+}
 
-// AppleScript to tell Terminal to open a new window and run a command
-const appleScript = `
-tell application "Terminal"
-  activate
-  do script "${commandToRun}"
-end tell
-`;
+// Start each process in its own Terminal window/tab
+runInNewTerminal('yarn ollama');
+runInNewTerminal('yarn phi3');
+runInNewTerminal('yarn next');
 
-// Execute the AppleScript
-exec(`osascript -e '${appleScript.replace(/\n/g, '')}'`, (err, stdout, stderr) => {
-  if (err) {
-    console.error('Error opening new Terminal window:', err);
-    return;
-  }
-  if (stderr) console.error(stderr);
-  console.log(stdout);
-});
+// Open browser after a delay
+setTimeout(() => {
+  const targetUrl = 'http://localhost:3000';
+  console.log(`Opening ${targetUrl} in your default browser...`);
+  open(targetUrl);
+}, 4000);
