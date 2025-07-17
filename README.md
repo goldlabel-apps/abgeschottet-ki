@@ -1,4 +1,14 @@
-# abgeschottet
+# Abgeschottet KI
+
+> This repository contains a **ringfenced** environment running a local LLM on macOS.
+It includes supporting services and a frontend built with Next.js for interaction.
+
+## Local LLM
+
+The core of the project is a **locally hosted language model** which never leaves this machine. It processes documents and assists workflows in a secure, isolated manner. 
+Nothing in this environment is exposed to the internet.
+
+## How to
 
 > Ring-Fenced LLM on MacBook Air (M1, 8GB RAM)
 
@@ -86,3 +96,6 @@ It still works — proving your model is fully ring‑fenced.
 
 Enjoy your private dojo for LLMs
 
+## License
+
+Internal use only. Do not distribute.
