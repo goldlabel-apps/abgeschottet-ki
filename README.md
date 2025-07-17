@@ -5,6 +5,7 @@
 This guide walks you through setting up a completely ring‑fenced Large Language Model (LLM) on your MacBook Air (M1) with 8GB RAM. We will use Ollama to run the lightweight Phi-3 Mini model locally. All prompts and responses will stay on your laptop.
 
 ## Prerequisites
+
 - MacBook Air with Apple M1 chip
 - macOS 15.5 or later
 - At least **8 GB RAM** (Phi-3 Mini works in this configuration)
@@ -31,8 +32,6 @@ ollama serve
 ```
 
 Leave this terminal window open. Ollama will now be listening on `http://localhost:11434`.
-
----
 
 ## 4. Pull the Phi-3 Mini model
 
