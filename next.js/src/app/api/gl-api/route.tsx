@@ -12,8 +12,8 @@ export async function GET() {
         title: 'Abgeschottet KI',
         endpoints: [
           {
-            title: 'Ringfenced AI',
-            entpoint: `${getBase()}/abgeschottet-ki`,
+            title: 'LLM',
+            entpoint: `${getBase()}/llm`,
           },
         ],
       },
