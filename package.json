@@ -6,6 +6,6 @@
   "scripts": {
     "dev": "cd ./next.js && yarn dev",
     "ollama": "ollama serve",
-    "phi3":"ollama run phi3"
+    "phi3": "ollama run phi3"
   }
 }
