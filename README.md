@@ -1,0 +1,2 @@
+# abgeschottet
+Ringfenced AI
