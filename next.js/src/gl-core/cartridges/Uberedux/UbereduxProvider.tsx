@@ -1,11 +1,10 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/cartridges/Uberedux/UbereduxProvider.tsx
 'use client';
 import * as React from 'react';
 import { ReactNode } from 'react';
-import Image from 'next/image';
 import { Provider } from 'react-redux';
 import { store, persistor } from './store';
 import { PersistGate } from 'redux-persist/integration/react';
-import { LoadingOverlay } from '../../../gl-core';
 
 export default function UbereduxProvider({
   children,
@@ -14,7 +13,7 @@ export default function UbereduxProvider({
 }) {
   return (
     <Provider store={store}>
-      <PersistGate loading={<LoadingOverlay />} persistor={persistor}>
+      <PersistGate loading={null} persistor={persistor}>
         {children}
       </PersistGate>
     </Provider>

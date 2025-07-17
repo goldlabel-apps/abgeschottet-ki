@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useSlice } from '../Uberedux';
 import { Card, CardHeader, CardContent, Typography } from '@mui/material';
-import { Icon } from '../../';
+import { Icon } from '../../cartridges/Theme';
 
 export default function Uberedux() {
   const slice = useSlice();

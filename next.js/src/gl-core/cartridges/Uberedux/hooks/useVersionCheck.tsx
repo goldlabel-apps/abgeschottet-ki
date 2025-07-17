@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import pJSON from '../../../../package.json';
+import pJSON from '../../../../../package.json';
 import { useSelector } from 'react-redux';
 import { TRootState, resetUberedux } from '../store';
 import { useDispatch } from 'react-redux';

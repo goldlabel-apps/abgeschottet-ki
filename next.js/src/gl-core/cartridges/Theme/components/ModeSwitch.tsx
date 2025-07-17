@@ -9,11 +9,13 @@ import {
   ListItemText,
 } from '@mui/material';
 import {
-  Icon,
   useSlice,
   useDispatch,
   setUbereduxKey,
-} from '../../../../gl-core';
+} from '../../../cartridges/Uberedux';
+import {
+  Icon,
+} from '../../../cartridges/Theme';
 
 export default function ModeSwitch() {
   const dispatch = useDispatch();
