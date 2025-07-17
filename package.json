@@ -8,5 +8,8 @@
     "next": "cd ./next.js && yarn dev",
     "ollama": "ollama serve",
     "phi3": "ollama run phi3"
+  },
+  "dependencies": {
+    "open": "^10.2.0"
   }
 }
