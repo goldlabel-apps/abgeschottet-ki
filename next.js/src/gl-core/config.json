@@ -1,0 +1,31 @@
+{
+  "persist": true,
+  "app": "Goldlabel",
+  "description": "AI software which just works",
+  "url": "https://goldlabel.pro",
+  "repo": "https://github.com/javascript-pro/core",
+  "images": {
+    "favicon": "/png/favicon.png"
+  },
+  "imagesArr": ["/png/apple-touch-icon.png", "/png/og.png"],
+  "themes": {
+    "light": {
+      "mode": "light",
+      "primary": "#5E7978",
+      "secondary": "#5E7978",
+      "background": "#FFF",
+      "paper": "#FFF",
+      "text": "#303030",
+      "border": "#5E7978"
+    },
+    "dark": {
+      "mode": "dark",
+      "primary": "#A6D4D1",
+      "secondary": "#e8c10b",
+      "background": "#5E7978",
+      "paper": "#5E7978",
+      "text": "#FFFFFF",
+      "border": "#C09F52"
+    }
+  }
+}
