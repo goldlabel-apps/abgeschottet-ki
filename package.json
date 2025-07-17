@@ -1,4 +1,9 @@
 {
+  "version": "1.0.2",
   "name": "abgeschottet",
-  "packageManager": "yarn@4.3.1"
+  "description": "Ringfenced Artificial Intelligence",
+  "packageManager": "yarn@4.3.1",
+  "scripts": {
+    "dev": "cd ./next.js && yarn dev"
+  }
 }

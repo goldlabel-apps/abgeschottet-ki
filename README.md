@@ -1,10 +1,21 @@
-# abgeschottet
+# Abgeschottet KI
+
+> This repository contains a **ringfenced** environment running a local LLM on macOS.
+It includes supporting services and a frontend built with Next.js for interaction.
+
+## Local LLM
+
+The core of the project is a **locally hosted language model** which never leaves this machine. It processes documents and assists workflows in a secure, isolated manner. 
+Nothing in this environment is exposed to the internet.
+
+## How to
 
 > Ring-Fenced LLM on MacBook Air (M1, 8GB RAM)
 
 This guide walks you through setting up a completely ring‑fenced Large Language Model (LLM) on your MacBook Air (M1) with 8GB RAM. We will use Ollama to run the lightweight Phi-3 Mini model locally. All prompts and responses will stay on your laptop.
 
 ## Prerequisites
+
 - MacBook Air with Apple M1 chip
 - macOS 15.5 or later
 - At least **8 GB RAM** (Phi-3 Mini works in this configuration)
@@ -31,8 +42,6 @@ ollama serve
 ```
 
 Leave this terminal window open. Ollama will now be listening on `http://localhost:11434`.
-
----
 
 ## 4. Pull the Phi-3 Mini model
 
@@ -86,4 +95,8 @@ It still works — proving your model is fully ring‑fenced.
 - Try other small models like `mistral` if you upgrade to a machine with more RAM.
 
 Enjoy your private dojo for LLMs
+
+## License
+
+Internal use only. Do not distribute.
 
