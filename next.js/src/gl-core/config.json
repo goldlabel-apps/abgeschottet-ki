@@ -1,13 +1,8 @@
 {
   "persist": true,
-  "app": "Goldlabel",
-  "description": "AI software which just works",
-  "url": "https://goldlabel.pro",
-  "repo": "https://github.com/javascript-pro/core",
-  "images": {
-    "favicon": "/png/favicon.png"
-  },
-  "imagesArr": ["/png/apple-touch-icon.png", "/png/og.png"],
+  "app": "Abgeschottet KI",
+  "description": "Ringfenced AI",
+  "repo": "https://github.com/goldlabel-apps/abgeschottet-ki",
   "themes": {
     "light": {
       "mode": "light",
