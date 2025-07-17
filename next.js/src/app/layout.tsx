@@ -1,21 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { UbereduxProvider } from '../gl-core/cartridges/Uberedux';
 
 export const metadata: Metadata = {
   title: "Abgeschottet KI",
   description: "Ringfenced Artificial Intelligence",
 };
+
+const shortcutIcon = '/svg/favicon.svg';
+const appleTouchIcon = '/png/favicon.png';
 
 export default function RootLayout({
   children,
@@ -24,8 +16,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#FFF" />
+        <link rel="icon" href={shortcutIcon} type="image/x-icon" />
+        <link rel="shortcut icon" href={shortcutIcon} type="image/x-icon" />
+        <link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon} />
+      </head>
+      <body>
+        <UbereduxProvider>{children}</UbereduxProvider>
       </body>
     </html>
   );

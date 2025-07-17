@@ -1,0 +1,26 @@
+{
+  "persist": true,
+  "app": "Abgeschottet KI",
+  "description": "Ringfenced AI",
+  "repo": "https://github.com/goldlabel-apps/abgeschottet-ki",
+  "themes": {
+    "light": {
+      "mode": "light",
+      "primary": "#5E7978",
+      "secondary": "#5E7978",
+      "background": "#FFF",
+      "paper": "#FFF",
+      "text": "#303030",
+      "border": "#5E7978"
+    },
+    "dark": {
+      "mode": "dark",
+      "primary": "#A6D4D1",
+      "secondary": "#e8c10b",
+      "background": "#5E7978",
+      "paper": "#5E7978",
+      "text": "#FFFFFF",
+      "border": "#C09F52"
+    }
+  }
+}

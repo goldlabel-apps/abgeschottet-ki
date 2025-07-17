@@ -1,3 +1,5 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/start.mjs
+
 // start.mjs (in your project root)
 import { exec } from 'child_process';
 import open from 'open'; // yarn add open
