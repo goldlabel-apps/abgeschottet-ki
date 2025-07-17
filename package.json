@@ -1,9 +1,11 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "name": "abgeschottet",
   "description": "Ringfenced Artificial Intelligence",
   "packageManager": "yarn@4.3.1",
   "scripts": {
-    "dev": "cd ./next.js && yarn dev"
+    "dev": "cd ./next.js && yarn dev",
+    "ollama": "ollama serve",
+    "phi3":"ollama run phi3"
   }
 }
