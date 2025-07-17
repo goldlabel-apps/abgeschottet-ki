@@ -1,4 +1,8 @@
 {
+  "version": "1.0.1",
   "name": "abgeschottet",
-  "packageManager": "yarn@4.3.1"
+  "packageManager": "yarn@4.3.1",
+  "scripts": {
+    "dev": "echo devving..."
+  }
 }
