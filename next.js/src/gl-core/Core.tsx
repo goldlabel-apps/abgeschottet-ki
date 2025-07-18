@@ -1,10 +1,11 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/Core.tsx
+
 'use client';
 
 import config from './config.json';
 import * as React from 'react';
 import {
   CssBaseline,
-  Card,
   CardHeader,
   CardContent,
   Typography,
@@ -13,6 +14,7 @@ import {
   Box,
 } from '@mui/material';
 import { Theme, Icon } from './cartridges/Theme';
+import { useSlice } from '../gl-core';
 
 // Animated dots while streaming
 function TypingDots() {
@@ -31,12 +33,13 @@ function TypingDots() {
 }
 
 export default function Core({ title = 'Abgeschottet KI' }: any) {
-  const themeMode = 'light';
+
   const [prompt, setPrompt] = React.useState('');
   const [response, setResponse] = React.useState('');
   const [streaming, setStreaming] = React.useState(false);
   const [error, setError] = React.useState('');
-
+  const slice = useSlice();
+  const {themeMode} = slice;
   async function handleSend() {
     if (!prompt.trim()) return;
     setError('');
@@ -92,7 +95,7 @@ export default function Core({ title = 'Abgeschottet KI' }: any) {
   return (
     <Theme theme={config.themes[themeMode] as any}>
       <CssBaseline />
-      <Card sx={{ m: 2, p: 2 }}>
+      <Box sx={{ m: 2, p: 2 }}>
         <CardHeader
           avatar={<Icon icon="ki" />}
           title={
@@ -104,7 +107,8 @@ export default function Core({ title = 'Abgeschottet KI' }: any) {
         <CardContent>
           <Box display="flex" gap={2} mb={2}>
             <TextField
-              label="Enter your prompt"
+              autoFocus
+              label="Prompt"
               variant="outlined"
               fullWidth
               value={prompt}
@@ -140,8 +144,11 @@ export default function Core({ title = 'Abgeschottet KI' }: any) {
               </Typography>
             </Box>
           )}
+
+          <pre>slice: {JSON.stringify(slice, null, 2)}</pre>
+
         </CardContent>
-      </Card>
+      </Box>
     </Theme>
   );
 }

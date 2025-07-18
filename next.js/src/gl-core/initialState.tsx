@@ -4,7 +4,7 @@ import pJSON from '../../package.json';
 // import config from './config.json';
 
 export const initialState: any = {
-  themeMode: 'light',
+  themeMode: 'dark',
   version: pJSON.version,
   persisted: Date.now()
 };

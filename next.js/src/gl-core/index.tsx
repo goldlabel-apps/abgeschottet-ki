@@ -3,7 +3,12 @@ import Core from './Core';
 import {
     useSlice,
 } from './hooks';
+import {
+    setKeyValue,
+} from './actions';
 
 export {
     Core,
+    useSlice,
+    setKeyValue,
 }
