@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  next:
+    build: .
+    ports:
+      - "1975:1975"
+    volumes:
+      - ./next.js:/app/next.js
+      - ./database:/app/database
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./models:/root/.ollama
+    environment:
+      - OLLAMA_MODELS=/root/.ollama
+    # if you want GPU support later, you'd add:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities: [gpu]

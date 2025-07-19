@@ -12,12 +12,50 @@ import {
   IconButton,
   InputAdornment,
   Box,
-  Button,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Grid,
+  Typography,
 } from '@mui/material';
 import { Icon } from '../cartridges/Theme';
 import { MightyButton } from '../../gl-core';
 
-// helper to compile prompt
+export const guidelineOptions = [
+  {
+    label: 'Reply like a pirate',
+    guideline: 'Speak like a pirate',
+  },
+  {
+    label: 'Reply in German',
+    guideline: 'Reply in German',
+  },
+];
+
+export const youOptions = [
+  {
+    label: 'German Lawyer',
+    you: 'You are a German lawyer with 20 years experience',
+  },
+  {
+    label: 'Senior Developer',
+    you: 'You are Sempai, a software developer with 20 years experience',
+  },
+];
+
+export const meOptions = [
+  {
+    label: 'Junior Developer',
+    me: 'I am Kohai, a junior JavaScript developer with 2 years experience',
+  },
+  {
+    label: 'Junior Lawyer',
+    me: 'I am Kohai, currently an intern learning frontend development',
+  },
+];
+
 function buildPrompt(prompt: {
   you: string;
   me: string;
@@ -74,6 +112,8 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
       <Box mb={2} key={key}>
         <TextField
           label={label}
+          multiline
+          rows={4}
           variant="outlined"
           fullWidth
           value={value}
@@ -106,24 +146,90 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
         subheader="Break the prompt down"
       />
       <CardContent>
-        {renderField('You', 'you')}
-        {renderField('Me', 'me')}
-        {renderField('Guidelines', 'guidelines')}
+        {/* QUERY first */}
         {renderField('Query', 'query')}
 
-        <Box mt={2}>
+        <Grid container spacing={2}>
+          {/* KI Persona */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">KI Persona</FormLabel>
+              <RadioGroup
+                value={prompt?.you || ''}
+                onChange={(e) => dispatch(updatePrompt('you', e.target.value))}
+              >
+                {youOptions.map((opt) => (
+                  <FormControlLabel
+                    key={opt.label}
+                    value={opt.you}
+                    control={<Radio />}
+                    label={
+                      <Typography variant="caption">{opt.label}</Typography>
+                    }
+                  />
+                ))}
+              </RadioGroup>
+            </FormControl>
+          </Grid>
 
+          {/* Your Persona */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Your Persona</FormLabel>
+              <RadioGroup
+                value={prompt?.me || ''}
+                onChange={(e) => dispatch(updatePrompt('me', e.target.value))}
+              >
+                {meOptions.map((opt) => (
+                  <FormControlLabel
+                    key={opt.label}
+                    value={opt.me}
+                    control={<Radio />}
+                    label={
+                      <Typography variant="caption">{opt.label}</Typography>
+                    }
+                  />
+                ))}
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+
+          {/* Extras */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Extras</FormLabel>
+              <RadioGroup
+                value={prompt?.guidelines || ''}
+                onChange={(e) =>
+                  dispatch(updatePrompt('guidelines', e.target.value))
+                }
+              >
+                {guidelineOptions.map((opt) => (
+                  <FormControlLabel
+                    key={opt.label}
+                    value={opt.guideline}
+                    control={<Radio />}
+                    label={
+                      <Typography variant="caption">{opt.label}</Typography>
+                    }
+                  />
+                ))}
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Box mt={2}>
           <MightyButton
             variant="contained"
             icon="ai"
-            iconPlacement='right'
+            iconPlacement="right"
             label="Start KI"
             color="primary"
             onClick={handleSubmit}
             disabled={!allValid}
           />
         </Box>
-
       </CardContent>
     </Card>
   );
