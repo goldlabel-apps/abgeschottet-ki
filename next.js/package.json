@@ -5,7 +5,7 @@
   "packageManager": "yarn@4.3.1",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 1975",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

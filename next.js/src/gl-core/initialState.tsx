@@ -4,7 +4,13 @@ import pJSON from '../../package.json';
 // import config from './config.json';
 
 export const initialState: any = {
-  themeMode: 'dark',
   version: pJSON.version,
-  persisted: Date.now()
+  themeMode: 'light',
+  persisted: Date.now(),
+  prompt: {
+    you: "You are Sempai, a software developer with 20 years experience",
+    me: "I am Kohai, a junior JavaScript developer with 2 years experience",
+    guidelines: "Speak like a pirate",
+    query: "Good morning Sempai, How are you?"
+  },
 };

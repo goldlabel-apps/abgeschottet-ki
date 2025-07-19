@@ -1,5 +1,3 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/Core.tsx
-
 'use client';
 
 import config from './config.json';
@@ -12,9 +10,13 @@ import {
   TextField,
   Button,
   Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
 import { Theme, Icon } from './cartridges/Theme';
-import { useSlice } from '../gl-core';
+import { useDispatch } from './cartridges/Uberedux';
+import { useSlice, setKeyValue, PromptBuilder } from '../gl-core';
 
 // Animated dots while streaming
 function TypingDots() {
@@ -33,95 +35,100 @@ function TypingDots() {
 }
 
 export default function Core({ title = 'Abgeschottet KI' }: any) {
-
   const [prompt, setPrompt] = React.useState('');
   const [response, setResponse] = React.useState('');
   const [streaming, setStreaming] = React.useState(false);
   const [error, setError] = React.useState('');
   const slice = useSlice();
-  const {themeMode} = slice;
-  async function handleSend() {
-    if (!prompt.trim()) return;
-    setError('');
-    setResponse('');
-    setStreaming(true);
+  const dispatch = useDispatch();
+  const { themeMode } = slice;
 
-    try {
-      const res = await fetch('/api/gl-api/llm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
-      });
+  async function handleSend(compiledPrompt: string) {
+  if (!compiledPrompt.trim()) return;
+  setError('');
+  setResponse('');
+  setStreaming(true);
 
-      if (!res.ok || !res.body) {
-        setError('No response body');
-        setStreaming(false);
-        return;
-      }
+  try {
+    const res = await fetch('/api/gl-api/llm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: compiledPrompt }),
+    });
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let buffer = '';
+    if (!res.ok || !res.body) {
+      setError('No response body');
+      setStreaming(false);
+      return;
+    }
 
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        if (value) {
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || ''; // keep any incomplete line
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    let buffer = '';
 
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            try {
-              const json = JSON.parse(line);
-              if (json.response) {
-                setResponse((prev) => prev + json.response);
-              }
-            } catch (e) {
-              console.error('JSON parse error', e, line);
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      if (value) {
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const json = JSON.parse(line);
+            if (json.response) {
+              setResponse((prev) => prev + json.response);
             }
+          } catch (e) {
+            console.error('JSON parse error', e, line);
           }
         }
       }
-    } catch (err: any) {
-      setError(err.message || 'Unknown error');
-    } finally {
-      setStreaming(false);
     }
+  } catch (err: any) {
+    setError(err.message || 'Unknown error');
+  } finally {
+    setStreaming(false);
   }
+}
+
 
   return (
     <Theme theme={config.themes[themeMode] as any}>
       <CssBaseline />
+      
+
       <Box sx={{ m: 2, p: 2 }}>
         <CardHeader
           avatar={<Icon icon="ki" />}
-          title={
-            <Typography variant="h6">
-              {title}
-            </Typography>
-          }
+          title={<Typography variant="h6">{title}</Typography>}
         />
         <CardContent>
-          <Box display="flex" gap={2} mb={2}>
-            <TextField
-              autoFocus
-              label="Prompt"
-              variant="outlined"
-              fullWidth
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-            />
-            <Button
-              variant="contained"
-              onClick={handleSend}
-              disabled={streaming || !prompt.trim()}
+          {/* Accordion for slice output */}
+          <Accordion sx={{ mb: 2 }}>
+            <AccordionSummary
+              expandIcon={<Icon icon="down" />}
+              aria-controls="slice-content"
+              id="slice-header"
             >
-              Send
-            </Button>
-          </Box>
+              <Typography variant="subtitle2">Uberedux</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography
+                component="pre"
+                variant="body2"
+                sx={{ whiteSpace: 'pre-wrap' }}
+              >
+                {JSON.stringify(slice, null, 2)}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <PromptBuilder onSubmit={handleSend} />
+
 
           {error && (
             <Typography color="error" variant="body2" sx={{ mb: 2 }}>
@@ -145,8 +152,7 @@ export default function Core({ title = 'Abgeschottet KI' }: any) {
             </Box>
           )}
 
-          <pre>slice: {JSON.stringify(slice, null, 2)}</pre>
-
+          
         </CardContent>
       </Box>
     </Theme>
