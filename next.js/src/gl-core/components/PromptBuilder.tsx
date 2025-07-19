@@ -12,11 +12,10 @@ import {
   IconButton,
   InputAdornment,
   Box,
-  Typography,
   Button,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { Icon } from '../cartridges/Theme';
+import { MightyButton } from '../../gl-core';
 
 // helper to compile prompt
 function buildPrompt(prompt: {
@@ -88,7 +87,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
               <InputAdornment position="end">
                 {value && value.length > 0 && (
                   <IconButton onClick={handleReset(key)} edge="end">
-                    <CloseIcon />
+                    <Icon icon="close" />
                   </IconButton>
                 )}
               </InputAdornment>
@@ -113,14 +112,16 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
         {renderField('Query', 'query')}
 
         <Box mt={2}>
-          <Button
+
+          <MightyButton
             variant="contained"
+            icon="ai"
+            iconPlacement='right'
+            label="Start KI"
             color="primary"
             onClick={handleSubmit}
             disabled={!allValid}
-          >
-            Submit
-          </Button>
+          />
         </Box>
 
       </CardContent>

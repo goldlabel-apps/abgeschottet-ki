@@ -1,7 +1,6 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/index.tsx
 import Core from './Core';
 import {
-
     useSlice,
     usePrompt,
 } from './hooks';
@@ -12,6 +11,7 @@ import {
 } from './actions';
 import {
     PromptBuilder,
+    MightyButton,
 } from './components';
 import {useDispatch} from './cartridges/Uberedux';
 
@@ -24,4 +24,5 @@ export {
     fetchKI,
     updatePrompt,
     PromptBuilder,
+    MightyButton,
 }
