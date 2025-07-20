@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  web:
+    build: ./next.js
+    container_name: nextjs-app
+    ports:
+      - "1975:1975"
+    volumes:
+      # Mount database file
+      - ./database:/data
+      # Mount shared pdf folder
+      - ./pdfs:/data/pdfs
+    environment:
+      - DB_PATH=/data/abgeschottet.db
+      - PDF_PATH=/data/pdfs
+    # Wait for PDF Smash to be up before starting
+    depends_on:
+      - pdfsmash
+
+  pdfsmash:
+    build: ./pdf-smash
+    container_name: pdfsmash-service
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount same database file
+      - ./database:/data
+      # Mount same pdf folder
+      - ./pdfs:/data/pdfs
+    environment:
+      - DB_PATH=/data/abgeschottet.db
+      - PDF_PATH=/data/pdfs

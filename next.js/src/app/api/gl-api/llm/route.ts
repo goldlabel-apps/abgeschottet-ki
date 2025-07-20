@@ -1,4 +1,5 @@
-// app/api/gl-api/llm/route.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/app/api/gl-api/llm/route.ts
+
 import { NextRequest } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -22,4 +23,20 @@ export async function POST(req: NextRequest) {
       'Transfer-Encoding': 'chunked',
     },
   });
+}
+
+export async function GET() {
+  return new Response(
+    JSON.stringify({
+      title: 'LLM API Endpoint',
+      description: 'Handles prompt streaming to the local LLM service.',
+      message: 'Use POST',
+    }),
+    {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      status: 200,
+    }
+  );
 }
