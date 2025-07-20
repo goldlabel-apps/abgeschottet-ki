@@ -5,6 +5,11 @@ import pJSON from '../../package.json';
 
 export const initialState: any = {
   themeMode: 'light',
-  version: pJSON.version,
-  persisted: Date.now()
+  persisted: Date.now(),
+  prompt: {
+    you: "",
+    me: "",
+    guidelines: "",
+    query: ""
+  },
 };

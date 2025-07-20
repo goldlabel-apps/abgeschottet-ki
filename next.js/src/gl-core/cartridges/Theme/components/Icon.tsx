@@ -141,9 +141,12 @@ import FilesIcon from '@mui/icons-material/Topic';
 import PDFIcon from '@mui/icons-material/PictureAsPdf';
 import UserIcon from '@mui/icons-material/Face';
 import KIIcon from '@mui/icons-material/BackHand';
+import PromptIcon from '@mui/icons-material/ChatBubbleOutline';
+
 export type TIcon = {
   icon:
     | 'more'
+    | 'prompt'
     | 'user'
     | 'ki'
     | 'users'
@@ -323,7 +326,11 @@ export default function Icon({ icon, color }: TIcon) {
       iconFragment = <FilesIcon color={color} />;
       break;
 
-    case 'case':
+    case 'prompt':
+      iconFragment = <PromptIcon color={color} />;
+      break;
+
+      case 'case':
       iconFragment = <CaseIcon color={color} />;
       break;
 

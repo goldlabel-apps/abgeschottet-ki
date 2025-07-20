@@ -30,7 +30,7 @@ runInNewTerminal('yarn next');
 
 // Open browser after a delay
 setTimeout(() => {
-  const targetUrl = 'http://localhost:3000';
+  const targetUrl = 'http://localhost:1975';
   console.log(`Opening ${targetUrl} in your default browser...`);
   open(targetUrl);
 }, 4000);
