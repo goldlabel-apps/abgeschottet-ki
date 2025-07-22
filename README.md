@@ -1,3 +1,5 @@
+![OG Image](https://goldlabel.pro/jpg/abgeschotten-ki.jpg)
+
 # Abgeschottet KI
 
 > This repository contains a **ringfenced** environment running a local LLM on macOS. It includes supporting services and a frontend built with Next.js for interaction.
