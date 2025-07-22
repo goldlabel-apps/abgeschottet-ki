@@ -1,103 +1,67 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/processPdf.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/server.ts
 
-import fs from 'fs';
+import express from 'express';
+import multer from 'multer';
 import path from 'path';
-import pdfParse from 'pdf-parse';
-import Tesseract from 'tesseract.js';
-import { fromPath } from 'pdf2pic';
-import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
+import cors from 'cors'; // allow cross-origin requests
+import { insertPdf } from './db';
+import { processPdf } from './processPdf';
 
-/**
- * Process a PDF file and return extracted text.
- * Tries pdf-parse first; if no meaningful text, converts pages to PNG and OCRs them.
- */
-export async function processPdf(
-  filePath: string
-): Promise<{ text: string | null; error: string | null }> {
+const app = express();
+const PORT = 4000;
+
+// Resolve to a persistent storage directory inside this repo
+// This will work on any machine as long as the relative structure is the same
+const pdfsDir = path.join(process.cwd(), 'pdf-smash', 'data', 'pdfs');
+fs.mkdirSync(pdfsDir, { recursive: true });
+
+// Enable CORS for all routes (adjust origin as needed)
+app.use(cors());
+
+// Parse JSON bodies (not needed for multipart but good for other endpoints)
+app.use(express.json());
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, pdfsDir),
+  filename: (_req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
+});
+const upload = multer({ storage });
+
+// POST endpoint to process PDF
+app.post('/process-pdf', upload.single('file'), async (req, res) => {
   try {
-    // 1. Try native text extraction
-    const dataBuffer = fs.readFileSync(filePath);
-    const parsed = await pdfParse(dataBuffer);
-    const extractedText = parsed.text.trim();
-
-    if (isMeaningfulText(extractedText)) {
-      return { text: extractedText, error: null };
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    console.log('⚠️ pdf-parse found no meaningful text, falling back to OCR…');
+    const filepath = req.file.path;
+    const filename = req.file.filename;
+    const filesize = req.file.size;
 
-    // 2. Prepare a working directory inside ../data/pdfs
-    const pdfsDir = path.resolve(__dirname, '..', 'data', 'pdfs');
-    fs.mkdirSync(pdfsDir, { recursive: true });
+    // Run PDF processing
+    const { text, error } = await processPdf(filepath);
 
-    const tempDir = path.join(pdfsDir, `pdf-smash-${uuidv4()}`);
-    fs.mkdirSync(tempDir, { recursive: true });
+    // Insert metadata into database
+    const id = insertPdf(filename, filesize, text, error);
 
-    // Set up converter
-    const convert = fromPath(filePath, {
-      density: 200,
-      saveFilename: 'page',
-      savePath: tempDir,
-      format: 'png',
-      width: 1024,
-      height: 1024
+    res.json({
+      success: true,
+      id,
+      filename,
+      filesize,
+      error,
+      textLength: text ? text.length : 0,
     });
-
-    console.log('⏳ Converting PDF pages to images…');
-    const pageCount = parsed.numpages;
-    const imagePaths: string[] = [];
-
-    for (let i = 1; i <= pageCount; i++) {
-      const pageResult = await convert(i);
-      if (pageResult && pageResult.path) {
-        imagePaths.push(pageResult.path);
-      }
-    }
-
-    if (imagePaths.length === 0) {
-      return { text: null, error: 'Failed to convert PDF to images for OCR' };
-    }
-
-    // 3. Run OCR on each image
-    let ocrText = '';
-    for (const imgPath of imagePaths) {
-      console.log(`🔎 Running OCR on ${imgPath}…`);
-      const ocrResult = await Tesseract.recognize(imgPath, 'eng', {
-        logger: m => console.log(m)
-      });
-      ocrText += ocrResult.data.text.trim() + '\n';
-    }
-
-    // 4. Clean up temporary images
-    for (const imgPath of imagePaths) {
-      try {
-        fs.unlinkSync(imgPath);
-      } catch (err) {
-        console.warn(`⚠️ Could not delete temp image ${imgPath}`, err);
-      }
-    }
-    try {
-      fs.rmSync(tempDir, { recursive: true, force: true });
-    } catch (err) {
-      console.warn(`⚠️ Could not delete temp folder ${tempDir}`, err);
-    }
-
-    // 5. Check OCR output
-    if (isMeaningfulText(ocrText)) {
-      return { text: ocrText.trim(), error: null };
-    } else {
-      return { text: null, error: 'No extractable text found via OCR' };
-    }
   } catch (err: any) {
-    console.error('❌ Error processing PDF:', err);
-    return { text: null, error: err.message || 'Unknown error while processing PDF' };
+    console.error('Error in /process-pdf:', err);
+    res.status(500).json({ error: err.message || 'Internal server error' });
   }
-}
+});
 
-/**
- * Heuristic to decide if text is meaningful.
- */
-function isMeaningfulText(text: string): boolean {
-  if (!text) return false;
-  return text.replace(/\s+/g, '').length > 20;
-}
+// Start server
+app.listen(PORT, () => {
+  console.log(`pdf-smash service running on http://localhost:${PORT}`);
+  console.log(`PDFs will be saved to: ${pdfsDir}`);
+});

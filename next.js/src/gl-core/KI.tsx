@@ -118,7 +118,7 @@ export default function KI({ title = 'KI' }: any) {
               <Card sx={{ height: '100%' }}>
                 <CardHeader
                   avatar={<Icon icon="ai" />}
-                  title="KI Says"
+                  title="KI Says..."
                 />
                 <CardContent>
                   {(response || streaming) ? (

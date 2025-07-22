@@ -1,12 +1,17 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/server.ts
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import cors from 'cors';           // <— add this
 import { insertPdf } from './db';
 import { processPdf } from './processPdf';
 
 const app = express();
 const PORT = 4000;
+
+// enable CORS for all routes
+app.use(cors());                   // <— add this
 
 // resolve to a persistent storage directory
 const uploadDir = path.join(process.cwd(), 'pdf-smash', 'data', 'pdfs');
