@@ -1,4 +1,5 @@
 {
+  "varsion": "1.0.0",
   "name": "pdf-smash",
   "type": "commonjs",
   "packageManager": "yarn@4.3.1",
