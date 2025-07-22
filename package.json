@@ -3,6 +3,10 @@
   "name": "abgeschottet-ki",
   "description": "Government Approved Ringfenced Artificial Intelligence",
   "packageManager": "yarn@4.3.1",
+  "workspaces": [
+    "next.js",
+    "pdf-smash"
+  ],
   "scripts": {
     "start": "node start.mjs",
     "next": "cd ./next.js && yarn dev",

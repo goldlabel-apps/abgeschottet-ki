@@ -12,38 +12,27 @@ import {
   AccordionSummary,
   AccordionDetails,
   Grid,
-  Card,
 } from '@mui/material';
 import { Theme, Icon } from './cartridges/Theme';
 import { useDispatch } from './cartridges/Uberedux';
-import { useSlice, PromptBuilder } from '../gl-core';
+import { useSlice, KI, PdfSmashUpload } from '../gl-core';
 
-// Animated dots while streaming
-function TypingDots() {
-  const [dotCount, setDotCount] = React.useState(0);
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setDotCount((d) => (d + 1) % 4);
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-  return (
-    <span style={{ fontWeight: 'bold', marginLeft: 4 }}>
-      {'.'.repeat(dotCount)}
-    </span>
-  );
+// derive the allowed keys from your config.themes
+type ThemeMode = keyof typeof config.themes;
+
+interface CoreProps {
+  title?: string;
 }
 
-export default function Core({ title = 'Abgeschottet KI' }: any) {
-  const [response, setResponse] = React.useState('');
-  const [streaming, setStreaming] = React.useState(false);
-  const [error, setError] = React.useState('');
+export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
   const slice = useSlice();
   const dispatch = useDispatch();
-  const { themeMode } = slice;
+
+  // cast themeMode to the known union
+  const themeMode = slice.themeMode as ThemeMode;
 
   return (
-    <Theme theme={config.themes[themeMode] as any}>
+    <Theme theme={config.themes[themeMode]}>
       <CssBaseline />
 
       <Box sx={{ m: 2, p: 2 }}>
@@ -53,7 +42,7 @@ export default function Core({ title = 'Abgeschottet KI' }: any) {
         />
 
         <CardContent>
-          {/* Accordion for slice output */}
+          {/* Accordion showing current slice state */}
           <Accordion sx={{ mb: 2 }}>
             <AccordionSummary
               expandIcon={<Icon icon="down" />}
@@ -73,20 +62,13 @@ export default function Core({ title = 'Abgeschottet KI' }: any) {
             </AccordionDetails>
           </Accordion>
 
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-              {error}
-            </Typography>
-          )}
-
-          {/* Grid container with PromptBuilder on the left and Response on the right */}
+          {/* Grid v2 layout */}
           <Grid container spacing={2}>
-            <Grid size={6}>
-              left
+            <Grid size={{ xs: 12, md: 6 }}>
+              <PdfSmashUpload />
             </Grid>
-
-            <Grid size={6}>
-              right
+            <Grid size={{ xs: 12, md: 6 }}>
+              <KI />
             </Grid>
           </Grid>
         </CardContent>

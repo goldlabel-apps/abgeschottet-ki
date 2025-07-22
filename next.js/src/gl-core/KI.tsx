@@ -34,7 +34,7 @@ function TypingDots() {
   );
 }
 
-export default function Core({ title = 'Abgeschottet KI' }: any) {
+export default function KI({ title = 'KI' }: any) {
   const [response, setResponse] = React.useState('');
   const [streaming, setStreaming] = React.useState(false);
   const [error, setError] = React.useState('');
