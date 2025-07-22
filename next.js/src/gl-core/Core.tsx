@@ -4,14 +4,18 @@ import config from './config.json';
 import * as React from 'react';
 import {
   CssBaseline,
+  AppBar,
+  Toolbar,
+  Box,
   CardHeader,
   CardContent,
-  Typography,
-  Box,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Typography,
   Grid,
+  IconButton,
+  // IconButton,
 } from '@mui/material';
 import { Theme, Icon } from './cartridges/Theme';
 import { useDispatch } from './cartridges/Uberedux';
@@ -28,21 +32,46 @@ export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
   const slice = useSlice();
   const dispatch = useDispatch();
 
-  // cast themeMode to the known union
   const themeMode = slice.themeMode as ThemeMode;
 
   return (
     <Theme theme={config.themes[themeMode]}>
       <CssBaseline />
+      {/* Sticky AppBar */}
+      <AppBar position="sticky" color="default" elevation={1}>
+        <Toolbar disableGutters>
+          <CardHeader
+            sx={{ flex: 1, py: 1 }}
+            avatar={<IconButton><Icon icon="ki" /></IconButton>}
+            title={<Typography variant="h6">{title}</Typography>}
+            action={
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <PdfSmashUpload />
+              </Box>
+            }
+          />
+        </Toolbar>
+      </AppBar>
+      {/* Scrollable content */}
+      <Box
+        sx={{
+          height: 'calc(100vh - 64px)', // subtract AppBar height
+          overflowY: 'auto',
+          p: 2,
+        }}
+      >
+        <CardContent sx={{ p: 0 }}>
 
-      <Box sx={{ m: 2, p: 2 }}>
-        <CardHeader
-          avatar={<Icon icon="ki" />}
-          title={<Typography variant="h6">{title}</Typography>}
-        />
 
-        <CardContent>
-          {/* Accordion showing current slice state */}
+          {/* Grid content */}
+          <Grid container spacing={2}>
+            
+            <Grid size={{ xs: 12, md: 8 }}>
+              <KI />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 4 }}>
+                        {/* Accordion showing current slice state */}
           <Accordion sx={{ mb: 2 }}>
             <AccordionSummary
               expandIcon={<Icon icon="down" />}
@@ -61,15 +90,8 @@ export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
               </Typography>
             </AccordionDetails>
           </Accordion>
+            </Grid>
 
-          {/* Grid v2 layout */}
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <PdfSmashUpload />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <KI />
-            </Grid>
           </Grid>
         </CardContent>
       </Box>

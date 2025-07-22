@@ -95,35 +95,12 @@ export default function KI({ title = 'KI' }: any) {
   }
 
   return (
-    <Theme theme={config.themes[themeMode] as any}>
-      <CssBaseline />
+      <Box>
 
-      <Box sx={{ m: 2, p: 2 }}>
-        <CardHeader
-          avatar={<Icon icon="ki" />}
-          title={<Typography variant="h6">{title}</Typography>}
-        />
 
         <CardContent>
           {/* Accordion for slice output */}
-          <Accordion sx={{ mb: 2 }}>
-            <AccordionSummary
-              expandIcon={<Icon icon="down" />}
-              aria-controls="slice-content"
-              id="slice-header"
-            >
-              <Typography variant="subtitle2">Uberedux</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography
-                component="pre"
-                variant="body2"
-                sx={{ whiteSpace: 'pre-wrap' }}
-              >
-                {JSON.stringify(slice, null, 2)}
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
+          
 
           {error && (
             <Typography color="error" variant="body2" sx={{ mb: 2 }}>
@@ -164,6 +141,5 @@ export default function KI({ title = 'KI' }: any) {
           </Grid>
         </CardContent>
       </Box>
-    </Theme>
   );
 }
