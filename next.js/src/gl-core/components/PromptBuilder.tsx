@@ -141,9 +141,8 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
   return (
     <Card>
       <CardHeader
-        avatar={<Icon icon="prompt" color="primary" />}
-        title="Prompt Builder"
-        subheader="Break the prompt down"
+        avatar={<Icon icon="ai" />}
+        title="You Say..."
       />
       <CardContent>
         {/* QUERY first */}

@@ -4,56 +4,74 @@ import config from './config.json';
 import * as React from 'react';
 import {
   CssBaseline,
+  AppBar,
+  Toolbar,
+  Box,
   CardHeader,
   CardContent,
-  Typography,
-  Box,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Typography,
   Grid,
-  Card,
+  IconButton,
+  // IconButton,
 } from '@mui/material';
 import { Theme, Icon } from './cartridges/Theme';
 import { useDispatch } from './cartridges/Uberedux';
-import { useSlice, PromptBuilder } from '../gl-core';
+import { useSlice, KI, PdfSmashUpload } from '../gl-core';
 
-// Animated dots while streaming
-function TypingDots() {
-  const [dotCount, setDotCount] = React.useState(0);
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setDotCount((d) => (d + 1) % 4);
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-  return (
-    <span style={{ fontWeight: 'bold', marginLeft: 4 }}>
-      {'.'.repeat(dotCount)}
-    </span>
-  );
+// derive the allowed keys from your config.themes
+type ThemeMode = keyof typeof config.themes;
+
+interface CoreProps {
+  title?: string;
 }
 
-export default function Core({ title = 'Abgeschottet KI' }: any) {
-  const [response, setResponse] = React.useState('');
-  const [streaming, setStreaming] = React.useState(false);
-  const [error, setError] = React.useState('');
+export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
   const slice = useSlice();
   const dispatch = useDispatch();
-  const { themeMode } = slice;
+
+  const themeMode = slice.themeMode as ThemeMode;
 
   return (
-    <Theme theme={config.themes[themeMode] as any}>
+    <Theme theme={config.themes[themeMode]}>
       <CssBaseline />
+      {/* Sticky AppBar */}
+      <AppBar position="sticky" color="default" elevation={1}>
+        <Toolbar disableGutters>
+          <CardHeader
+            sx={{ flex: 1, py: 1 }}
+            avatar={<IconButton><Icon icon="ki" /></IconButton>}
+            title={<Typography variant="h6">{title}</Typography>}
+            action={
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <PdfSmashUpload />
+              </Box>
+            }
+          />
+        </Toolbar>
+      </AppBar>
+      {/* Scrollable content */}
+      <Box
+        sx={{
+          height: 'calc(100vh - 64px)', // subtract AppBar height
+          overflowY: 'auto',
+          p: 2,
+        }}
+      >
+        <CardContent sx={{ p: 0 }}>
 
-      <Box sx={{ m: 2, p: 2 }}>
-        <CardHeader
-          avatar={<Icon icon="ki" />}
-          title={<Typography variant="h6">{title}</Typography>}
-        />
 
-        <CardContent>
-          {/* Accordion for slice output */}
+          {/* Grid content */}
+          <Grid container spacing={2}>
+            
+            <Grid size={{ xs: 12, md: 8 }}>
+              <KI />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 4 }}>
+                        {/* Accordion showing current slice state */}
           <Accordion sx={{ mb: 2 }}>
             <AccordionSummary
               expandIcon={<Icon icon="down" />}
@@ -72,22 +90,8 @@ export default function Core({ title = 'Abgeschottet KI' }: any) {
               </Typography>
             </AccordionDetails>
           </Accordion>
-
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-              {error}
-            </Typography>
-          )}
-
-          {/* Grid container with PromptBuilder on the left and Response on the right */}
-          <Grid container spacing={2}>
-            <Grid size={6}>
-              left
             </Grid>
 
-            <Grid size={6}>
-              right
-            </Grid>
           </Grid>
         </CardContent>
       </Box>

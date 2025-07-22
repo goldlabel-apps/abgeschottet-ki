@@ -1,14 +1,19 @@
 {
-  "version": "1.0.8",
+  "version": "1.0.9",
   "name": "abgeschottet-ki",
-  "description": "Government Approved Ringfenced Artificial Intelligence",
-  "packageManager": "yarn@4.3.1",
+  "description": "Ringfenced Artificial Intelligence",
   "scripts": {
     "start": "node start.mjs",
     "next": "cd ./next.js && yarn dev",
     "ollama": "ollama serve",
-    "phi3": "ollama run phi3"
+    "phi3": "ollama run phi3",
+    "pdf-smash": "cd ./pdf-smash && yarn dev"
   },
+  "packageManager": "yarn@4.3.1",
+  "workspaces": [
+    "next.js",
+    "pdf-smash"
+  ],
   "dependencies": {
     "open": "^10.2.0"
   }
