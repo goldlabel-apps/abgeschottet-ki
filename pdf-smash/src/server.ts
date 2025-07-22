@@ -1,17 +1,15 @@
-// pdf-smash/src/server.ts
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import fs from 'fs';
-import { insertPdf } from './db.js';
-import { processPdf } from './processPdf.js';
+import { insertPdf } from './db';
+import { processPdf } from './processPdf';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const app = express();
+const PORT = 4000;
 
-// persistent storage directory
-const uploadDir = path.join(__dirname, '../data/pdfs');
+// resolve to a persistent storage directory
+const uploadDir = path.join(process.cwd(), 'pdf-smash', 'data', 'pdfs');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -22,9 +20,6 @@ const storage = multer.diskStorage({
   filename: (_req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
 });
 const upload = multer({ storage });
-
-const app = express();
-const PORT = 4000;
 
 app.use(express.json());
 

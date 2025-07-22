@@ -2,11 +2,9 @@ import fs from 'fs';
 import pdfParse from 'pdf-parse';
 import Tesseract from 'tesseract.js';
 
-/**
- * Process a PDF file and return extracted text.
- * Tries pdf-parse first; if no meaningful text, falls back to OCR.
- */
-export async function processPdf(filePath: string): Promise<{ text: string | null; error: string | null }> {
+export async function processPdf(
+  filePath: string
+): Promise<{ text: string | null; error: string | null }> {
   try {
     const dataBuffer = fs.readFileSync(filePath);
 
@@ -20,7 +18,7 @@ export async function processPdf(filePath: string): Promise<{ text: string | nul
 
     // Fallback: OCR via Tesseract
     const ocrResult = await Tesseract.recognize(filePath, 'eng', {
-      logger: m => console.log(m) // optional: progress logs
+      logger: m => console.log(m) // progress log
     });
 
     const ocrText = ocrResult.data.text.trim();
@@ -29,7 +27,6 @@ export async function processPdf(filePath: string): Promise<{ text: string | nul
       return { text: ocrText, error: null };
     }
 
-    // Neither method yielded meaningful text
     return { text: null, error: 'No extractable text found via pdf-parse or OCR' };
   } catch (err: any) {
     console.error('Error processing PDF:', err);
@@ -37,11 +34,7 @@ export async function processPdf(filePath: string): Promise<{ text: string | nul
   }
 }
 
-/**
- * Helper: determine if extracted text is meaningful (not empty or just whitespace)
- */
 function isMeaningfulText(text: string): boolean {
   if (!text) return false;
-  // basic heuristic: at least 20 non-whitespace characters
   return text.replace(/\s+/g, '').length > 20;
 }

@@ -1,13 +1,11 @@
-// pdf-smash/src/db.ts
-import Database from 'better-sqlite3';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import Database from 'better-sqlite3';
 
-// Resolve path relative to this file
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// go up one folder from pdf-smash to the monorepo root, then into database
+const dbPath = path.resolve(__dirname, '..', '..', 'database', 'abgeschottet-ki.db');
+console.log('🔧 Opening SQLite database at:', dbPath);
 
-const db = new Database(path.join(__dirname, '../../database/abgeschottet-ki.db'));
+const db = new Database(dbPath);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS pdfs (
@@ -20,10 +18,15 @@ db.exec(`
   );
 `);
 
-export function insertPdf(filename: string, filesize: number, rawText: string | null, error: string | null) {
-  const stmt = db.prepare(`
-    INSERT INTO pdfs (filename, filesize, rawText, error) VALUES (?, ?, ?, ?)
-  `);
+export function insertPdf(
+  filename: string,
+  filesize: number,
+  rawText: string | null,
+  error: string | null
+) {
+  const stmt = db.prepare(
+    `INSERT INTO pdfs (filename, filesize, rawText, error) VALUES (?, ?, ?, ?)`
+  );
   const info = stmt.run(filename, filesize, rawText, error);
   return info.lastInsertRowid as number;
 }
