@@ -1,67 +1,26 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/server.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/processPdf.ts
 
-import express from 'express';
-import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
-import cors from 'cors'; // allow cross-origin requests
-import { insertPdf } from './db';
-import { processPdf } from './processPdf';
+import pdfParse from 'pdf-parse';
+// add any other imports you need (e.g. tesseract, pdf2pic, etc.)
 
-const app = express();
-const PORT = 4000;
-
-// Resolve to a persistent storage directory inside this repo
-// This will work on any machine as long as the relative structure is the same
-const pdfsDir = path.join(process.cwd(), 'pdf-smash', 'data', 'pdfs');
-fs.mkdirSync(pdfsDir, { recursive: true });
-
-// Enable CORS for all routes (adjust origin as needed)
-app.use(cors());
-
-// Parse JSON bodies (not needed for multipart but good for other endpoints)
-app.use(express.json());
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, pdfsDir),
-  filename: (_req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
-});
-const upload = multer({ storage });
-
-// POST endpoint to process PDF
-app.post('/process-pdf', upload.single('file'), async (req, res) => {
+// Main function to process a PDF
+export async function processPdf(
+  filePath: string
+): Promise<{ text: string | null; error: string | null }> {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+    const dataBuffer = fs.readFileSync(filePath);
+    const parsed = await pdfParse(dataBuffer);
+    const extractedText = parsed.text.trim();
+
+    if (extractedText && extractedText.length > 0) {
+      return { text: extractedText, error: null };
     }
 
-    const filepath = req.file.path;
-    const filename = req.file.filename;
-    const filesize = req.file.size;
-
-    // Run PDF processing
-    const { text, error } = await processPdf(filepath);
-
-    // Insert metadata into database
-    const id = insertPdf(filename, filesize, text, error);
-
-    res.json({
-      success: true,
-      id,
-      filename,
-      filesize,
-      error,
-      textLength: text ? text.length : 0,
-    });
+    // TODO: handle OCR fallback here if needed
+    return { text: null, error: 'No meaningful text found' };
   } catch (err: any) {
-    console.error('Error in /process-pdf:', err);
-    res.status(500).json({ error: err.message || 'Internal server error' });
+    console.error('processPdf error:', err);
+    return { text: null, error: err.message || 'Unknown error' };
   }
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`pdf-smash service running on http://localhost:${PORT}`);
-  console.log(`PDFs will be saved to: ${pdfsDir}`);
-});
+}

@@ -1,34 +1,52 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/db.ts
+import fs from 'fs';
 import path from 'path';
 import Database from 'better-sqlite3';
 
-// go up one folder from pdf-smash to the monorepo root, then into database
-const dbPath = path.resolve(__dirname, '..', '..', 'database', 'abgeschottet-ki.db');
-console.log('🔧 Opening SQLite database at:', dbPath);
+// Target directory for the database
+// This will resolve to: /abgeschottet-ki/database
+const dbDir = path.join(process.cwd(), 'database');
 
-const db = new Database(dbPath);
+// Ensure the directory exists
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
 
+// Full path to the SQLite database file
+// Final file: /abgeschottet-ki/database/abgeschottet-ki.db
+const dbPath = path.join(dbDir, 'abgeschottet-ki.db');
+
+// Open (or create) the database
+export const db = new Database(dbPath);
+
+// Ensure the `pdfs` table exists
 db.exec(`
   CREATE TABLE IF NOT EXISTS pdfs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    filename TEXT,
-    filesize INTEGER,
-    rawText TEXT,
+    filename TEXT NOT NULL,
+    filesize INTEGER NOT NULL,
+    text TEXT,
     error TEXT,
-    createdAt TEXT DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `);
 
+// Insert a processed PDF record
 export function insertPdf(
   filename: string,
   filesize: number,
-  rawText: string | null,
+  text: string | null,
   error: string | null
-) {
+): number {
   const stmt = db.prepare(
-    `INSERT INTO pdfs (filename, filesize, rawText, error) VALUES (?, ?, ?, ?)`
+    'INSERT INTO pdfs (filename, filesize, text, error) VALUES (?, ?, ?, ?)'
   );
-  const info = stmt.run(filename, filesize, rawText, error);
+  const info = stmt.run(filename, filesize, text, error);
   return info.lastInsertRowid as number;
 }
 
-export default db;
+// Get all stored PDF records
+export function getAllPdfs() {
+  const stmt = db.prepare('SELECT * FROM pdfs ORDER BY id DESC');
+  return stmt.all(); // returns an array of rows
+}

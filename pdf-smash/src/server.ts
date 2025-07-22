@@ -3,18 +3,18 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import cors from 'cors';           // <— add this
-import { insertPdf } from './db';
+import cors from 'cors';
 import { processPdf } from './processPdf';
+import { insertPdf, getAllPdfs } from './db';
 
 const app = express();
 const PORT = 4000;
 
 // enable CORS for all routes
-app.use(cors());                   // <— add this
+app.use(cors());
 
 // resolve to a persistent storage directory
-const uploadDir = path.join(process.cwd(), 'pdf-smash', 'data', 'pdfs');
+const uploadDir = path.join(process.cwd(), 'pdf-smash', 'pdfs');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -28,6 +28,28 @@ const upload = multer({ storage });
 
 app.use(express.json());
 
+// GET endpoint to return all PDFs
+app.get('/', (req, res) => {
+  try {
+    res.json({ success: true });
+  } catch (err: any) {
+    console.error('Error in /:', err);
+    res.status(500).json({ success: false, error: err.message || 'Internal server error' });
+  }
+});
+
+// GET endpoint to return all PDFs
+app.get('/pdfs', (req, res) => {
+  try {
+    const rows = getAllPdfs();
+    res.json({ success: true, pdfs: rows });
+  } catch (err: any) {
+    console.error('Error in /pdfs:', err);
+    res.status(500).json({ success: false, error: err.message || 'Internal server error' });
+  }
+});
+
+// POST endpoint to process a single PDF
 app.post('/process-pdf', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
