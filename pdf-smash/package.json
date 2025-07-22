@@ -3,6 +3,7 @@
   "type": "commonjs",
   "packageManager": "yarn@4.3.1",
   "scripts": {
+    "pdf-smash": "node ./src/server.js",
     "dev": "ts-node src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"

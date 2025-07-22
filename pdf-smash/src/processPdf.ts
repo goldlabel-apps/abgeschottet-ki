@@ -1,6 +1,7 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/processPdf.ts
+
 import fs from 'fs';
 import path from 'path';
-import os from 'os';
 import pdfParse from 'pdf-parse';
 import Tesseract from 'tesseract.js';
 import { fromPath } from 'pdf2pic';
@@ -25,10 +26,14 @@ export async function processPdf(
 
     console.log('⚠️ pdf-parse found no meaningful text, falling back to OCR…');
 
-    // 2. Convert each page of the PDF to an image
-    const tempDir = path.join(os.tmpdir(), `pdf-smash-${uuidv4()}`);
+    // 2. Prepare a working directory inside ../data/pdfs
+    const pdfsDir = path.resolve(__dirname, '..', 'data', 'pdfs');
+    fs.mkdirSync(pdfsDir, { recursive: true });
+
+    const tempDir = path.join(pdfsDir, `pdf-smash-${uuidv4()}`);
     fs.mkdirSync(tempDir, { recursive: true });
 
+    // Set up converter
     const convert = fromPath(filePath, {
       density: 200,
       saveFilename: 'page',
@@ -72,7 +77,7 @@ export async function processPdf(
       }
     }
     try {
-      fs.rmdirSync(tempDir, { recursive: true });
+      fs.rmSync(tempDir, { recursive: true, force: true });
     } catch (err) {
       console.warn(`⚠️ Could not delete temp folder ${tempDir}`, err);
     }
