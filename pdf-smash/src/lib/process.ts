@@ -1,11 +1,11 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/processPdf.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/lib/process.ts
 
 import fs from 'fs';
 import pdfParse from 'pdf-parse';
 // add any other imports you need (e.g. tesseract, pdf2pic, etc.)
 
 // Main function to process a PDF
-export async function processPdf(
+export async function process(
   filePath: string
 ): Promise<{ text: string | null; error: string | null }> {
   try {
