@@ -5,64 +5,41 @@ import { useDispatch, useSlice } from '../../gl-core';
 import { updatePrompt } from '../actions/updatePrompt';
 
 import {
-  Card,
-  CardHeader,
-  CardContent,
   TextField,
   IconButton,
   InputAdornment,
   Box,
   FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Grid,
-  Typography,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { Icon } from '../cartridges/Theme';
 import { MightyButton } from '../../gl-core';
 
 export const guidelineOptions = [
-  {
-    label: 'Reply like a pirate',
-    guideline: 'Speak like a pirate',
-  },
-  {
-    label: 'Reply in German',
-    guideline: 'Reply in German',
-  },
+  { label: 'Reply in English', guideline: 'Reply in English' },
+  { label: 'Reply like a pirate', guideline: 'Speak like a pirate' },
+  { label: 'Reply in German', guideline: 'Reply in German' },
 ];
 
 export const youOptions = [
-  {
-    label: 'German Lawyer',
-    you: 'You are a German lawyer with 20 years experience',
-  },
-  {
-    label: 'Senior Developer',
-    you: 'You are Sempai, a software developer with 20 years experience',
-  },
+  { label: 'German Lawyer', you: 'You are a German lawyer with 20 years experience' },
+  { label: 'Senior JavaScript Developer', you: 'You are Sempai, a software developer with 20 years experience' },
 ];
 
 export const meOptions = [
-  {
-    label: 'Junior Developer',
-    me: 'I am Kohai, a junior JavaScript developer with 2 years experience',
-  },
-  {
-    label: 'Junior Lawyer',
-    me: 'I am Kohai, currently an intern learning frontend development',
-  },
+  { label: 'Rechtsanwaltsfachangestellte', me: 'I am an intern learning to be a paralegal' },
+  { label: 'Junior JavaScript Developer', me: 'I am Kohai, a junior JavaScript developer with 2 years experience' },
 ];
 
-function buildPrompt(prompt: {
-  you: string;
-  me: string;
-  guidelines: string;
-  query: string;
+function buildPrompt(prompt?: {
+  you?: string;
+  me?: string;
+  guidelines?: string;
+  query?: string;
 }): string {
-  const { you = '', me = '', guidelines = '', query = '' } = prompt;
+  const { you = '', me = '', guidelines = '', query = '' } = prompt || {};
   return `
 ${you.trim()}
 
@@ -80,7 +57,13 @@ interface PromptBuilderProps {
 
 export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
   const dispatch = useDispatch();
-  const { prompt } = useSlice();
+  const { prompt } = useSlice() || {};
+
+  React.useEffect(() => {
+    if (!prompt?.you) dispatch(updatePrompt('you', youOptions[0].you));
+    if (!prompt?.me) dispatch(updatePrompt('me', meOptions[0].me));
+    if (!prompt?.guidelines) dispatch(updatePrompt('guidelines', guidelineOptions[0].guideline));
+  }, [dispatch, prompt]);
 
   const isFieldValid = (val?: string) => !!val && val.trim().length >= 10;
   const allValid =
@@ -89,7 +72,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
     isFieldValid(prompt?.guidelines) &&
     isFieldValid(prompt?.query);
 
-  const handleChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (key: string) => (e: any) => {
     dispatch(updatePrompt(key, e.target.value));
   };
 
@@ -97,7 +80,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
     dispatch(updatePrompt(key, ''));
   };
 
-  const compiled = buildPrompt(prompt);
+  const compiled = buildPrompt(prompt || { you: '', me: '', guidelines: '', query: '' });
 
   const handleSubmit = () => {
     if (onSubmit && allValid) {
@@ -105,17 +88,18 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
     }
   };
 
-  const renderField = (label: string, key: keyof typeof prompt) => {
+  const renderField = (label: string, key: keyof typeof prompt, autoFocus?: boolean) => {
     const value = (prompt?.[key] as string) || '';
     const valid = isFieldValid(value);
     return (
-      <Box mb={2} key={key}>
+      <Box key={key}>
         <TextField
           label={label}
           multiline
           rows={4}
           variant="outlined"
           fullWidth
+          autoFocus={autoFocus}
           value={value}
           onChange={handleChange(key)}
           error={!valid && value.length > 0}
@@ -139,97 +123,73 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
   };
 
   return (
-    <Card>
-      <CardHeader
-        avatar={<Icon icon="ai" />}
-        title="You Say..."
-      />
-      <CardContent>
-        {/* QUERY first */}
-        {renderField('Query', 'query')}
+    <Box sx={{ width: '100%' }}>
+      {/* Query first */}
+      {renderField('Prompt', 'query', true)}
 
-        <Grid container spacing={2}>
-          {/* KI Persona */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">KI Persona</FormLabel>
-              <RadioGroup
-                value={prompt?.you || ''}
-                onChange={(e) => dispatch(updatePrompt('you', e.target.value))}
-              >
-                {youOptions.map((opt) => (
-                  <FormControlLabel
-                    key={opt.label}
-                    value={opt.you}
-                    control={<Radio />}
-                    label={
-                      <Typography variant="caption">{opt.label}</Typography>
-                    }
-                  />
-                ))}
-              </RadioGroup>
-            </FormControl>
-          </Grid>
+      {/* Send button */}
+      <Box mb={3}>
+        <MightyButton
+          variant="contained"
+          icon="ai"
+          iconPlacement="right"
+          label="Send Prompt"
+          color="primary"
+          onClick={handleSubmit}
+          disabled={!allValid}
+        />
+      </Box>
 
-          {/* Your Persona */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Your Persona</FormLabel>
-              <RadioGroup
-                value={prompt?.me || ''}
-                onChange={(e) => dispatch(updatePrompt('me', e.target.value))}
-              >
-                {meOptions.map((opt) => (
-                  <FormControlLabel
-                    key={opt.label}
-                    value={opt.me}
-                    control={<Radio />}
-                    label={
-                      <Typography variant="caption">{opt.label}</Typography>
-                    }
-                  />
-                ))}
-              </RadioGroup>
-            </FormControl>
-          </Grid>
+      {/* Dropdowns underneath, not full width, spaced out */}
+      <Box display="flex" flexDirection="column" alignItems="flex-start" gap={2}>
+        <FormControl sx={{ minWidth: 240 }}>
+          <InputLabel id="you-select-label">KI Persona</InputLabel>
+          <Select
+            variant="filled"
+            labelId="you-select-label"
+            value={prompt?.you || youOptions[0].you}
+            onChange={handleChange('you')}
+          >
+            {youOptions.map((opt) => (
+              <MenuItem key={opt.label} value={opt.you}>
+                {opt.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          {/* Extras */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Extras</FormLabel>
-              <RadioGroup
-                value={prompt?.guidelines || ''}
-                onChange={(e) =>
-                  dispatch(updatePrompt('guidelines', e.target.value))
-                }
-              >
-                {guidelineOptions.map((opt) => (
-                  <FormControlLabel
-                    key={opt.label}
-                    value={opt.guideline}
-                    control={<Radio />}
-                    label={
-                      <Typography variant="caption">{opt.label}</Typography>
-                    }
-                  />
-                ))}
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
+        <FormControl sx={{ minWidth: 240 }}>
+          <InputLabel id="me-select-label">Your Persona</InputLabel>
+          <Select
+            variant="filled"
+            labelId="me-select-label"
+            value={prompt?.me || meOptions[0].me}
+            onChange={handleChange('me')}
+          >
+            {meOptions.map((opt) => (
+              <MenuItem key={opt.label} value={opt.me}>
+                {opt.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-        <Box mt={2}>
-          <MightyButton
-            variant="contained"
-            icon="ai"
-            iconPlacement="right"
-            label="Start KI"
-            color="primary"
-            onClick={handleSubmit}
-            disabled={!allValid}
-          />
-        </Box>
-      </CardContent>
-    </Card>
+        <FormControl sx={{ minWidth: 240 }}>
+          <InputLabel id="guidelines-select-label">Extras</InputLabel>
+          <Select
+            variant="filled"
+            labelId="guidelines-select-label"
+            value={prompt?.guidelines || guidelineOptions[0].guideline}
+            onChange={handleChange('guidelines')}
+          >
+            {guidelineOptions.map((opt) => (
+              <MenuItem key={opt.label} value={opt.guideline}>
+                {opt.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+    </Box>
   );
 }

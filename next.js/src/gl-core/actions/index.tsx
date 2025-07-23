@@ -2,9 +2,11 @@
 import {setKeyValue} from './setKeyValue';
 import {updatePrompt} from './updatePrompt';
 import {fetchKI} from './fetchKI';
+import {setTable} from './setTable'
 
 export {
     setKeyValue,
     updatePrompt,
     fetchKI,
+    setTable,
 };

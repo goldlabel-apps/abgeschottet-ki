@@ -1,20 +1,12 @@
 'use client';
 
-import config from './config.json';
 import * as React from 'react';
 import {
-  CssBaseline,
-  CardHeader,
-  CardContent,
   Typography,
   Box,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Grid,
-  Card,
+  Button,
+  Stack,
 } from '@mui/material';
-import { Theme, Icon } from './cartridges/Theme';
 import { useDispatch } from './cartridges/Uberedux';
 import { useSlice, PromptBuilder } from '../gl-core';
 
@@ -38,21 +30,28 @@ export default function KI({ title = 'KI' }: any) {
   const [response, setResponse] = React.useState('');
   const [streaming, setStreaming] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [controller, setController] = React.useState<AbortController | null>(null);
+
   const slice = useSlice();
   const dispatch = useDispatch();
-  const { themeMode } = slice;
 
   async function handleSend(compiledPrompt: string) {
     if (!compiledPrompt.trim()) return;
+
+    // prepare states
     setError('');
     setResponse('');
     setStreaming(true);
+
+    const abortController = new AbortController();
+    setController(abortController);
 
     try {
       const res = await fetch('/api/gl-api/llm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: compiledPrompt }),
+        signal: abortController.signal,
       });
 
       if (!res.ok || !res.body) {
@@ -88,58 +87,66 @@ export default function KI({ title = 'KI' }: any) {
         }
       }
     } catch (err: any) {
-      setError(err.message || 'Unknown error');
+      if (err.name !== 'AbortError') {
+        setError(err.message || 'Unknown error');
+      }
     } finally {
       setStreaming(false);
+      setController(null);
     }
   }
 
+  function handleCancel() {
+    if (controller) {
+      controller.abort();
+    }
+    setStreaming(false);
+    setController(null);
+    setResponse('');
+    setError('');
+  }
+
+  function handleReset() {
+    setResponse('');
+    setError('');
+  }
+
   return (
-      <Box>
+    <Box>
+      {error && (
+        <Typography color="error" variant="body2" sx={{ mb: 2 }}>
+          {error}
+        </Typography>
+      )}
 
+      {(response || streaming) ? (
+        <>
+          <Typography
+            variant="body1"
+            component="pre"
+            sx={{ whiteSpace: 'pre-wrap', mt: 1, mb: 2 }}
+          >
+            {response}
+            {streaming && <TypingDots />}
+          </Typography>
 
-        <CardContent>
-          {/* Accordion for slice output */}
-          
-
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-              {error}
-            </Typography>
-          )}
-
-          {/* Grid container with PromptBuilder on the left and Response on the right */}
-          <Grid container spacing={2}>
-            <Grid size={6}>
-              <PromptBuilder onSubmit={handleSend} />
-            </Grid>
-
-            <Grid size={6}>
-              <Card sx={{ height: '100%' }}>
-                <CardHeader
-                  avatar={<Icon icon="ai" />}
-                  title="KI Says..."
-                />
-                <CardContent>
-                  {(response || streaming) ? (
-                    <Typography
-                      variant="body1"
-                      component="pre"
-                      sx={{ whiteSpace: 'pre-wrap', mt: 1 }}
-                    >
-                      {response}
-                      {streaming && <TypingDots />}
-                    </Typography>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      Nothing yet.
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Box>
+          <Stack direction="row" spacing={2}>
+            {streaming ? (
+              <Button variant="outlined" color="error" onClick={handleCancel}>
+                Cancel
+              </Button>
+            ) : (
+              <Button variant="outlined" onClick={handleReset}>
+                Reset
+              </Button>
+            )}
+          </Stack>
+        </>
+      ) : (
+        <>
+          <PromptBuilder onSubmit={handleSend} />
+        </>
+      )}
+    </Box>
   );
 }
