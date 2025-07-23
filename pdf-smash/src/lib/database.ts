@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/db.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/lib/db.ts
 import fs from 'fs';
 import path from 'path';
 import Database from 'better-sqlite3';

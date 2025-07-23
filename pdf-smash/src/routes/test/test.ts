@@ -1,25 +1,26 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/ki/ki.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/test/test.ts
 
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
 
 const router = Router();
 
-// Example: GET /ki
+// Example: GET /test
 router.get('/', (req: Request, res: Response) => {
   res.json({
     ...header,
-    message: 'KI route root',
+    message: 'TEST route root',
   });
 });
 
-// Example: GET /ki/info
+// Example: GET /test/info
 router.get('/info', (req: Request, res: Response) => {
   res.json({
     ...header,
-    db: 'KI test info here',
+    db: 'Your test info here',
   });
 });
 
-export default router;
+// You can add more routes like POST /test/add, etc.
 
+export default router;
