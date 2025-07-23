@@ -14,12 +14,14 @@ import {
     PromptBuilder,
     MightyButton,
     PdfSmashUpload,
+    DB,
 } from './components';
 import {useDispatch} from './cartridges/Uberedux';
 
 export {
     Core,
     KI,
+    DB,
     useSlice,
     usePrompt,
     useDispatch,

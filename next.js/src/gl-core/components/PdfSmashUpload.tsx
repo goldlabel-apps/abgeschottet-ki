@@ -1,11 +1,17 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/PdfSmashUpload.tsx
-
 'use client';
 
 import * as React from 'react';
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Backdrop, LinearProgress, Typography, Box, Button } from '@mui/material';
+import {
+  Backdrop,
+  LinearProgress,
+  Typography,
+  Box,
+  Button,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 
 export default function PdfSmashUpload() {
   const router = useRouter();
@@ -13,6 +19,7 @@ export default function PdfSmashUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
@@ -25,38 +32,58 @@ export default function PdfSmashUpload() {
 
   const uploadFile = async (file: File) => {
     setUploading(true);
+    const apiUrl = 'http://localhost:4000/process-pdf';
 
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      // Adjust this URL if your Next.js API will proxy to pdf-smash
-      const res = await fetch('http://localhost:4000/process-pdf', {
+      const res = await fetch(apiUrl, {
         method: 'POST',
         body: formData,
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get('content-type') || '';
+
+      let data: any = null;
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        // Non-JSON response (likely a 404 HTML page)
+        throw new Error(
+          `API route ${apiUrl} was not found or the backend isn't running.`
+        );
+      }
 
       if (!res.ok) {
-        throw new Error(data?.error || 'Upload failed');
+        throw new Error(
+          data?.error ||
+            `Upload failed with status ${res.status} from ${apiUrl}`
+        );
       }
 
       console.log('Upload success:', data);
-      // e.g. redirect or show success
-      // router.push(`/pdfs/${data.id}`); // implement as needed
-
+      // router.push(`/pdfs/${data.id}`);
       setUploading(false);
       setFile(null);
     } catch (err: any) {
       console.error('Upload failed:', err);
       setError(err.message || 'Something went wrong');
+      setSnackbarOpen(true);
       setUploading(false);
     }
   };
 
   const handleClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleSnackbarClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === 'clickaway') return;
+    setSnackbarOpen(false);
   };
 
   return (
@@ -80,12 +107,6 @@ export default function PdfSmashUpload() {
         </Button>
       )}
 
-      {error && (
-        <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-          {error}
-        </Typography>
-      )}
-
       <Backdrop
         open={uploading}
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.modal + 1 }}
@@ -99,6 +120,22 @@ export default function PdfSmashUpload() {
           </Box>
         </Box>
       </Backdrop>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="error"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
