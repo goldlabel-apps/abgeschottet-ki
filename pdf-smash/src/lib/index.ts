@@ -1,0 +1,1 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/lib/index.ts
