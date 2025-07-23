@@ -1,6 +1,7 @@
 {
+  "version": "2.0.0",
   "name": "next.js",
-  "description": "The only web app to be designed to never be on the web",
+  "description": "First web app ever to be designed to never be on the web",
   "packageManager": "yarn@4.3.1",
   "private": true,
   "scripts": {
