@@ -1,12 +1,13 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/db/db.ts
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
-import structureRouter from './structure';
+import schemaRouter from './schema';
+import createRouter from './create';
+import readRouter from './read';
 import { endpoints } from '../../lib';
 
 const router = Router();
 
-// GET /db
 router.get('/', (req: Request, res: Response) => {
   res.json({
     ...header,
@@ -14,7 +15,8 @@ router.get('/', (req: Request, res: Response) => {
   });
 });
 
-// Mount structure routes at /db/structure
-router.use('/structure', structureRouter);
+router.use('/schema', schemaRouter);
+router.use('/create', createRouter);
+router.use('/read', readRouter);
 
 export default router;

@@ -9,7 +9,6 @@ import {
     setKeyValue,
     updatePrompt,
     fetchKI,
-    setTable,
 } from './actions';
 import {
     PromptBuilder,
@@ -32,5 +31,4 @@ export {
     PromptBuilder,
     MightyButton,
     PdfSmashUpload,
-    setTable,
 }

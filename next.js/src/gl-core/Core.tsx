@@ -67,11 +67,7 @@ export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
         <CardContent sx={{ p: 0 }}>
           {/* Grid content */}
           <Grid container spacing={2}>
-            <Grid size={{xs: 12, md:7}}>
-              <KI />
-            </Grid>
-
-            <Grid size={{xs: 12, md:5}}>
+            <Grid size={{xs: 12, md:6}}>
               <DB />
               {/* Accordion showing current slice state */}
               {!hideUberedux && (
@@ -94,6 +90,9 @@ export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
                   </AccordionDetails>
                 </Accordion>
               )}
+            </Grid>
+            <Grid size={{xs: 12, md:6}}>
+              <KI />
             </Grid>
           </Grid>
         </CardContent>

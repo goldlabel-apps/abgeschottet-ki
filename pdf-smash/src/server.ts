@@ -4,7 +4,7 @@ import cors from 'cors';
 import {header, endpoints} from './lib';
 
 import testRouter from './routes/test/test';
-import dbRouter from './routes/db/db';
+import dbRouter from './routes/db';
 import kiRouter from './routes/ki/ki';
 import pdfRouter from './routes/pdf/pdf';
 

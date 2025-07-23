@@ -1,12 +1,12 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/db/structure.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/db/schema.ts
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
 import { db } from '../../lib/database';
 
-const structureRouter = Router();
+const schemaRouter = Router();
 
-// GET /db/structure
-structureRouter.get('/', (req: Request, res: Response) => {
+// GET /db/schema
+schemaRouter.get('/', (req: Request, res: Response) => {
   try {
     // Get all tables (ignore SQLite internal ones)
     const tables = db
@@ -28,7 +28,7 @@ structureRouter.get('/', (req: Request, res: Response) => {
       schema,
     });
   } catch (err: any) {
-    console.error('Error in /db/structure:', err);
+    console.error('Error in /db/schema:', err);
     res.status(500).json({
       success: false,
       error: err.message || 'Internal server error',
@@ -36,4 +36,4 @@ structureRouter.get('/', (req: Request, res: Response) => {
   }
 });
 
-export default structureRouter;
+export default schemaRouter;

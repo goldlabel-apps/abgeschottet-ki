@@ -1,48 +1,49 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
 import { FormControl, InputLabel, Select, MenuItem, Box } from '@mui/material';
 import { useSlice, useDispatch } from '../../../../gl-core';
-import { setTable } from '../../../../gl-core/actions/setTable'; // adjust path if needed
+import { setTable, fetchDB } from '../';
 
 export default function TableSelector() {
-  const router = useRouter();
   const dispatch = useDispatch();
-  const { db } = useSlice(); // expects db.structure.tables in your Redux slice
-  const tables: string[] = db?.structure?.tables ?? [];
+  const { db } = useSlice();
 
+  const tables: string[] = db?.schema?.tables ?? [];
+  const selectedFromStore = db?.selectedTable ?? '';
   const [selectedTable, setSelectedTable] = React.useState('');
 
-  // ✅ fallback: if we have tables and none selected yet, set first item as default
+  // Choose a default table when tables load or selectedFromStore changes
   React.useEffect(() => {
-    if (tables.length > 0 && !selectedTable) {
-      const first = tables[0];
-      setSelectedTable(first);
-      dispatch(setTable(first));
-      router.push(`/db/tables/${first}`);
+    if (tables.length > 0) {
+      if (selectedFromStore && tables.includes(selectedFromStore)) {
+        setSelectedTable(selectedFromStore);
+      } else if (!selectedTable) {
+        const first = tables[0];
+        setSelectedTable(first);
+        dispatch(setTable(first));
+      }
     }
-  }, [tables, selectedTable, dispatch, router]);
+  }, [tables, selectedFromStore, selectedTable, dispatch]);
+
+  // Refetch whenever db.selectedTable changes
+  React.useEffect(() => {
+    if (selectedFromStore) {
+      console.log('[TableSelector] Fetching data for table:', selectedFromStore);
+      dispatch(
+        fetchDB('table', `http://localhost:4000/db/read/table/${selectedFromStore}`) as any
+      );
+    }
+  }, [selectedFromStore, dispatch]);
 
   const handleChange = (event: any) => {
     const value = event.target.value as string;
     setSelectedTable(value);
-
-    // ✅ update in Uberedux (db.selectedTable = value)
     dispatch(setTable(value));
-
-    // Navigate
-    if (value) {
-      router.push(`/db/tables/${value}`);
-    }
   };
 
   if (!tables || tables.length === 0) {
-    return (
-      <Box sx={{ p: 2, fontStyle: 'italic' }}>
-        No tables found.
-      </Box>
-    );
+    return <Box sx={{ p: 2, fontStyle: 'italic' }}>No tables found.</Box>;
   }
 
   return (

@@ -4,7 +4,7 @@ import { setUbereduxKey } from '../../../../gl-core/cartridges/Uberedux';
 import { fetchDB } from '../';
 
 /**
- * Initialize the db slice and fetch structure.
+ * Initialize the db slice and fetch schema.
  */
 export const initDB =
   () => async (dispatch: TUbereduxDispatch) => {
@@ -20,7 +20,7 @@ export const initDB =
       );
 
       // Perform actual fetch
-      await dispatch(fetchDB('structure', 'http://localhost:4000/db/structure') as any);
+      await dispatch(fetchDB('schema', 'http://localhost:4000/db/schema') as any);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       dispatch(

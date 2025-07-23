@@ -1,6 +1,6 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/actions/setTable.tsx
-import { TUbereduxDispatch } from '../../gl-core/types';
-import { setUbereduxKey } from '../../gl-core/cartridges/Uberedux';
+import { TUbereduxDispatch } from '../../../../gl-core/types';
+import { setUbereduxKey } from '../../../../gl-core/cartridges/Uberedux';
 
 /**
  * Sets the selected table in the db slice

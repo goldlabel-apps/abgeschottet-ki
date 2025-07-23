@@ -26,11 +26,13 @@ export const guidelineOptions = [
 export const youOptions = [
   { label: 'German Lawyer', you: 'You are a German lawyer with 20 years experience' },
   { label: 'Senior JavaScript Developer', you: 'You are Sempai, a software developer with 20 years experience' },
+  { label: 'Therapist', you: 'You are a therapist with 20 years experience specializing in CBT,'},
 ];
 
 export const meOptions = [
   { label: 'Rechtsanwaltsfachangestellte', me: 'I am an intern learning to be a paralegal' },
   { label: 'Junior JavaScript Developer', me: 'I am Kohai, a junior JavaScript developer with 2 years experience' },
+  { label: 'Lost Soul', me: 'I am a lost soul, struggling to make sense of the world. I need help and support' },
 ];
 
 function buildPrompt(prompt?: {
@@ -45,7 +47,7 @@ ${you.trim()}
 
 ${me.trim()}
 
-Guidelines: ${guidelines.trim()}
+Guidelines: Keeping your response as consise as possible, ${guidelines.trim()}
 
 Kohai says: "${query.trim()}"
 `.trim();
@@ -97,7 +99,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
           label={label}
           multiline
           rows={4}
-          variant="outlined"
+          variant="filled"
           fullWidth
           autoFocus={autoFocus}
           value={value}

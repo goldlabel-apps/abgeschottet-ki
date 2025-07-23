@@ -132,11 +132,11 @@ export default function KI({ title = 'KI' }: any) {
 
           <Stack direction="row" spacing={2}>
             {streaming ? (
-              <Button variant="outlined" color="error" onClick={handleCancel}>
+              <Button variant="contained" onClick={handleCancel}>
                 Cancel
               </Button>
             ) : (
-              <Button variant="outlined" onClick={handleReset}>
+              <Button variant="contained" onClick={handleReset}>
                 Reset
               </Button>
             )}
