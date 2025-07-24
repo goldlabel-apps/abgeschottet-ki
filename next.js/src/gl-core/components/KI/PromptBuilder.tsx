@@ -27,10 +27,9 @@ export const youOptions = [
 ];
 
 export const meOptions = [
-    { label: 'Dopey Human', me: 'I am a lost soul, struggling to make sense of the world. I need help and support' },
+  { label: 'Dopey Human', me: 'I am a lost soul, struggling to make sense of the world. I need help and support' },
   { label: 'Rechtsanwaltsfachangestellte', me: 'I am an intern learning to be a paralegal' },
   { label: 'Junior JavaScript Developer', me: 'I am Kohai, a junior JavaScript developer with 2 years experience' },
-
 ];
 
 export const guidelineOptions = [
@@ -95,6 +94,19 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
     }
   };
 
+  // ✅ keydown listener for Enter
+  React.useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        // Optional: prevent accidental newline in textarea
+        // e.preventDefault();
+        handleSubmit();
+      }
+    };
+    window.addEventListener('keydown', listener);
+    return () => window.removeEventListener('keydown', listener);
+  }, [prompt, allValid]); // recalculate allValid if dependencies change
+
   const renderField = (label: string, key: keyof typeof prompt, autoFocus?: boolean) => {
     const value = (prompt?.[key] as string) || '';
     const valid = isFieldValid(value);
@@ -104,7 +116,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
           label={label}
           multiline
           rows={6}
-          variant="filled"
+          variant="outlined" // changed from filled
           fullWidth
           autoFocus={autoFocus}
           value={value}
@@ -118,8 +130,8 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
               <InputAdornment
                 position="end"
                 sx={{
-                  alignItems: 'flex-start', // Aligns the icon button to the top
-                  mt: 1, // optional small margin to look nicer
+                  alignItems: 'flex-start',
+                  mt: 1,
                 }}
               >
                 {value && value.length > 0 && (
@@ -151,7 +163,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
             <FormControl sx={{ minWidth: 240 }}>
               <InputLabel id="you-select-label">KI Persona</InputLabel>
               <Select
-                variant="filled"
+                variant="outlined" // changed from filled
                 labelId="you-select-label"
                 value={prompt?.you || youOptions[0].you}
                 onChange={handleChange('you')}
@@ -167,7 +179,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
             <FormControl sx={{ minWidth: 240 }}>
               <InputLabel id="me-select-label">Your Persona</InputLabel>
               <Select
-                variant="filled"
+                variant="outlined" // changed from filled
                 labelId="me-select-label"
                 value={prompt?.me || meOptions[0].me}
                 onChange={handleChange('me')}
@@ -183,7 +195,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
             <FormControl sx={{ minWidth: 240 }}>
               <InputLabel id="guidelines-select-label">Extras</InputLabel>
               <Select
-                variant="filled"
+                variant="outlined" // changed from filled
                 labelId="guidelines-select-label"
                 value={prompt?.guidelines || guidelineOptions[0].guideline}
                 onChange={handleChange('guidelines')}
