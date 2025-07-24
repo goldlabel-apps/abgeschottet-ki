@@ -1,7 +1,6 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/actions/reset.tsx
 import { TUbereduxDispatch } from '../../gl-core/types';
-import { resetUberedux } from '../../gl-core/cartridges/Uberedux';
-import { initialState } from '../initialState';
+import { resetUberedux, setUbereduxKey } from '../../gl-core/cartridges/Uberedux';
 
 /**
  * Resets the entire Uberedux slice back to initialState,
@@ -11,15 +10,13 @@ export const reset =
   () => async (dispatch: TUbereduxDispatch) => {
     try {
 
-      console.log("resetting Uberedux")
-
       // reset  Uberedux
       dispatch(resetUberedux());
 
       // after 333ms, redirect to "/"
       setTimeout(() => {
         if (typeof window !== 'undefined') {
-          window.location.replace('/');
+          window.location.replace('/database');
         }
       }, 333);
     } catch (e: unknown) {

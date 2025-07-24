@@ -1,7 +1,7 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/DB/actions/initDB.tsx
 import { TUbereduxDispatch } from '../../../../gl-core/types';
 import { setUbereduxKey } from '../../../../gl-core/cartridges/Uberedux';
-import { fetchDB } from '../';
+import { fetchSchema } from '../';
 
 /**
  * Initialize the db slice and fetch schema.
@@ -20,7 +20,15 @@ export const initDB =
       );
 
       // Perform actual fetch
-      await dispatch(fetchDB('schema', 'http://localhost:4000/db/schema') as any);
+      await dispatch(fetchSchema('schema', 'http://localhost:4000/db/schema') as any);
+
+      // Mark as initted
+      dispatch(
+        setUbereduxKey({
+          key: 'db.initting',
+          value: false,
+        }),
+      );
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       dispatch(

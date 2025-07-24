@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Box, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useDispatch, useSlice } from '../../../../gl-core';
-import { fetchDB } from '../';
+import { fetchSchema } from '../';
 
 export default function Table() {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ export default function Table() {
     if (!hasFetched.current && !hasTableKey) {
       hasFetched.current = true;
       console.log('[Table] No db.table found, fetching now...');
-      dispatch(fetchDB('table', 'http://localhost:4000/db/read/table/pdfs') as any);
+      dispatch(fetchSchema('table', 'http://localhost:4000/db/read/table/pdfs') as any);
     }
   }, [db, dispatch]);
 

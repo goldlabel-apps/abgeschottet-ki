@@ -4,16 +4,19 @@ import {KI} from './components/KI';
 import {
     useSlice,
     usePrompt,
+    useFeedback,
 } from './hooks';
 import {
     setKeyValue,
     updatePrompt,
     fetchKI,
     reset,
+    showFeedback,
 } from './actions';
 import {
     MightyButton,
     Upload,
+    Feedback,
 } from './components';
 import {
     DB,
@@ -32,6 +35,7 @@ export {
     useSlice,
     usePrompt,
     useDispatch,
+    useFeedback,
     setKeyValue,
     fetchKI,
     updatePrompt,
@@ -40,4 +44,6 @@ export {
     reset,
     Icon,
     resetUberedux,
+    showFeedback,
+    Feedback,
 }

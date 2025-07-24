@@ -1,7 +1,11 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/Core.tsx
 'use client';
 
-import * as React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import { styled, Theme, CSSObject } from '@mui/material/styles';
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   Box,
   CssBaseline,
@@ -15,19 +19,13 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { usePathname } from 'next/navigation';
-import { Icon } from './cartridges/Theme';
-import { DB, KI, Table } from './';
-import { useDispatch } from '../gl-core';
-import { reset } from '../gl-core/actions/reset';
+import { KI } from './components/KI';
+import { Icon, Feedback, useSlice, useDispatch, reset } from '../gl-core';
+import { initDB, DB, Table } from './components/DB';
 
 const drawerWidth = 240;
 const defaultIcon = 'settings';
-
-export const baseUrl = 'http://localhost:1975';
+const baseUrl = 'http://localhost:1975';
 
 export const nav = [
   { label: 'Upload', icon: 'upload', route: `${baseUrl}/upload` },
@@ -36,25 +34,12 @@ export const nav = [
     label: 'Database',
     icon: 'database',
     route: `${baseUrl}/database`,
-    // children: [
-    //   {
-    //     label: 'PDFs',
-    //     icon: 'table',
-    //     route: `${baseUrl}/database/tables/pdf`,
-    //   },
-    //   {
-    //     label: 'KI',
-    //     icon: 'table',
-    //     route: `${baseUrl}/database/tables/ki`,
-    //   },
-    // ],
   },
   {
     label: 'Code',
     icon: 'github',
     url: `https://github.com/goldlabel-apps/abgeschottet-ki`,
   },
-  // special Reset item
   { label: 'Reset', icon: 'reset', onClick: 'handleReset' },
 ];
 
@@ -132,21 +117,28 @@ const Drawer = styled(MuiDrawer, {
 export default function Core() {
   const [open, setOpen] = React.useState(true);
   const pathname = usePathname();
+  const { db } = useSlice();
   const dispatch = useDispatch();
+  const hasInitRun = useRef(false);
 
+  useEffect(() => {
+    if (!hasInitRun.current && (!db || Object.keys(db).length === 0)) {
+      hasInitRun.current = true;
+      dispatch(initDB());
+    }
+  }, [db, dispatch]);
+  
   const handleReset = () => {
-    dispatch(reset() as any);
+    dispatch(reset());
   };
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
-  // Render nav items recursively
   const renderNavItems = (items: typeof nav): React.ReactNode =>
     items.map((item, idx) => {
       const uniqueKey = item.route || (item as any).url || `${item.label}-${idx}`;
 
-      // handle special onClick nav items (like Reset)
       if ((item as any).onClick === 'handleReset') {
         return (
           <ListItem key={uniqueKey} disablePadding sx={{ display: 'block' }}>
@@ -208,7 +200,6 @@ export default function Core() {
               />
             </ListItemButton>
           </ListItem>
-          {item.children && renderNavItems(item.children)}
         </React.Fragment>
       );
     });
@@ -232,7 +223,7 @@ export default function Core() {
     }
     return (
       <>
-        <Typography variant="h5" sx={{ mb: 2 }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
           Welcome to Abgeschottet KI
         </Typography>
         <Typography variant="body2">
@@ -245,6 +236,7 @@ export default function Core() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <CssBaseline />
+      <Feedback />
       <AppBar position="fixed" open={open} elevation={1}>
         <Toolbar>
           <IconButton

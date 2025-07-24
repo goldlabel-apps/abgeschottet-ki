@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { FormControl, InputLabel, Select, MenuItem, Box } from '@mui/material';
 import { useSlice, useDispatch } from '../../../../gl-core';
-import { setTable, fetchDB } from '../';
+import { setTable, fetchSchema } from '../';
 
 export default function TableSelector() {
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ export default function TableSelector() {
     if (selectedFromStore) {
       console.log('[TableSelector] Fetching data for table:', selectedFromStore);
       dispatch(
-        fetchDB('table', `http://localhost:4000/db/read/table/${selectedFromStore}`) as any
+        fetchSchema('table', `http://localhost:4000/db/read/table/${selectedFromStore}`) as any
       );
     }
   }, [selectedFromStore, dispatch]);

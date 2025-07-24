@@ -1,26 +1,26 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/actions/fetchDB.tsx
+// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/actions/fetchSchema.tsx
 import { TUbereduxDispatch } from '../../../../gl-core/types';
 import { setUbereduxKey } from '../../../../gl-core/cartridges/Uberedux';
-
+import { showFeedback } from '../../../../gl-core'
 /**
  * Generic fetcher that loads JSON from a URL,
  * strips unwanted keys, and stores in db.<key>.
  */
-export const fetchDB =
+export const fetchSchema =
   (key: string, url: string) => async (dispatch: TUbereduxDispatch) => {
-    // console.log(`[fetchDB] Starting fetch for key "${key}" from URL: ${url}`);
+    // console.log(`[fetchSchema] Starting fetch for key "${key}" from URL: ${url}`);
     try {
       const res = await fetch(url);
-      // console.log(`[fetchDB] HTTP status for "${key}":`, res.status);
+      // console.log(`[fetchSchema] HTTP status for "${key}":`, res.status);
 
       if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
 
       const rawJson = await res.json();
-      // console.log(`[fetchDB] Raw JSON for "${key}":`, rawJson);
+      // console.log(`[fetchSchema] Raw JSON for "${key}":`, rawJson);
 
       // Filter out unwanted top-level props
       const { version, name, baseURL, ...filteredJson } = rawJson;
-      // console.log(`[fetchDB] Filtered JSON for "${key}":`, filteredJson);
+      // console.log(`[fetchSchema] Filtered JSON for "${key}":`, filteredJson);
 
       dispatch(
         setUbereduxKey({
@@ -29,10 +29,15 @@ export const fetchDB =
         }),
       );
 
-      // console.log(`[fetchDB] Dispatched filtered data to slice at db.${key}`);
+      dispatch(showFeedback({
+        severity: "info",
+        title: "Schema updated"
+      }))
+
+      // console.log(`[fetchSchema] Dispatched filtered data to slice at db.${key}`);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
-      console.error(`[fetchDB] Error fetching "${key}":`, msg);
+      console.error(`[fetchSchema] Error fetching "${key}":`, msg);
 
       dispatch(
         setUbereduxKey({
