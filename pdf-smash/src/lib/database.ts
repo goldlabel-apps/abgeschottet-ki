@@ -4,8 +4,8 @@ import path from 'path';
 import Database from 'better-sqlite3';
 
 // Target directory for the database
-// This will resolve to: /abgeschottet-ki/database
-const dbDir = path.join(process.cwd(), 'database');
+// This will resolve to: /abgeschottet-ki/db
+const dbDir = path.resolve(process.cwd(), '..', 'db');
 
 // Ensure the directory exists
 if (!fs.existsSync(dbDir)) {
@@ -13,7 +13,7 @@ if (!fs.existsSync(dbDir)) {
 }
 
 // Full path to the SQLite database file
-// Final file: /abgeschottet-ki/database/abgeschottet-ki.db
+// Final file: /abgeschottet-ki/db/abgeschottet-ki.db
 const dbPath = path.join(dbDir, 'abgeschottet-ki.db');
 
 // Open (or create) the database
