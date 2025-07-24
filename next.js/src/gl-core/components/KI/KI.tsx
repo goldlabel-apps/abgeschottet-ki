@@ -8,9 +8,10 @@ import {
   Stack,
   CardHeader,
 } from '@mui/material';
+import { usePathname } from 'next/navigation';
 import { useDispatch } from '../../cartridges/Uberedux';
-import { useSlice, Icon} from '../../../gl-core';
-import {PromptBuilder} from '../KI'
+import { useSlice, Icon } from '../../../gl-core';
+import { PromptBuilder, PDF2KI } from '../KI';
 
 function TypingDots() {
   const [dotCount, setDotCount] = React.useState(0);
@@ -36,10 +37,28 @@ export default function KI({ title = 'KI' }: any) {
   const slice = useSlice();
   const dispatch = useDispatch();
 
+  // 👉 get the current path and detect slug after /ki/
+  const pathname = usePathname();
+  const segments = pathname.split('/').filter(Boolean);
+  const kiIndex = segments.indexOf('ki');
+  const slug = kiIndex !== -1 && segments.length > kiIndex + 1 ? segments[kiIndex + 1] : null;
+
+  // 👉 if we have a slug, render the PDF2KI component instead
+  if (slug) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <CardHeader
+          avatar={<Icon icon="ki" color="primary" />}
+          title={`PDF → KI: ${slug}`}
+        />
+        <PDF2KI slug={slug} />
+      </Box>
+    );
+  }
+
   async function handleSend(compiledPrompt: string) {
     if (!compiledPrompt.trim()) return;
 
-    // prepare states
     setError('');
     setResponse('');
     setStreaming(true);
@@ -98,9 +117,7 @@ export default function KI({ title = 'KI' }: any) {
   }
 
   function handleCancel() {
-    if (controller) {
-      controller.abort();
-    }
+    if (controller) controller.abort();
     setStreaming(false);
     setController(null);
     setResponse('');
@@ -116,7 +133,7 @@ export default function KI({ title = 'KI' }: any) {
     <Box>
       <CardHeader
         avatar={<Icon icon="ki" color="primary" />}
-        title={"KI"}
+        title={title}
       />
       {error && (
         <Typography color="error" variant="body2" sx={{ mb: 2 }}>
@@ -148,9 +165,7 @@ export default function KI({ title = 'KI' }: any) {
           </Stack>
         </>
       ) : (
-        <>
-          <PromptBuilder onSubmit={handleSend} />
-        </>
+        <PromptBuilder onSubmit={handleSend} />
       )}
     </Box>
   );

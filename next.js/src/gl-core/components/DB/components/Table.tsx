@@ -1,21 +1,21 @@
 'use client';
 
 import * as React from 'react';
-import { Box, CardHeader } from '@mui/material';
+import { Box, CardHeader, List } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import { useDispatch, useSlice, MightyButton } from '../../../../gl-core';
-import { fetchTable } from '../';
+import { Icon, useDispatch, useSlice, MightyButton } from '../../../../gl-core';
+import { fetchTable, RowKI, RowPDF } from '../';
 
 export default function Table() {
   const dispatch = useDispatch();
   const { db } = useSlice();
 
-  // aktuelle Route analysieren
+  // get current route and derive tableName
   const pathname = usePathname();
   const segments = pathname.split('/').filter(Boolean);
   const tableName = segments[segments.length - 1];
 
-  // Daten laden
+  // fetch data whenever tableName changes
   React.useEffect(() => {
     if (tableName) {
       const apiUrl = `http://localhost:4000/db/read/table/${tableName}`;
@@ -28,7 +28,6 @@ export default function Table() {
     dispatch(fetchTable(tableName, apiUrl) as any);
   };
 
-  // Safe access auf Tabellen-Daten
   const rows = db?.tables?.[tableName]?.rows;
 
   return (
@@ -48,9 +47,39 @@ export default function Table() {
         }
       />
 
-      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-        {rows ? `rows: ${JSON.stringify(rows, null, 2)}` : 'Lade Daten…'}
-      </pre>
+      {rows && Array.isArray(rows) && rows.length > 0 ? (
+        <List>
+          {rows.map((row: any, index: number) => {
+            // choose which component to render based on tableName
+            if (tableName === 'ki') {
+              return <RowKI key={index} row={row} />;
+            }
+            if (tableName === 'pdfs') {
+              return <RowPDF key={index} row={row} />;
+            }
+
+            // fallback rendering
+            return (
+              <Box
+                key={index}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  borderBottom: '1px solid #eee',
+                  p: 1,
+                }}
+              >
+                <Icon icon={tableName as any} color="primary" />
+                <Box sx={{ ml: 2 }}>
+                  {row.label ?? '(no label)'}
+                </Box>
+              </Box>
+            );
+          })}
+        </List>
+      ) : (
+        <Box>No data available…</Box>
+      )}
     </Box>
   );
 }

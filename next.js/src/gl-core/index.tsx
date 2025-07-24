@@ -9,7 +9,6 @@ import {
 import {
     setKeyValue,
     updatePrompt,
-    fetchKI,
     reset,
     showFeedback,
 } from './actions';
@@ -28,6 +27,7 @@ import {
 import {useDispatch, resetUberedux} from './cartridges/Uberedux';
 
 export {
+    resetUberedux,
     Core,
     KI,
     DB,
@@ -37,13 +37,11 @@ export {
     useDispatch,
     useFeedback,
     setKeyValue,
-    fetchKI,
     updatePrompt,
     MightyButton,
     Upload,
     reset,
     Icon,
-    resetUberedux,
     showFeedback,
     Feedback,
 }

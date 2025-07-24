@@ -140,8 +140,6 @@ import TickIcon from '@mui/icons-material/DoneOutline';
 import FilesIcon from '@mui/icons-material/Topic';
 import PDFIcon from '@mui/icons-material/PictureAsPdf';
 import UserIcon from '@mui/icons-material/Face';
-
-
 import KIIcon from '@mui/icons-material/ChatBubbleOutline';
 import DatabaseIcon from '@mui/icons-material/Storage';
 import TablesIcon from '@mui/icons-material/BackupTable';
@@ -157,6 +155,7 @@ export type TIcon = {
     | 'ki'
     | 'users'
     | 'pdf'
+    | 'pdfs'
     | 'tick'
     | 'case'
     | 'caseclosed'
@@ -356,11 +355,15 @@ export default function Icon({ icon, color }: TIcon) {
       iconFragment = <CasesIcon color={color} />;
       break;
 
+    case 'pdfs':
+      iconFragment = <PDFIcon color={color} />;
+      break;
+
     case 'pdf':
       iconFragment = <PDFIcon color={color} />;
       break;
 
-          case 'ki':
+    case 'ki':
       iconFragment = <KIIcon color={color} />;
       break;
 

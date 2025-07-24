@@ -29,6 +29,12 @@ const baseUrl = 'http://localhost:1975';
 
 export const nav = [
   { label: 'Upload', icon: 'upload', route: `${baseUrl}/upload` },
+  
+  {
+    label: 'PDFs',
+    icon: 'pdf',
+    route: `${baseUrl}/database/table/pdfs`,
+  },
   { label: 'KI', icon: 'ki', route: `${baseUrl}/ki` },
   {
     label: 'Database',

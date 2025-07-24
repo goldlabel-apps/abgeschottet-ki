@@ -1,8 +1,7 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/KI/components/PromptBuilder.tsx
 'use client';
 
 import * as React from 'react';
-import { useDispatch, useSlice, MightyButton } from '../../../gl-core';
-import { updatePrompt } from '../../actions/updatePrompt';
 import {
   TextField,
   IconButton,
@@ -17,7 +16,8 @@ import {
   AccordionDetails,
   Typography,
 } from '@mui/material';
-import { Icon } from '../../cartridges/Theme';
+import { useDispatch, useSlice, MightyButton, Icon } from '../../../../gl-core';
+import { updatePrompt } from '../../../actions/updatePrompt';
 
 export const youOptions = [
   { label: 'Adult in the room', you: 'You are a sensible person - wise and older. You are the adult in the room' },
