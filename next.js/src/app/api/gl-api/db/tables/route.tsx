@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   // resolve absolute path to the sqlite file
+  
   const dbPath = path.resolve(process.cwd(), '../database/abgeschottet-ki.db');
 
   // open a connection
