@@ -29,7 +29,7 @@ export default function DB({ mode = 'default' }: TDB) {
   const schemas: Record<string, any> = db?.schema?.schema ?? {};
 
   const handleClick = (tableName: string) => {
-    router.push(`/table/${tableName}`);
+    router.push(`/database/table/${tableName}`);
   };
 
   const handleReload = () => {

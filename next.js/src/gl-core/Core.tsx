@@ -208,7 +208,7 @@ export default function Core() {
     if (!pathname) return null;
     const path = pathname.toLowerCase();
 
-    const matchTable = path.match(/^\/database\/tables\/([^/]+)/);
+    const matchTable = path.match(/^\/database\/table\/([^/]+)/);
     if (matchTable) {
       return <Table />;
     }

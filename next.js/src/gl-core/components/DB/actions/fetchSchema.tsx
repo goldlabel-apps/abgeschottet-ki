@@ -31,7 +31,7 @@ export const fetchSchema =
 
       dispatch(showFeedback({
         severity: "info",
-        title: "Schema updated"
+        title: "Schema fetched"
       }))
 
       // console.log(`[fetchSchema] Dispatched filtered data to slice at db.${key}`);
