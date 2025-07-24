@@ -2,9 +2,13 @@
 import {setKeyValue} from './setKeyValue';
 import {updatePrompt} from './updatePrompt';
 import {fetchKI} from './fetchKI';
+import {reset} from './reset';
+import {showFeedback} from './showFeedback';
 
 export {
     setKeyValue,
     updatePrompt,
     fetchKI,
+    reset,
+    showFeedback,
 };

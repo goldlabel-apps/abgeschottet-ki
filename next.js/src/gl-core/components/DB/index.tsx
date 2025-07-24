@@ -1,15 +1,15 @@
 import DB from './DB';
 import Table from './components/Table';
-import TableSelector from './components/TableSelector';
 import {initDB} from './actions/initDB';
-import {fetchDB} from './actions/fetchDB';
-import {setTable} from './actions/setTable';
+import {fetchSchema} from './actions/fetchSchema';
+import {
+    fetchTable,
+} from './actions'
 
 export{
     DB,
     Table,
-    TableSelector,
     initDB,
-    fetchDB,
-    setTable,
-}
+    fetchSchema,
+    fetchTable,
+};

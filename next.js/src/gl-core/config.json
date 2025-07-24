@@ -1,13 +1,13 @@
 {
   "persist": true,
   "app": "Abgeschottet KI",
-  "description": "Ringfenced AI",
+  "description": "Ringfenced AI for SME",
   "repo": "https://github.com/goldlabel-apps/abgeschottet-ki",
   "themes": {
     "light": {
       "mode": "light",
-      "primary": "#5E7978",
-      "secondary": "#5E7978",
+      "primary": "#365280",
+      "secondary": "#305DA5",
       "background": "#FFF",
       "paper": "#FFF",
       "text": "#303030",

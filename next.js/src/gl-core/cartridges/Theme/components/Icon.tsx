@@ -140,13 +140,19 @@ import TickIcon from '@mui/icons-material/DoneOutline';
 import FilesIcon from '@mui/icons-material/Topic';
 import PDFIcon from '@mui/icons-material/PictureAsPdf';
 import UserIcon from '@mui/icons-material/Face';
-import KIIcon from '@mui/icons-material/BackHand';
-import PromptIcon from '@mui/icons-material/ChatBubbleOutline';
+
+
+import KIIcon from '@mui/icons-material/ChatBubbleOutline';
+import DatabaseIcon from '@mui/icons-material/Storage';
+import TablesIcon from '@mui/icons-material/BackupTable';
+import TableIcon from '@mui/icons-material/TableRows';
 
 export type TIcon = {
   icon:
     | 'more'
-    | 'prompt'
+    | 'database'
+    | 'tables'
+    | 'table'
     | 'user'
     | 'ki'
     | 'users'
@@ -322,13 +328,21 @@ export default function Icon({ icon, color }: TIcon) {
       iconFragment = <TickIcon color={color} />;
       break;
 
+    case 'database':
+      iconFragment = <DatabaseIcon color={color} />;
+      break;
+    case 'tables':
+      iconFragment = <TablesIcon color={color} />;
+      break;
+    case 'table':
+      iconFragment = <TableIcon color={color} />;
+      break;
+
+
     case 'files':
       iconFragment = <FilesIcon color={color} />;
       break;
 
-    case 'prompt':
-      iconFragment = <PromptIcon color={color} />;
-      break;
 
       case 'case':
       iconFragment = <CaseIcon color={color} />;

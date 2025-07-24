@@ -13,7 +13,7 @@ import {
   Alert,
 } from '@mui/material';
 
-export default function PdfSmashUpload() {
+export default function Upload() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);

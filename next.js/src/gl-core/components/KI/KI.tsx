@@ -6,11 +6,12 @@ import {
   Box,
   Button,
   Stack,
+  CardHeader,
 } from '@mui/material';
-import { useDispatch } from './cartridges/Uberedux';
-import { useSlice, PromptBuilder } from '../gl-core';
+import { useDispatch } from '../../cartridges/Uberedux';
+import { useSlice, Icon} from '../../../gl-core';
+import {PromptBuilder} from '../KI'
 
-// Animated dots while streaming
 function TypingDots() {
   const [dotCount, setDotCount] = React.useState(0);
   React.useEffect(() => {
@@ -113,6 +114,10 @@ export default function KI({ title = 'KI' }: any) {
 
   return (
     <Box>
+      <CardHeader
+        avatar={<Icon icon="ki" color="primary" />}
+        title={"KI"}
+      />
       {error && (
         <Typography color="error" variant="body2" sx={{ mb: 2 }}>
           {error}

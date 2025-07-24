@@ -1,11 +1,12 @@
-import PromptBuilder from './PromptBuilder';
+
 import MightyButton from './MightyButton';
-import PdfSmashUpload from './PdfSmashUpload';
+import Upload from './Upload';
 import {DB} from './DB';
+import Feedback from './Feedback';
 
 export{
-    PromptBuilder,
     MightyButton,
-    PdfSmashUpload,
+    Upload,
     DB,
+    Feedback,
 }

@@ -1,34 +1,49 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/index.tsx
 import Core from './Core';
-import KI from './KI';
+import {KI} from './components/KI';
 import {
     useSlice,
     usePrompt,
+    useFeedback,
 } from './hooks';
 import {
     setKeyValue,
     updatePrompt,
     fetchKI,
+    reset,
+    showFeedback,
 } from './actions';
 import {
-    PromptBuilder,
     MightyButton,
-    PdfSmashUpload,
-    DB,
+    Upload,
+    Feedback,
 } from './components';
-import {useDispatch} from './cartridges/Uberedux';
+import {
+    DB,
+    Table,
+} from './components/DB';
+import {
+    Icon
+} from './cartridges/Theme';
+import {useDispatch, resetUberedux} from './cartridges/Uberedux';
 
 export {
     Core,
     KI,
     DB,
+    Table,
     useSlice,
     usePrompt,
     useDispatch,
+    useFeedback,
     setKeyValue,
     fetchKI,
     updatePrompt,
-    PromptBuilder,
     MightyButton,
-    PdfSmashUpload,
+    Upload,
+    reset,
+    Icon,
+    resetUberedux,
+    showFeedback,
+    Feedback,
 }
