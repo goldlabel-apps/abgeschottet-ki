@@ -1,9 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useDispatch, useSlice } from '../../gl-core';
-import { updatePrompt } from '../actions/updatePrompt';
-
+import { useDispatch, useSlice, MightyButton } from '../../../gl-core';
+import { updatePrompt } from '../../actions/updatePrompt';
 import {
   TextField,
   IconButton,
@@ -14,8 +13,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { Icon } from '../cartridges/Theme';
-import { MightyButton } from '../../gl-core';
+import { Icon } from '../../cartridges/Theme';
 
 export const guidelineOptions = [
   { label: 'Reply in English', guideline: 'Reply in English' },

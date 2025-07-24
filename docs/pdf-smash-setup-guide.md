@@ -85,7 +85,7 @@ Connect to existing SQLite database and ensure `pdfs` table exists:
 import Database from 'better-sqlite3';
 import path from 'path';
 
-const db = new Database(path.join(__dirname, '../../db/abgeschottet-ki.db'));
+const db = new Database(path.join(__dirname, '../../abgeschottet-ki.db'));
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS pdfs (

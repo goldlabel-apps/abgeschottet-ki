@@ -1,6 +1,6 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/index.tsx
 import Core from './Core';
-import KI from './KI';
+import {KI} from './components/KI';
 import {
     useSlice,
     usePrompt,
@@ -11,9 +11,8 @@ import {
     fetchKI,
 } from './actions';
 import {
-    PromptBuilder,
     MightyButton,
-    PdfSmashUpload,
+    Upload,
     DB,
 } from './components';
 import {useDispatch} from './cartridges/Uberedux';
@@ -28,7 +27,6 @@ export {
     setKeyValue,
     fetchKI,
     updatePrompt,
-    PromptBuilder,
     MightyButton,
-    PdfSmashUpload,
+    Upload,
 }

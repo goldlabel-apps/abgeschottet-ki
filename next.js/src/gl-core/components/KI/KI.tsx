@@ -7,10 +7,10 @@ import {
   Button,
   Stack,
 } from '@mui/material';
-import { useDispatch } from './cartridges/Uberedux';
-import { useSlice, PromptBuilder } from '../gl-core';
+import { useDispatch } from '../../cartridges/Uberedux';
+import { useSlice} from '../../../gl-core';
+import {PromptBuilder} from '../KI'
 
-// Animated dots while streaming
 function TypingDots() {
   const [dotCount, setDotCount] = React.useState(0);
   React.useEffect(() => {
