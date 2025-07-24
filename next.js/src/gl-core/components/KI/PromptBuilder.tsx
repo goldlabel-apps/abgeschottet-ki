@@ -12,25 +12,32 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
 } from '@mui/material';
 import { Icon } from '../../cartridges/Theme';
 
-export const guidelineOptions = [
-  { label: 'Reply in English', guideline: 'Reply in English' },
-  { label: 'Reply like a pirate', guideline: 'Speak like a pirate' },
-  { label: 'Reply in German', guideline: 'Reply in German' },
-];
-
 export const youOptions = [
+  { label: 'Adult in the room', you: 'You are a sensible person - wise and older. You are the adult in the room' },
   { label: 'German Lawyer', you: 'You are a German lawyer with 20 years experience' },
   { label: 'Senior JavaScript Developer', you: 'You are Sempai, a software developer with 20 years experience' },
-  { label: 'Therapist', you: 'You are a therapist with 20 years experience specializing in CBT,'},
+  { label: 'Therapist', you: 'You are a therapist with 20 years experience specializing in CBT,' },
 ];
 
 export const meOptions = [
+    { label: 'Dopey Human', me: 'I am a lost soul, struggling to make sense of the world. I need help and support' },
   { label: 'Rechtsanwaltsfachangestellte', me: 'I am an intern learning to be a paralegal' },
   { label: 'Junior JavaScript Developer', me: 'I am Kohai, a junior JavaScript developer with 2 years experience' },
-  { label: 'Lost Soul', me: 'I am a lost soul, struggling to make sense of the world. I need help and support' },
+
+];
+
+export const guidelineOptions = [
+  { label: 'Reply as a German pirate', guideline: 'Speak like a pirate, but in German' },
+  { label: 'Reply in English', guideline: 'Reply in English' },
+  { label: 'Reply like a pirate', guideline: 'Speak like a pirate' },
+  { label: 'Reply in German', guideline: 'Reply in German' },
 ];
 
 function buildPrompt(prompt?: {
@@ -96,7 +103,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
         <TextField
           label={label}
           multiline
-          rows={4}
+          rows={6}
           variant="filled"
           fullWidth
           autoFocus={autoFocus}
@@ -108,7 +115,13 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
           }
           InputProps={{
             endAdornment: (
-              <InputAdornment position="end">
+              <InputAdornment
+                position="end"
+                sx={{
+                  alignItems: 'flex-start', // Aligns the icon button to the top
+                  mt: 1, // optional small margin to look nicer
+                }}
+              >
                 {value && value.length > 0 && (
                   <IconButton onClick={handleReset(key)} edge="end">
                     <Icon icon="close" />
@@ -123,72 +136,82 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      {/* Query first */}
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {/* Accordion for dropdowns */}
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<Icon icon="down" color="primary" />}
+          aria-controls="fine-tuning-content"
+          id="fine-tuning-header"
+        >
+          <Typography variant="subtitle1">Fine tune your prompt</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box display="flex" flexDirection="column" alignItems="flex-start" gap={2}>
+            <FormControl sx={{ minWidth: 240 }}>
+              <InputLabel id="you-select-label">KI Persona</InputLabel>
+              <Select
+                variant="filled"
+                labelId="you-select-label"
+                value={prompt?.you || youOptions[0].you}
+                onChange={handleChange('you')}
+              >
+                {youOptions.map((opt, i) => (
+                  <MenuItem key={String(i)} value={opt.you}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl sx={{ minWidth: 240 }}>
+              <InputLabel id="me-select-label">Your Persona</InputLabel>
+              <Select
+                variant="filled"
+                labelId="me-select-label"
+                value={prompt?.me || meOptions[0].me}
+                onChange={handleChange('me')}
+              >
+                {meOptions.map((opt, i) => (
+                  <MenuItem key={String(i)} value={opt.me}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl sx={{ minWidth: 240 }}>
+              <InputLabel id="guidelines-select-label">Extras</InputLabel>
+              <Select
+                variant="filled"
+                labelId="guidelines-select-label"
+                value={prompt?.guidelines || guidelineOptions[0].guideline}
+                onChange={handleChange('guidelines')}
+              >
+                {guidelineOptions.map((opt, i) => (
+                  <MenuItem key={String(i)} value={opt.guideline}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Query field */}
       {renderField('Prompt', 'query', true)}
 
       {/* Send button */}
       <Box mb={3}>
         <MightyButton
           variant="contained"
-          icon="ai"
-          iconPlacement="right"
+          icon="ki"
           label="Send Prompt"
           color="primary"
           onClick={handleSubmit}
           disabled={!allValid}
         />
-      </Box>
-
-      {/* Dropdowns underneath, not full width, spaced out */}
-      <Box display="flex" flexDirection="column" alignItems="flex-start" gap={2}>
-        <FormControl sx={{ minWidth: 240 }}>
-          <InputLabel id="you-select-label">KI Persona</InputLabel>
-          <Select
-            variant="filled"
-            labelId="you-select-label"
-            value={prompt?.you || youOptions[0].you}
-            onChange={handleChange('you')}
-          >
-            {youOptions.map((opt) => (
-              <MenuItem key={opt.label} value={opt.you}>
-                {opt.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl sx={{ minWidth: 240 }}>
-          <InputLabel id="me-select-label">Your Persona</InputLabel>
-          <Select
-            variant="filled"
-            labelId="me-select-label"
-            value={prompt?.me || meOptions[0].me}
-            onChange={handleChange('me')}
-          >
-            {meOptions.map((opt) => (
-              <MenuItem key={opt.label} value={opt.me}>
-                {opt.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl sx={{ minWidth: 240 }}>
-          <InputLabel id="guidelines-select-label">Extras</InputLabel>
-          <Select
-            variant="filled"
-            labelId="guidelines-select-label"
-            value={prompt?.guidelines || guidelineOptions[0].guideline}
-            onChange={handleChange('guidelines')}
-          >
-            {guidelineOptions.map((opt) => (
-              <MenuItem key={opt.label} value={opt.guideline}>
-                {opt.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
       </Box>
     </Box>
   );

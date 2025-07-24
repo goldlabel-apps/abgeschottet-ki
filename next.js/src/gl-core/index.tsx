@@ -9,18 +9,26 @@ import {
     setKeyValue,
     updatePrompt,
     fetchKI,
+    reset,
 } from './actions';
 import {
     MightyButton,
     Upload,
-    DB,
 } from './components';
-import {useDispatch} from './cartridges/Uberedux';
+import {
+    DB,
+    Table,
+} from './components/DB';
+import {
+    Icon
+} from './cartridges/Theme';
+import {useDispatch, resetUberedux} from './cartridges/Uberedux';
 
 export {
     Core,
     KI,
     DB,
+    Table,
     useSlice,
     usePrompt,
     useDispatch,
@@ -29,4 +37,7 @@ export {
     updatePrompt,
     MightyButton,
     Upload,
+    reset,
+    Icon,
+    resetUberedux,
 }

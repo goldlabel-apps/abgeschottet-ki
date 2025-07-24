@@ -18,7 +18,11 @@ import {
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import { usePathname } from 'next/navigation';
 import { Icon } from './cartridges/Theme';
+import { DB, KI, Table } from './';
+import { useDispatch } from '../gl-core';
+import { reset } from '../gl-core/actions/reset';
 
 const drawerWidth = 240;
 const defaultIcon = 'settings';
@@ -26,46 +30,34 @@ const defaultIcon = 'settings';
 export const baseUrl = 'http://localhost:1975';
 
 export const nav = [
-  {
-    label: 'KI',
-    icon: 'ki',
-    route: `${baseUrl}/ki`,
-  },
-  {
-    label: 'Upload',
-    icon: 'upload',
-    route: `${baseUrl}/upload`,
-  },
+  { label: 'Upload', icon: 'upload', route: `${baseUrl}/upload` },
+  { label: 'KI', icon: 'ki', route: `${baseUrl}/ki` },
   {
     label: 'Database',
     icon: 'database',
     route: `${baseUrl}/database`,
-    children: [
-          {
-            label: 'PDFs',
-            icon: 'table',
-            route: `${baseUrl}/database/tables/pdf`,
-          },
-          {
-            label: 'KI',
-            icon: 'table',
-            route: `${baseUrl}/database/tables/ki`,
-          },
-        ],
+    // children: [
+    //   {
+    //     label: 'PDFs',
+    //     icon: 'table',
+    //     route: `${baseUrl}/database/tables/pdf`,
+    //   },
+    //   {
+    //     label: 'KI',
+    //     icon: 'table',
+    //     route: `${baseUrl}/database/tables/ki`,
+    //   },
+    // ],
   },
   {
     label: 'Code',
     icon: 'github',
     url: `https://github.com/goldlabel-apps/abgeschottet-ki`,
   },
-  {
-    label: 'Reset',
-    icon: 'reset',
-    route: `${baseUrl}/`,
-  },
+  // special Reset item
+  { label: 'Reset', icon: 'reset', onClick: 'handleReset' },
 ];
 
-// Drawer open/close styles
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
   transition: theme.transitions.create('width', {
@@ -73,7 +65,6 @@ const openedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
-  backgroundColor: '#f8f8f8',
   borderRight: `1px solid ${theme.palette.divider}`,
 });
 
@@ -84,7 +75,6 @@ const closedMixin = (theme: Theme): CSSObject => ({
   }),
   overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
-  backgroundColor: '#f8f8f8',
   borderRight: `1px solid ${theme.palette.divider}`,
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -107,7 +97,6 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: '#5E7978',
   color: '#fff',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
@@ -141,17 +130,53 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Core() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(true);
+  const pathname = usePathname();
+  const dispatch = useDispatch();
+
+  const handleReset = () => {
+    dispatch(reset() as any);
+  };
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
-  // Render nav items recursively with unique keys
-  const renderNavItems = (items: typeof nav, depth = 0): React.ReactNode => {
-    return items.map((item, idx) => {
+  // Render nav items recursively
+  const renderNavItems = (items: typeof nav): React.ReactNode =>
+    items.map((item, idx) => {
       const uniqueKey = item.route || (item as any).url || `${item.label}-${idx}`;
-      const href = item.route || (item as any).url || '#';
+
+      // handle special onClick nav items (like Reset)
+      if ((item as any).onClick === 'handleReset') {
+        return (
+          <ListItem key={uniqueKey} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              onClick={handleReset}
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <Icon icon={(item.icon || defaultIcon) as any} />
+              </ListItemIcon>
+              <ListItemText
+                primary={item.label}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
+        );
+      }
+
+      const href = (item as any).route || (item as any).url || '#';
       const isExternal = Boolean((item as any).url);
 
       return (
@@ -179,53 +204,76 @@ export default function Core() {
               </ListItemIcon>
               <ListItemText
                 primary={item.label}
-                secondary={open ? item.description : null}
                 sx={{ opacity: open ? 1 : 0 }}
               />
             </ListItemButton>
           </ListItem>
-          {item.children && item.children.length > 0 && renderNavItems(item.children, depth + 1)}
+          {item.children && renderNavItems(item.children)}
         </React.Fragment>
       );
     });
+
+  const renderContent = () => {
+    if (!pathname) return null;
+    const path = pathname.toLowerCase();
+
+    const matchTable = path.match(/^\/database\/tables\/([^/]+)/);
+    if (matchTable) {
+      return <Table />;
+    }
+    if (path.startsWith('/database')) {
+      return <DB />;
+    }
+    if (path.startsWith('/ki')) {
+      return <KI />;
+    }
+    if (path.startsWith('/upload')) {
+      return <Typography variant="body1">Upload component goes here.</Typography>;
+    }
+    return (
+      <>
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          Welcome to Abgeschottet KI
+        </Typography>
+        <Typography variant="body2">
+          Select a menu item from the drawer.
+        </Typography>
+      </>
+    );
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#fafafa' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} elevation={1}>
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             sx={{ marginRight: 3, ...(open && { display: 'none' }) }}
           >
-            <Icon icon={"right"} />
+            <Icon icon="right" />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap>
             Abgeschottet KI
           </Typography>
         </Toolbar>
       </AppBar>
+
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            <Icon icon={"left"} />
+            <Icon icon="left" />
           </IconButton>
         </DrawerHeader>
         <Divider />
         <List>{renderNavItems(nav)}</List>
       </Drawer>
+
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Typography variant="body1" sx={{ mb: 2 }}>
-          This is a refactored layout with our style and MUI working as a client component.
-        </Typography>
-        <Typography variant="body2">
-          Add your page content here.
-        </Typography>
+        {renderContent()}
       </Box>
     </Box>
   );

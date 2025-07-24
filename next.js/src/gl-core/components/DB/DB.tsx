@@ -3,7 +3,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Box, CardHeader, Typography } from '@mui/material';
-import { MightyButton, useDispatch, useSlice } from '../../../gl-core';
+import { MightyButton, useDispatch, useSlice, Icon } from '../../../gl-core';
 import { initDB, TableSelector } from '../DB';
 import { fetchDB, Table } from './';
 
@@ -28,32 +28,20 @@ export default function DB({ mode = 'default' }: TDB) {
     dispatch(fetchDB('schema', 'http://localhost:4000/db/schema') as any);
   };
 
-  if (mode === 'icon') {
-    return <Box>DB icon mode</Box>;
-  }
-
   const selectedTable = db?.selectedTable || '';
 
   return (
     <Box>
       <CardHeader
-        title={<TableSelector />}
-        // action={
-        //   <MightyButton
-        //     mode="icon"
-        //     label="Refresh"
-        //     icon="reset"
-        //     variant="contained"
-        //     onClick={handleRefresh}
-        //   />
-        // }
+        avatar={<Icon icon="database" color="primary" />}
+        title={"Database"}
       />
-
-      {selectedTable && (
-        <Box sx={{}}>
-          <Table />
-        </Box>
-      )}
+      <MightyButton 
+        icon="right"
+        iconPlacement='right'
+        label="Refresh"
+        variant="contained"
+      />
     </Box>
   );
 }
