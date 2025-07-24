@@ -20,7 +20,7 @@ import {
   ListItemText,
 } from '@mui/material';
 import { KI } from './components/KI';
-import { Icon, Feedback, useSlice, useDispatch, reset } from '../gl-core';
+import { Icon, Feedback, useSlice, useDispatch, reset, Upload } from '../gl-core';
 import { initDB, DB, Table } from './components/DB';
 
 const drawerWidth = 240;
@@ -115,7 +115,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Core() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
   const { db } = useSlice();
   const dispatch = useDispatch();
@@ -157,7 +157,7 @@ export default function Core() {
                   justifyContent: 'center',
                 }}
               >
-                <Icon icon={(item.icon || defaultIcon) as any} />
+                <Icon icon={(item.icon || defaultIcon) as any} color="primary" />
               </ListItemIcon>
               <ListItemText
                 primary={item.label}
@@ -192,7 +192,7 @@ export default function Core() {
                   justifyContent: 'center',
                 }}
               >
-                <Icon icon={(item.icon || defaultIcon) as any} />
+                <Icon icon={(item.icon || defaultIcon) as any} color="primary"/>
               </ListItemIcon>
               <ListItemText
                 primary={item.label}
@@ -219,7 +219,7 @@ export default function Core() {
       return <KI />;
     }
     if (path.startsWith('/upload')) {
-      return <Typography variant="body1">Upload component goes here.</Typography>;
+      return <Upload />;
     }
     return (
       <>

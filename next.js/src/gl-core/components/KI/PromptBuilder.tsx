@@ -33,8 +33,8 @@ export const meOptions = [
 ];
 
 export const guidelineOptions = [
-  { label: 'Reply as a German pirate', guideline: 'Speak like a pirate, but in German' },
   { label: 'Reply in English', guideline: 'Reply in English' },
+  { label: 'Reply as a German pirate', guideline: 'Speak like a pirate, but in German' },
   { label: 'Reply like a pirate', guideline: 'Speak like a pirate' },
   { label: 'Reply in German', guideline: 'Reply in German' },
 ];
@@ -150,7 +150,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
   return (
     <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* Accordion for dropdowns */}
-      <Accordion>
+      <Accordion sx={{boxShadow:0}}>
         <AccordionSummary
           expandIcon={<Icon icon="down" color="primary" />}
           aria-controls="fine-tuning-content"

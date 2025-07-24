@@ -16,7 +16,7 @@ export const reset =
       // after 333ms, redirect to "/"
       setTimeout(() => {
         if (typeof window !== 'undefined') {
-          window.location.replace('/database');
+          window.location.replace('/');
         }
       }, 333);
     } catch (e: unknown) {

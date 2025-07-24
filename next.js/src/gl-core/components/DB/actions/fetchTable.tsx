@@ -30,7 +30,7 @@ export const fetchTable =
         })
       );
 
-      dispatch(showFeedback({ severity: 'info', title: 'Table fetched' }));
+      dispatch(showFeedback({ severity: 'success', title: `${tableName} fetched` }));
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       console.error(`[fetchTable] Error fetching "${tableName}":`, msg);

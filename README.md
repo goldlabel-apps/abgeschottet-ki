@@ -9,5 +9,5 @@ Ring-Fenced LLM on MacBook Air (M1, 8GB RAM)  This guide walks you through setti
 - [Local LLM Setup](./docs/llm-setup-guide.md)
 - [PDF smash](./docs/pdf-smash-setup-guide.md)
 
-![OG Image](https://goldlabel.pro/jpg/abgeschotten-ki.jpg)
+![OG Image](https://live.staticflickr.com/65535/54676004619_ac1207c621_c.jpg)
 

@@ -30,7 +30,7 @@ export const fetchSchema =
       );
 
       dispatch(showFeedback({
-        severity: "info",
+        severity: "success",
         title: "Schema fetched"
       }))
 
