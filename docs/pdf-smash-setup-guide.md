@@ -26,7 +26,7 @@ Next.js App (UI & API)
           ├─ Accept upload (POST /process-pdf)
           ├─ Store file under /pdf-smash/data/pdfs
           ├─ Extract text (pdf-parse → OCR fallback)
-          ├─ Insert record into SQLite (database/abgeschottet-ki.db)
+          ├─ Insert record into SQLite (db/abgeschottet-ki.db)
           └─ Respond with JSON
 ```
 
@@ -36,7 +36,7 @@ Next.js App (UI & API)
 
 - Node.js 20+
 - Yarn or npm
-- SQLite database present in `database/abgeschottet-ki.db`
+- SQLite database present in `db/abgeschottet-ki.db`
 
 ---
 
@@ -85,7 +85,7 @@ Connect to existing SQLite database and ensure `pdfs` table exists:
 import Database from 'better-sqlite3';
 import path from 'path';
 
-const db = new Database(path.join(__dirname, '../../database/abgeschottet-ki.db'));
+const db = new Database(path.join(__dirname, '../../db/abgeschottet-ki.db'));
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS pdfs (

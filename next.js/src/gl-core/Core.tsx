@@ -15,11 +15,10 @@ import {
   Typography,
   Grid,
   IconButton,
-  // IconButton,
 } from '@mui/material';
 import { Theme, Icon } from './cartridges/Theme';
 import { useDispatch } from './cartridges/Uberedux';
-import { useSlice, KI, PdfSmashUpload } from '../gl-core';
+import { useSlice, DB, KI, PdfSmashUpload } from '../gl-core';
 
 // derive the allowed keys from your config.themes
 type ThemeMode = keyof typeof config.themes;
@@ -31,7 +30,7 @@ interface CoreProps {
 export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
   const slice = useSlice();
   const dispatch = useDispatch();
-
+  const hideUberedux = true; // set to true to hide, false to show
   const themeMode = slice.themeMode as ThemeMode;
 
   return (
@@ -42,7 +41,11 @@ export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
         <Toolbar disableGutters>
           <CardHeader
             sx={{ flex: 1, py: 1 }}
-            avatar={<IconButton><Icon icon="ki" /></IconButton>}
+            avatar={
+              <IconButton>
+                <Icon icon="ki" />
+              </IconButton>
+            }
             title={<Typography variant="h6">{title}</Typography>}
             action={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -52,6 +55,7 @@ export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
           />
         </Toolbar>
       </AppBar>
+
       {/* Scrollable content */}
       <Box
         sx={{
@@ -61,37 +65,35 @@ export default function Core({ title = 'Abgeschottet KI' }: CoreProps) {
         }}
       >
         <CardContent sx={{ p: 0 }}>
-
-
           {/* Grid content */}
           <Grid container spacing={2}>
-            
-            <Grid size={{ xs: 12, md: 8 }}>
+            <Grid size={{xs: 12, md:6}}>
+              <DB />
+              {/* Accordion showing current slice state */}
+              {!hideUberedux && (
+                <Accordion sx={{ mb: 2 }}>
+                  <AccordionSummary
+                    expandIcon={<Icon icon="down" />}
+                    aria-controls="slice-content"
+                    id="slice-header"
+                  >
+                    <Typography variant="subtitle2">Uberedux</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography
+                      component="pre"
+                      variant="body2"
+                      sx={{ whiteSpace: 'pre-wrap' }}
+                    >
+                      {JSON.stringify(slice, null, 2)}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              )}
+            </Grid>
+            <Grid size={{xs: 12, md:6}}>
               <KI />
             </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-                        {/* Accordion showing current slice state */}
-          <Accordion sx={{ mb: 2 }}>
-            <AccordionSummary
-              expandIcon={<Icon icon="down" />}
-              aria-controls="slice-content"
-              id="slice-header"
-            >
-              <Typography variant="subtitle2">Uberedux</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography
-                component="pre"
-                variant="body2"
-                sx={{ whiteSpace: 'pre-wrap' }}
-              >
-                {JSON.stringify(slice, null, 2)}
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-            </Grid>
-
           </Grid>
         </CardContent>
       </Box>

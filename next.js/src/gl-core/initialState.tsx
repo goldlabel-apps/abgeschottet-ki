@@ -6,10 +6,11 @@ import pJSON from '../../package.json';
 export const initialState: any = {
   themeMode: 'light',
   persisted: Date.now(),
-  prompt: {
-    you: "",
-    me: "",
-    guidelines: "",
-    query: ""
-  },
 };
+
+  // prompt: {
+  //   you: "",
+  //   me: "",
+  //   guidelines: "",
+  //   query: ""
+  // },
