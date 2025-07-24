@@ -35,11 +35,11 @@ export const nav = [
     icon: 'database',
     route: `${baseUrl}/database`,
   },
-  {
-    label: 'Code',
-    icon: 'github',
-    url: `https://github.com/goldlabel-apps/abgeschottet-ki`,
-  },
+  // {
+  //   label: 'Code',
+  //   icon: 'github',
+  //   url: `https://github.com/goldlabel-apps/abgeschottet-ki`,
+  // },
   { label: 'Reset', icon: 'reset', onClick: 'handleReset' },
 ];
 
