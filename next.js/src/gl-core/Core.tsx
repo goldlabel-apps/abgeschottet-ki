@@ -18,8 +18,6 @@ import {
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Icon } from './cartridges/Theme';
 
 const drawerWidth = 240;
@@ -29,50 +27,41 @@ export const baseUrl = 'http://localhost:1975';
 
 export const nav = [
   {
-    label: 'Home',
-    description: 'Reset and Restart',
-    icon: 'reset',
-    route: `${baseUrl}/`,
-  },
-  {
-    label: 'Source Code',
-    description: 'Latest code on GitHub',
-    icon: 'github',
-    url: `https://github.com/goldlabel-apps/abgeschottet-ki`,
-  },
-  {
     label: 'KI',
-    description: 'Interact with the AI',
     icon: 'ki',
     route: `${baseUrl}/ki`,
   },
   {
+    label: 'Upload',
+    icon: 'upload',
+    route: `${baseUrl}/upload`,
+  },
+  {
     label: 'Database',
-    description: 'Manage data',
     icon: 'database',
     route: `${baseUrl}/database`,
     children: [
-      {
-        label: 'Tables',
-        description: 'View a list of tables',
-        icon: 'tables',
-        route: `${baseUrl}/database/tables`,
-        children: [
           {
             label: 'PDFs',
-            description: 'View the PDF table',
             icon: 'table',
             route: `${baseUrl}/database/tables/pdf`,
           },
           {
             label: 'KI',
-            description: 'View the KI table',
             icon: 'table',
             route: `${baseUrl}/database/tables/ki`,
           },
         ],
-      },
-    ],
+  },
+  {
+    label: 'Code',
+    icon: 'github',
+    url: `https://github.com/goldlabel-apps/abgeschottet-ki`,
+  },
+  {
+    label: 'Reset',
+    icon: 'reset',
+    route: `${baseUrl}/`,
   },
 ];
 
@@ -158,39 +147,47 @@ export default function Core() {
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
-  // Helper to render navigation items recursively
-  const renderNavItems = (items: typeof nav, depth = 0) => {
-    return items.map((item) => (
-      <React.Fragment key={item.route}>
-        <ListItem disablePadding sx={{ display: 'block', pl: depth > 0 ? 2 : 0 }}>
-          <ListItemButton
-            component="a"
-            href={item.route}
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
-            }}
-          >
-            <ListItemIcon
+  // Render nav items recursively with unique keys
+  const renderNavItems = (items: typeof nav, depth = 0): React.ReactNode => {
+    return items.map((item, idx) => {
+      const uniqueKey = item.route || (item as any).url || `${item.label}-${idx}`;
+      const href = item.route || (item as any).url || '#';
+      const isExternal = Boolean((item as any).url);
+
+      return (
+        <React.Fragment key={uniqueKey}>
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              component="a"
+              href={href}
+              target={isExternal ? '_blank' : undefined}
+              rel={isExternal ? 'noopener noreferrer' : undefined}
               sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
-                justifyContent: 'center',
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
               }}
             >
-              <Icon icon={(item.icon || defaultIcon) as any} />
-            </ListItemIcon>
-            <ListItemText
-              primary={item.label}
-              secondary={open ? item.description : null}
-              sx={{ opacity: open ? 1 : 0 }}
-            />
-          </ListItemButton>
-        </ListItem>
-        {item.children && item.children.length > 0 && renderNavItems(item.children, depth + 1)}
-      </React.Fragment>
-    ));
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <Icon icon={(item.icon || defaultIcon) as any} />
+              </ListItemIcon>
+              <ListItemText
+                primary={item.label}
+                secondary={open ? item.description : null}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
+          {item.children && item.children.length > 0 && renderNavItems(item.children, depth + 1)}
+        </React.Fragment>
+      );
+    });
   };
 
   return (
@@ -205,7 +202,7 @@ export default function Core() {
             edge="start"
             sx={{ marginRight: 3, ...(open && { display: 'none' }) }}
           >
-            <Icon icon={defaultIcon as any} />
+            <Icon icon={"right"} />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             Abgeschottet KI
@@ -215,7 +212,7 @@ export default function Core() {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            <Icon icon={"left"} />
           </IconButton>
         </DrawerHeader>
         <Divider />
