@@ -1,5 +1,5 @@
 {
-  "name": "next.js",
+  "name": "aki-frontend",
   "description": "First web app ever to be designed to never be on the web",
   "packageManager": "yarn@4.3.1",
   "private": true,
