@@ -1,17 +1,16 @@
+![OG Image](https://live.staticflickr.com/65535/54676004619_ac1207c621_c.jpg)
+# AKI
 ## Abgeschottet KI
-
 ### Ringfenced AI powered Document Management for SMEs
 
-> This Private repo contains a Ring-Fenced environment which runs a local LLM alongside a Node front & backend
-
+> This Private repo contains a Ring-Fenced environment which runs on a local LLM alongside a Node front & backend
 
 #### Test Prompts
 
-Explain what machine learning weights are in simple terms
+> Some simple propmts to try giving the LLM
 
-Wie könnten große Sprachmodelle deutschen Anwaltskanzleien bei der Recherche helfen? 
+`Explain what machine learning weights are in simple terms`
 
-What risks arise if companies send confidential files to a public AI service like ChatGPT?
+`Wie könnten große Sprachmodelle deutschen Anwaltskanzleien bei der Recherche helfen? `
 
-
-![OG Image](https://live.staticflickr.com/65535/54676004619_ac1207c621_c.jpg)
+`What risks arise if companies send confidential files to a public AI service like ChatGPT?`
