@@ -25,12 +25,12 @@ function runInNewTerminal(command) {
 // Start each process in its own Terminal window/tab
 runInNewTerminal('yarn ollama');
 runInNewTerminal('yarn phi3');
-runInNewTerminal('yarn next');
-runInNewTerminal('yarn pdf-smash'); // <--- added pdf-smash service
+runInNewTerminal('yarn frontend');
+runInNewTerminal('yarn backend'); // <--- added pdf-smash service
 
 // Open browser after a delay
 setTimeout(() => {
   const targetUrl = 'http://localhost:1975';
-  console.log(`Opening ${targetUrl} in your default browser...`);
+  console.log(`Frontend opening ${targetUrl} in default browser...`);
   open(targetUrl);
 }, 4000);
