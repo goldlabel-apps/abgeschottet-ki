@@ -1,11 +1,11 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/pdf/pdf.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/routes/pdf/index.ts
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
+import uploadRouter from './upload';
 import { endpoints } from '../../lib';
 
 const router = Router();
 
-// GET /pdf
 router.get('/', (req: Request, res: Response) => {
   res.json({
     ...header,
@@ -13,7 +13,6 @@ router.get('/', (req: Request, res: Response) => {
   });
 });
 
-// Mount structure routes at /db/structure
-// router.use('/structure', structureRouter);
+router.use('/upload', uploadRouter);
 
 export default router;
