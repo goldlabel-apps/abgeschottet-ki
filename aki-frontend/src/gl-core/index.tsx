@@ -23,13 +23,15 @@ import {
     Table,
 } from './components/DB';
 import {
-    Icon
+    Theme,
+    Icon,
 } from './cartridges/Theme';
 import {useDispatch, resetUberedux} from './cartridges/Uberedux';
 
 export {
     resetUberedux,
     Core,
+    Theme,
     KI,
     DB,
     Table,

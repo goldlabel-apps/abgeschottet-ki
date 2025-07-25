@@ -6,8 +6,9 @@ import config from './config.json';
 export const initialState: any = {
   vs: pJSON.version,
   created_at: Date.now(),
+  themes: config.themes,
   settings: {
     themeMode: 'dark',
+    drawerOpen: true,
   },
-  themes: config.themes,
 };
