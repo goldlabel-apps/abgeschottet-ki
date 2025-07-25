@@ -2,20 +2,19 @@
 
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Backdrop,
   LinearProgress,
   Typography,
   Box,
-  Button,
   Snackbar,
   Alert,
 } from '@mui/material';
-import { MightyButton } from '../../gl-core';
+import { MightyButton, showFeedback, useDispatch } from '../../gl-core';
 
 export default function Upload() {
-  const router = useRouter();
+
+  const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -63,8 +62,9 @@ export default function Upload() {
         );
       }
 
-      console.log('Upload success:', data);
-      // router.push(`/pdfs/${data.id}`);
+      console.log('data.data', data.data);
+      const {severity, title, description} = data;
+      dispatch(showFeedback({severity, title, description}))
       setUploading(false);
       setFile(null);
     } catch (err: any) {
