@@ -90,12 +90,12 @@ export default function PDF2KI() {
           return;
         }
 
-        try {
-          const parsed = JSON.parse(finalOutput);
-          console.log('✅ KI completed JSON:', parsed);
-        } catch (err) {
-          console.error('❌ KI output is not valid JSON:', err, finalOutput);
-        }
+        // try {
+        //   const parsed = JSON.parse(finalOutput);
+        //   console.log('✅ KI completed JSON:', parsed);
+        // } catch (err) {
+        //   console.error('❌ KI output is not valid JSON:', err, finalOutput);
+        // }
       },
       controller.signal
     );
