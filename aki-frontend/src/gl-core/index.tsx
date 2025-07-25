@@ -5,6 +5,7 @@ import {
     useSlice,
     usePrompt,
     useFeedback,
+    useThemeMode,
 } from './hooks';
 import {
     setKeyValue,
@@ -35,6 +36,7 @@ export {
     useSlice,
     usePrompt,
     useDispatch,
+    useThemeMode,
     useFeedback,
     setKeyValue,
     updatePrompt,

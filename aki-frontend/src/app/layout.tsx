@@ -3,7 +3,7 @@ import { UbereduxProvider } from '../gl-core/cartridges/Uberedux';
 
 export const metadata: Metadata = {
   title: "Abgeschottet KI",
-  description: "Ringfenced Artificial Intelligence",
+  description: "",
 };
 
 const shortcutIcon = '/svg/favicon.svg';

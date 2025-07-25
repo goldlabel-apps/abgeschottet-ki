@@ -1,7 +1,7 @@
 {
   "persist": true,
   "app": "Abgeschottet KI",
-  "description": "Ringfenced AI for SME",
+  "description": "Ringfenced AI powered Document Management for SMEs",
   "repo": "https://github.com/goldlabel-apps/abgeschottet-ki",
   "themes": {
     "light": {

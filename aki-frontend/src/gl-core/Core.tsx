@@ -20,7 +20,15 @@ import {
   ListItemText,
 } from '@mui/material';
 import { KI } from './components/KI';
-import { Icon, Feedback, useSlice, useDispatch, reset, Upload } from '../gl-core';
+import { 
+  useThemeMode,
+  useSlice, 
+  useDispatch, 
+  reset, 
+  Icon, 
+  Feedback, 
+  Upload,
+} from '../gl-core';
 import { initDB, DB, Table } from './components/DB';
 
 const drawerWidth = 240;
@@ -123,10 +131,13 @@ const Drawer = styled(MuiDrawer, {
 export default function Core() {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
-  const { db } = useSlice();
+  const themeMode = useThemeMode();
+  const { db, themes } = useSlice();
   const dispatch = useDispatch();
   const hasInitRun = useRef(false);
 
+  console.log("theme", themes[themeMode]);
+  
   useEffect(() => {
     if (!hasInitRun.current && (!db || Object.keys(db).length === 0)) {
       hasInitRun.current = true;
@@ -239,6 +250,7 @@ export default function Core() {
     );
   };
 
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <CssBaseline />
@@ -253,8 +265,9 @@ export default function Core() {
           >
             <Icon icon="right" />
           </IconButton>
+          dsadkfh
           <Typography variant="h6" noWrap>
-            Abgeschottet KI
+            Abgeschottet KI 
           </Typography>
         </Toolbar>
       </AppBar>
