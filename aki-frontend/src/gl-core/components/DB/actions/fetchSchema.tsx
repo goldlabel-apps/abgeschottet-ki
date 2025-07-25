@@ -29,10 +29,10 @@ export const fetchSchema =
         }),
       );
 
-      dispatch(showFeedback({
-        severity: "success",
-        title: "Schema fetched"
-      }))
+      // dispatch(showFeedback({
+      //   severity: "success",
+      //   title: "Schema fetched"
+      // }))
 
       // console.log(`[fetchSchema] Dispatched filtered data to slice at db.${key}`);
     } catch (e: unknown) {

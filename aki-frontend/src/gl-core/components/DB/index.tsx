@@ -6,6 +6,7 @@ import {initDB} from './actions/initDB';
 import {fetchSchema} from './actions/fetchSchema';
 import {
     fetchTable,
+    deletePDF,
 } from './actions'
 
 export{
@@ -14,6 +15,7 @@ export{
     initDB,
     fetchSchema,
     fetchTable,
+    deletePDF,
     RowPDF,
     RowKI,
 };
