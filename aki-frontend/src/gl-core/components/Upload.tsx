@@ -12,10 +12,13 @@ import {
   Alert,
 } from '@mui/material';
 import { MightyButton, showFeedback, useDispatch } from '../../gl-core';
+import { fetchTable } from './DB';
 
 export default function Upload() {
 
-  const dispatch = useDispatch();
+
+
+  const dispatch = useDispatch();  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -68,6 +71,12 @@ export default function Upload() {
       dispatch(showFeedback({ severity, title }));
       setUploading(false);
       setFile(null);
+
+      setTimeout(() => {
+        const apiUrl = `http://localhost:4000/db/read/table/pdfs`;
+        dispatch(fetchTable("pdfs", apiUrl) as any);
+      }, 500);
+
     } catch (err: any) {
       // console.error('Upload failed:', err);
 
