@@ -1,2 +1,1 @@
-// /Users/goldlabel/GitHub/abgeschottet/prompts/hertwig-auer/index.ts
-
+// /Users/goldlabel/GitHub/abgeschottet-ki/aki-frontend/src/hertwig-auer/index.ts

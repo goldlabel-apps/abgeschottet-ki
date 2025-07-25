@@ -5,6 +5,7 @@ import {
     useSlice,
     usePrompt,
     useFeedback,
+    useThemeMode,
 } from './hooks';
 import {
     setKeyValue,
@@ -16,25 +17,29 @@ import {
     MightyButton,
     Upload,
     Feedback,
+    Shell,
 } from './components';
 import {
     DB,
     Table,
 } from './components/DB';
 import {
-    Icon
+    Theme,
+    Icon,
 } from './cartridges/Theme';
 import {useDispatch, resetUberedux} from './cartridges/Uberedux';
 
 export {
     resetUberedux,
     Core,
+    Theme,
     KI,
     DB,
     Table,
     useSlice,
     usePrompt,
     useDispatch,
+    useThemeMode,
     useFeedback,
     setKeyValue,
     updatePrompt,
@@ -44,4 +49,5 @@ export {
     Icon,
     showFeedback,
     Feedback,
+    Shell,
 }
