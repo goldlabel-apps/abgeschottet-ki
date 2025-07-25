@@ -1,7 +1,7 @@
 {
-  "version": "2.1.0",
+  "version": "2.1.1",
   "name": "abgeschottet-ki",
-  "description": "Ringfenced Artificial Intelligence",
+  "description": "Ringfenced AI powered Document Management for SMEs",
   "scripts": {
     "start": "node start.mjs",
     "ollama": "ollama serve",
