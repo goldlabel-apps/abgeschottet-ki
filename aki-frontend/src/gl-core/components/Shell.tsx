@@ -17,13 +17,12 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Avatar,
   CardHeader,
   Typography,
 } from '@mui/material';
-import { Icon, useDispatch, reset } from '../../gl-core';
+import { Icon, useDispatch, reset, Upload } from '../../gl-core';
 
-const drawerWidth = 200;
+const drawerWidth = 220;
 const defaultIcon = 'settings';
 
 const nav = config.nav;
@@ -157,13 +156,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <Icon icon="right" />
           </IconButton>
           <CardHeader
-            avatar={<Avatar src="/svg/favicon.svg" />}
+            sx={{flexGrow:1}}
             title={<Typography color="primary">Abgeschottet KI</Typography>}
             subheader={
               <Typography color="secondary">
                 Ringfenced AI powered Document Management for SMEs
               </Typography>
             }
+            action={<Upload />}
           />
         </Toolbar>
       </AppBar>

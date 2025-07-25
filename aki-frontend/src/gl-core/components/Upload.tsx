@@ -12,6 +12,7 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
+import { MightyButton } from '../../gl-core';
 
 export default function Upload() {
   const router = useRouter();
@@ -97,14 +98,13 @@ export default function Upload() {
       />
 
       {!uploading && (
-        <Button
+        <MightyButton
+          icon="upload"
+          iconPlacement='right'
+          label="Upload PDF"
           variant="contained"
-          color="primary"
           onClick={handleClick}
-          startIcon={<span style={{ fontSize: '1.2em' }}>📄</span>}
-        >
-          Upload PDF
-        </Button>
+        />
       )}
 
       <Backdrop

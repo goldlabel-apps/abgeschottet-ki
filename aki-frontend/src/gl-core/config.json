@@ -5,36 +5,30 @@
   "repo": "https://github.com/goldlabel-apps/abgeschottet-ki",
   "nav": [
     {
-      "label": "KI Test",
+      "label": "AKI Test",
       "icon": "ki",
       "route": "/ki"
     },
     {
-      "label": "PDFs",
+      "label": "Uploaded PDFs",
       "icon": "pdf",
       "route": "/database/table/pdfs"
-    },
-
-    {
-      "label": "Database Tables",
-      "icon": "database",
-      "route": "/database"
     },
     {
       "label": "AKI API",
       "icon": "api",
-      "route": "http://localhost:4000/"
+      "url": "http://localhost:4000/"
     },
     {
       "label": "Factory Settings",
-      "icon": "reset",
+      "icon": "delete",
       "onClick": "handleReset"
     }
   ],
   "themes": {
     "light": {
       "mode": "light",
-      "primary": "#E91010",
+      "primary": "#651e50",
       "secondary": "#E67E22",
       "background": "#FFFFFF",
       "paper": "#f5f5f5",
