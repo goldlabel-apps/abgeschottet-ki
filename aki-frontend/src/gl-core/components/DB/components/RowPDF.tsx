@@ -1,6 +1,13 @@
 // abgeschottet-ki/aki-frontend/src/gl-core/components/DB/components/RowPDF.tsx
 'use client';
 
+/*  
+  RowPDF.tsx  
+  This component displays a single PDF entry as a clickable list item.  
+  It shows a PDF icon, the entry’s label, and a truncated preview of its text.  
+  When clicked, it navigates to the detail page for that PDF at `/ki/[slug]`.  
+*/
+
 import * as React from 'react';
 import {
   ListItemButton,
@@ -14,8 +21,8 @@ export default function RowPDF({ row }: { row: any }) {
   const {
     id,
     label = '(no label)',
-    text = '',
-    slug = '',
+    text = '(no text)',
+    slug = 'no-slug',
   } = row;
 
   const router = useRouter();
