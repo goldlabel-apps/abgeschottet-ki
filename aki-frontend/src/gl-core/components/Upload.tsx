@@ -1,3 +1,4 @@
+// abgeschottet-ki/aki-frontend/src/gl-core/components/Upload.tsx
 'use client';
 
 import * as React from 'react';
@@ -49,26 +50,34 @@ export default function Upload() {
       if (contentType.includes('application/json')) {
         data = await res.json();
       } else {
-        // Non-JSON response (likely a 404 HTML page)
-        throw new Error(
-          `API route ${apiUrl} was not found or the backend isn't running.`
-        );
+        dispatch(showFeedback({
+          severity: "error", 
+          title: `API route ${apiUrl}`,
+          description: "Not found or not running"
+        }));
       }
-
       if (!res.ok) {
-        throw new Error(
-          data?.error ||
-            `Upload failed with status ${res.status} from ${apiUrl}`
-        );
+        dispatch(showFeedback({
+          severity: "error", 
+          title: `Upload failed`,
+          description: `Status ${res.status} from ${apiUrl}`
+        }));
       }
-
-      console.log('data.data', data.data);
-      const {severity, title, description} = data;
-      dispatch(showFeedback({severity, title, description}))
+      // console.log('data.data', data.data);
+      const { severity, title } = data;
+      dispatch(showFeedback({ severity, title }));
       setUploading(false);
       setFile(null);
     } catch (err: any) {
-      console.error('Upload failed:', err);
+      // console.error('Upload failed:', err);
+
+      dispatch(showFeedback({
+        severity: "error", 
+        title: `Upload failed`,
+        description: `Status ${err.toString()}`,
+      }));
+
+
       setError(err.message || 'Something went wrong');
       setSnackbarOpen(true);
       setUploading(false);
