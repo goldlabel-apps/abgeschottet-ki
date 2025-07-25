@@ -1,75 +1,157 @@
-// abgeschottet-ki/aki-backend/src/routes/pdf/upload.ts
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { header } from '../../lib/header';
+import { db } from '../../lib/database'; // your better-sqlite3 instance
 
 const createRouter = Router();
 
-// Ensure upload dir exists
-const uploadDir = path.resolve(__dirname, '../../../data/pdfs');
+// Absolute path to the Next.js public uploads folder
+const uploadDir = path.resolve(
+  __dirname,
+  '../../../../aki-frontend/public/pdf/uploads'
+);
+
+// Ensure the folder exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Multer storage
+// Multer storage configuration
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
+  destination: (_req, _file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (_req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
 });
 
+// Only allow PDFs
 const upload = multer({
   storage,
   fileFilter: (_req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
       cb(null, true);
     } else {
-      cb(new Error('Only PDF files are allowed!'));
+      cb(new Error('Only PDF files are allowed'));
     }
   },
 });
 
 // GET route – advise to use POST instead
 createRouter.get('/', (_req: Request, res: Response) => {
-  res.status(405).json({
+  return res.status(405).json({
     ...header,
-    severity: 'warning',
-    title: 'Please use POST to upload',
-    // no data key at all
+    severity: 'error',
+    title: 'GET method not allowed. Please use POST to upload a PDF.',
+    data: { message: 'Use POST instead of GET' },
   });
 });
 
 // POST route – handle upload
-createRouter.post('/', upload.single('file'), (req: Request, res: Response) => {
-  try {
-    const f = req.file;
-    if (!f) {
-      return res.status(400).json({ success: false, error: 'No file received' });
+createRouter.post('/', (req: Request, res: Response) => {
+  // Check directory existence first
+  if (!fs.existsSync(uploadDir)) {
+    return res.status(405).json({
+      ...header,
+      severity: 'error',
+      title: 'Upload directory does not exist on server',
+      data: { uploadDir },
+    });
+  }
+
+  upload.single('file')(req, res, function (err: any) {
+    // Multer-specific error
+    if (err instanceof multer.MulterError) {
+      return res.status(405).json({
+        ...header,
+        severity: 'error',
+        title: 'Multer error: ' + err.message,
+        data: { error: err },
+      });
+    }
+    // General error
+    else if (err) {
+      return res.status(405).json({
+        ...header,
+        severity: 'error',
+        title: err.message || 'Unknown upload error',
+        data: { error: err },
+      });
     }
 
+    // No file received
+    const f = req.file;
+    if (!f) {
+      return res.status(405).json({
+        ...header,
+        severity: 'error',
+        title: 'No file was received in the request',
+        data: { message: 'Expected field name "file"' },
+      });
+    }
+
+    // Build metadata
     const fileMeta = {
-      originalName: f.originalname,
+      label: f.originalname,
+      slug: path.parse(f.originalname).name.toLowerCase().replace(/\s+/g, '-'),
+      filename: f.originalname,
+      filesize: f.size,
+      text: null, // we can fill this in later when OCR/processing is done
       mimeType: f.mimetype,
-      size: f.size,
       destination: f.destination,
       fileNameOnDisk: f.filename,
       fullPath: path.join(f.destination, f.filename),
+      rawText: null, // reserved for later
     };
 
-    res.json({
-      ...header,
-      severity: 'success',
-      title: 'Uploaded OK',
-      data: fileMeta,
-    });
-  } catch (err: any) {
-    console.error('Error in /pdf/upload:', err);
-    res.status(500).json({
-      success: false,
-      error: err.message || 'Internal server error',
-    });
-  }
+    try {
+      // Insert into database
+      const stmt = db.prepare(`
+        INSERT INTO pdfs (
+          label, slug, filename, filesize, text,
+          mimeType, destination, fileNameOnDisk, fullPath, rawText
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      const result = stmt.run(
+        fileMeta.label,
+        fileMeta.slug,
+        fileMeta.filename,
+        fileMeta.filesize,
+        fileMeta.text,
+        fileMeta.mimeType,
+        fileMeta.destination,
+        fileMeta.fileNameOnDisk,
+        fileMeta.fullPath,
+        fileMeta.rawText
+      );
+
+      // Add the new id to the meta
+      const insertedId = result.lastInsertRowid as number;
+
+      return res.json({
+        ...header,
+        severity: 'success',
+        title: 'Uploaded and saved to database',
+        data: {
+          id: insertedId,
+          ...fileMeta,
+          publicUrl: `/pdf/uploads/${f.filename}`,
+        },
+      });
+    } catch (dbErr: any) {
+      console.error('[pdf/upload] DB insert error:', dbErr);
+      return res.status(500).json({
+        ...header,
+        severity: 'error',
+        title: 'Failed to save PDF metadata to database',
+        data: { error: dbErr.message },
+      });
+    }
+  });
 });
 
 export default createRouter;

@@ -30,7 +30,7 @@ runInNewTerminal('yarn backend'); // <--- added pdf-smash service
 
 // Open browser after a delay
 setTimeout(() => {
-  const targetUrl = 'http://localhost:1975';
+  const targetUrl = 'http://localhost:1975/database/table/pdfs';
   console.log(`Frontend opening ${targetUrl} in default browser...`);
   open(targetUrl);
 }, 4000);

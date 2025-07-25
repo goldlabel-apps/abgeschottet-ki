@@ -53,8 +53,8 @@ export default function Feedback({}: any) {
           </IconButton>
         }
       >
-        <strong>{title}</strong>
-        <br />
+        {title}
+        
         {description}
       </Alert>
     </Snackbar>

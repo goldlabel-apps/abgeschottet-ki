@@ -1,31 +1,35 @@
-// abgeschottet-ki/aki-frontend/src/gl-core/components/DB/components/RowPDF.tsx
 'use client';
 
-/*  
-  RowPDF.tsx  
-  This component displays a single PDF entry as a clickable list item.  
-  It shows a PDF icon, the entry’s label, and a truncated preview of its text.  
-  When clicked, it navigates to the detail page for that PDF at `/ki/[slug]`.  
+/*
+  RowPDF.tsx
+  This component displays a single PDF entry as a row of information
+  with action buttons for Edit, View, and Delete.
+  Delete now opens a confirm dialog; on confirm, it dispatches deletePDF(id).
 */
 
 import * as React from 'react';
-import {
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
+import { 
+  Box, 
+  Typography, 
+  Stack, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogContentText, 
+  DialogActions, 
+  Button,
 } from '@mui/material';
-import { useRouter } from 'next/navigation';
-import { Icon } from '../../../../gl-core';
+import { Icon, MightyButton, useDispatch } from '../../../../gl-core';
+import { deletePDF } from '../../DB';
 
 export default function RowPDF({ row }: { row: any }) {
   const {
     id,
     label = '(no label)',
     text = '(no text)',
-    slug = 'no-slug',
   } = row;
 
-  const router = useRouter();
+  const dispatch = useDispatch();
 
   // truncate text to 100 chars with ellipsis
   const truncatedText =
@@ -33,25 +37,92 @@ export default function RowPDF({ row }: { row: any }) {
       ? text.substring(0, 100) + '…'
       : text;
 
-  const handleClick = () => {
-    if (slug) {
-      router.push(`/ki/${slug}`);
-    }
+  // dialog state
+  const [openDialog, setOpenDialog] = React.useState(false);
+
+  const handleDeleteClick = () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogCancel = () => {
+    setOpenDialog(false);
+  };
+
+  const handleDialogConfirm = () => {
+    dispatch(deletePDF(id));
+    setOpenDialog(false);
   };
 
   return (
-    <ListItemButton 
-      key={id} 
-      divider 
-      onClick={handleClick}
-    >
-      <ListItemIcon>
-        <Icon icon="pdf" color="primary" />
-      </ListItemIcon>
-      <ListItemText
-        primary={label}
-        secondary={truncatedText}
-      />
-    </ListItemButton>
+    <>
+      <Box
+        key={id}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          py: 1,
+        }}
+      >
+        {/* Left side: icon and text */}
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+          <Box sx={{ mt: 0.5 }}>
+            <Icon icon="pdf" color="primary" />
+          </Box>
+          <Box>
+            <Typography variant="h6">{label}</Typography>
+            <Typography variant="body2">{truncatedText}</Typography>
+          </Box>
+        </Box>
+
+        {/* Right side: action buttons */}
+        <Stack direction="row" spacing={1}>
+          <MightyButton
+            disabled
+            mode="icon"
+            icon="edit"
+            label="Edit"
+            color="primary"
+            onClick={() => {}}
+          />
+
+          <MightyButton
+            disabled
+            mode="icon"
+            icon="link"
+            label="View"
+            color="primary"
+            onClick={() => {}}
+          />
+
+          <MightyButton
+            mode="icon"
+            icon="delete"
+            label="Delete"
+            color="primary"
+            onClick={handleDeleteClick}
+          />
+        </Stack>
+      </Box>
+
+      {/* Confirm Dialog */}
+      <Dialog open={openDialog} onClose={handleDialogCancel}>
+        <DialogTitle>Delete PDF</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete <strong>{label}</strong>?
+            This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogCancel}>Cancel</Button>
+          <Button color="error" variant="contained" onClick={handleDialogConfirm}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

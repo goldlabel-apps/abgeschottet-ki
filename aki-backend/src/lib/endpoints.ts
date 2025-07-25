@@ -9,6 +9,10 @@ export const endpoints = {
         title: 'Upload PDF',
         route: 'http://localhost:4000/pdf/upload',
       },
+      delete: {
+        title: 'Delete PDF by id',
+        route: 'http://localhost:4000/pdf/delete/',
+      },
       read: {
         title: 'List PDFs',
         route: 'http://localhost:4000/pdf/read',

@@ -3,7 +3,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { Box, CssBaseline, Typography } from '@mui/material';
+import { Box, CssBaseline } from '@mui/material';
 import {
   useThemeMode,
   useSlice,
@@ -12,10 +12,8 @@ import {
   Theme,
   Shell,
 } from '../gl-core';
-import { initDB } from './components/DB';
 import { Dashboard } from './components/Dashboard';
-import { DB } from './components/DB';
-import { Table } from './components/DB';
+import { DB, Table, initDB } from './components/DB';
 import { KI } from './components/KI';
 
 export default function Core() {
@@ -25,7 +23,6 @@ export default function Core() {
   const dispatch = useDispatch();
   const hasInitRun = useRef(false);
 
-  // initialise database if needed
   useEffect(() => {
     if (!hasInitRun.current && (!db || Object.keys(db).length === 0)) {
       hasInitRun.current = true;
