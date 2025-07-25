@@ -17,6 +17,7 @@ import {
     MightyButton,
     Upload,
     Feedback,
+    Shell,
 } from './components';
 import {
     DB,
@@ -48,4 +49,5 @@ export {
     Icon,
     showFeedback,
     Feedback,
+    Shell,
 }

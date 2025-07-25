@@ -8,7 +8,7 @@ export const initialState: any = {
   created_at: Date.now(),
   themes: config.themes,
   settings: {
-    themeMode: 'dark',
+    themeMode: 'light',
     drawerOpen: true,
   },
 };

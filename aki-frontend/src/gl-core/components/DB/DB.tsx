@@ -58,12 +58,11 @@ export default function DB({ mode = 'default' }: TDB) {
           const schemaArray: [string, any][] = Object.entries(schemas?.[tableName] || {});
 
           return (
-            <Grid key={tableName} size={{ xs: 12, md: 6 }}>
+            <Grid key={tableName} size={{ xs: 12, sm: 6, md: 4 }}>
               <Card variant="outlined">
                 <CardActionArea onClick={() => handleClick(tableName)}>
                   <CardHeader
                     title={tableName}
-                    titleTypographyProps={{ variant: 'h6' }}
                   />
                   <Divider />
                   <CardContent>
@@ -88,7 +87,7 @@ export default function DB({ mode = 'default' }: TDB) {
                         color="text.secondary"
                         sx={{ mt: 1, display: 'block' }}
                       >
-                        …and more fields
+                        …more fields
                       </Typography>
                     )}
                   </CardContent>

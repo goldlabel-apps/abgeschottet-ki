@@ -10,12 +10,12 @@ import {
   useDispatch,
   Feedback,
   Theme,
+  Shell,
 } from '../gl-core';
 import { initDB } from './components/DB';
 import { DB } from './components/DB';
 import { Table } from './components/DB';
 import { KI } from './components/KI';
-import { Shell } from './Shell';
 
 export default function Core() {
   const pathname = usePathname();

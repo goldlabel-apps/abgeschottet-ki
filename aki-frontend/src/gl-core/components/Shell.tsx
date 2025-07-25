@@ -1,6 +1,8 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/aki-frontend/src/gl-core/components/Shell.tsx
 'use client';
 
 import React from 'react';
+import config from '../../gl-core/config.json';
 import { styled, Theme as TTheme, CSSObject } from '@mui/material/styles';
 import {
   Drawer as MuiDrawer,
@@ -19,19 +21,12 @@ import {
   CardHeader,
   Typography,
 } from '@mui/material';
-import { Icon, useSlice, reset } from '../gl-core';
+import { Icon, useDispatch, reset } from '../../gl-core';
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 const defaultIcon = 'settings';
-const baseUrl = 'http://localhost:1975';
 
-const nav = [
-  { label: 'Upload', icon: 'upload', route: `${baseUrl}/upload` },
-  { label: 'PDFs', icon: 'pdf', route: `${baseUrl}/database/table/pdfs` },
-  { label: 'KI', icon: 'ki', route: `${baseUrl}/ki` },
-  { label: 'Database', icon: 'database', route: `${baseUrl}/database` },
-  { label: 'Reset', icon: 'reset', onClick: 'handleReset' },
-];
+const nav = config.nav;
 
 const openedMixin = (theme: TTheme): CSSObject => ({
   width: drawerWidth,
@@ -105,8 +100,9 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(false);
-  const { dispatch } = useSlice();
+  const [open, setOpen] = React.useState(true);
+  const dispatch= useDispatch();
+
 
   const handleReset = () => dispatch(reset());
   const handleDrawerOpen = () => setOpen(true);
@@ -124,7 +120,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <ListItem key={key} disablePadding sx={{ display: 'block' }}>
           <ListItemButton
             onClick={onClick}
-            component={!onClick ? 'a' : undefined}
             href={!onClick ? href : undefined}
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
