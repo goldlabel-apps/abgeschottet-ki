@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/hooks/themeMode.tsx
+// abgeschottet-ki/next.js/src/gl-core/hooks/themeMode.tsx
 /*
     Hook returning themeMode from the root slice 
 */

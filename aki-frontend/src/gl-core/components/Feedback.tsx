@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/Feedback.tsx
+// abgeschottet-ki/next.js/src/gl-core/components/Feedback.tsx
 'use client';
 
 import * as React from 'react';

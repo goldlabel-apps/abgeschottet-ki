@@ -1,4 +1,4 @@
-  // /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/server.ts
+  // abgeschottet-ki/pdf-smash/src/server.ts
 import express from 'express';
 import cors from 'cors';
 import {header, endpoints} from './lib';
@@ -6,7 +6,7 @@ import {header, endpoints} from './lib';
 import testRouter from './routes/test/test';
 import dbRouter from './routes/db';
 import kiRouter from './routes/ki/ki';
-import pdfRouter from './routes/pdf/pdf';
+import pdfRouter from './routes/pdf';
 
 const app = express();
 const PORT = 4000;

@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/lib/database.ts
+// abgeschottet-ki/aki-backend/src/lib/database.ts
 
 import fs from 'fs';
 import path from 'path';

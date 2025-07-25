@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/db/db.ts
+// abgeschottet-ki/pdf-smash/src/routes/db/db.ts
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
 import schemaRouter from './schema';

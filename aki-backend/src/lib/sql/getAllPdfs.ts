@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/db/sql/getAllPdfs.ts
+// abgeschottet-ki/db/sql/getAllPdfs.ts
 
 /*
 // Get all stored PDF records

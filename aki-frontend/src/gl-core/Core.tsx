@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/Core.tsx
+// abgeschottet-ki/next.js/src/gl-core/Core.tsx
 'use client';
 
 import React, { useEffect, useRef } from 'react';
@@ -13,6 +13,7 @@ import {
   Shell,
 } from '../gl-core';
 import { initDB } from './components/DB';
+import { Dashboard } from './components/Dashboard';
 import { DB } from './components/DB';
 import { Table } from './components/DB';
 import { KI } from './components/KI';
@@ -48,16 +49,7 @@ export default function Core() {
       return <KI />;
     }
 
-    return (
-      <>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Welcome to Abgeschottet KI
-        </Typography>
-        <Typography variant="body2">
-          Select a menu item from the drawer.
-        </Typography>
-      </>
-    );
+    return <Dashboard />;
   };
 
   return (

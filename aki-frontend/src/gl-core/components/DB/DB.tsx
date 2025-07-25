@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/DB/DB.tsx
+// abgeschottet-ki/next.js/src/gl-core/components/DB/DB.tsx
 'use client';
 
 import React from 'react';

@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/actions/index.tsx
+// abgeschottet-ki/next.js/src/gl-core/actions/index.tsx
 import {setKeyValue} from './setKeyValue';
 import {updatePrompt} from './updatePrompt';
 import {reset} from './reset';

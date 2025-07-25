@@ -2,19 +2,19 @@
 
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Backdrop,
   LinearProgress,
   Typography,
   Box,
-  Button,
   Snackbar,
   Alert,
 } from '@mui/material';
+import { MightyButton, showFeedback, useDispatch } from '../../gl-core';
 
 export default function Upload() {
-  const router = useRouter();
+
+  const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -32,7 +32,7 @@ export default function Upload() {
 
   const uploadFile = async (file: File) => {
     setUploading(true);
-    const apiUrl = 'http://localhost:4000/process-pdf';
+    const apiUrl = 'http://localhost:4000/pdf/upload';
 
     const formData = new FormData();
     formData.append('file', file);
@@ -62,8 +62,9 @@ export default function Upload() {
         );
       }
 
-      console.log('Upload success:', data);
-      // router.push(`/pdfs/${data.id}`);
+      console.log('data.data', data.data);
+      const {severity, title, description} = data;
+      dispatch(showFeedback({severity, title, description}))
       setUploading(false);
       setFile(null);
     } catch (err: any) {
@@ -97,14 +98,14 @@ export default function Upload() {
       />
 
       {!uploading && (
-        <Button
-          variant="contained"
-          color="primary"
+        <MightyButton
+          mode="icon"
+          icon="upload"
+          iconPlacement='right'
+          label="Upload PDF"
+          variant="outlined"
           onClick={handleClick}
-          startIcon={<span style={{ fontSize: '1.2em' }}>📄</span>}
-        >
-          Upload PDF
-        </Button>
+        />
       )}
 
       <Backdrop

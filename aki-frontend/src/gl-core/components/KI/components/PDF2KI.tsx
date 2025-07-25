@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/KI/components/PDF2KI.tsx
+// abgeschottet-ki/next.js/src/gl-core/components/KI/components/PDF2KI.tsx
 'use client';
 
 import * as React from 'react';

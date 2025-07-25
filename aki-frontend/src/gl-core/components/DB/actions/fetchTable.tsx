@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/DB/actions/fetchTable.tsx
+// abgeschottet-ki/next.js/src/gl-core/components/DB/actions/fetchTable.tsx
 import { TUbereduxDispatch } from '../../../../gl-core/types';
 import { setUbereduxKey } from '../../../../gl-core/cartridges/Uberedux';
 import { showFeedback } from '../../../../gl-core'

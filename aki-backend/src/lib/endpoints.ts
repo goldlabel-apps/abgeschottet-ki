@@ -1,6 +1,24 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/lib/endpoints.ts
+// abgeschottet-ki/pdf-smash/src/lib/endpoints.ts
 
 export const endpoints = {
+  pdf: {
+    title: 'PDF',
+    slug: 'pdf',
+    routes: {
+      upload: {
+        title: 'Upload PDF',
+        route: 'http://localhost:4000/pdf/upload',
+      },
+      read: {
+        title: 'List PDFs',
+        route: 'http://localhost:4000/pdf/read',
+      },
+      root: {
+        title: 'PDF Root',
+        route: 'http://localhost:4000/pdf',
+      },
+    },
+  },
   db: {
     title: 'Database',
     slug: 'db',
@@ -10,16 +28,6 @@ export const endpoints = {
         route: 'http://localhost:4000/db',
       },
 
-    },
-  },
-  pdf: {
-    title: 'PDF',
-    slug: 'pdf',
-    routes: {
-      root: {
-        title: 'PDF Root',
-        route: 'http://localhost:4000/pdf',
-      },
     },
   },
   ki: {
@@ -37,10 +45,8 @@ export const endpoints = {
       },
     },
   },
-
   test: {
     title: 'Test',
     route: 'http://localhost:4000/test',
   },
-
 };

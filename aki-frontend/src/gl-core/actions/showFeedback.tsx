@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/actions/showFeedback.tsx
+// abgeschottet-ki/next.js/src/gl-core/actions/showFeedback.tsx
 
 import { TUbereduxDispatch } from '../../gl-core/types';
 import { setUbereduxKey } from '../../gl-core/cartridges/Uberedux';

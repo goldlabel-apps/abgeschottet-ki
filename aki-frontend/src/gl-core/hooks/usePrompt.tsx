@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/hooks/useSlice.tsx
+// abgeschottet-ki/next.js/src/gl-core/hooks/useSlice.tsx
 /*
     Hook returning prompt from the root slice 
 */
