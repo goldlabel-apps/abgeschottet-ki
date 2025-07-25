@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-frontend/src/gl-core/components/Dashboard/Dashboard.tsx
+// abgeschottet-ki/aki-frontend/src/gl-core/components/Dashboard/Dashboard.tsx
 'use client';
 
 import React from 'react';

@@ -33,7 +33,7 @@ export default function Upload() {
 
   const uploadFile = async (file: File) => {
     setUploading(true);
-    const apiUrl = 'http://localhost:4000/process-pdf';
+    const apiUrl = 'http://localhost:4000/pdf/upload';
 
     const formData = new FormData();
     formData.append('file', file);
@@ -99,10 +99,11 @@ export default function Upload() {
 
       {!uploading && (
         <MightyButton
+          mode="icon"
           icon="upload"
           iconPlacement='right'
           label="Upload PDF"
-          variant="contained"
+          variant="outlined"
           onClick={handleClick}
         />
       )}

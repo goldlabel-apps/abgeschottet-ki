@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/actions/reset.tsx
+// abgeschottet-ki/next.js/src/gl-core/actions/reset.tsx
 import { TUbereduxDispatch } from '../../gl-core/types';
 import { resetUberedux, setUbereduxKey } from '../../gl-core/cartridges/Uberedux';
 

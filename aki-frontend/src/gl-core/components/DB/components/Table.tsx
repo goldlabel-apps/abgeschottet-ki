@@ -32,7 +32,7 @@ export default function Table() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <CardHeader
+      {/* <CardHeader
         title={tableName}
         action={
           <MightyButton
@@ -45,7 +45,7 @@ export default function Table() {
             onClick={handleReload}
           />
         }
-      />
+      /> */}
 
       {rows && Array.isArray(rows) && rows.length > 0 ? (
         <List>

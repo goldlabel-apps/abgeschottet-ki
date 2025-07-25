@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/hooks/useFeedback.tsx
+// abgeschottet-ki/next.js/src/gl-core/hooks/useFeedback.tsx
 /*
     Hook returning the feedback from root slice 
 */

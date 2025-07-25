@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/cartridges/Uberedux/UbereduxProvider.tsx
+// abgeschottet-ki/next.js/src/gl-core/cartridges/Uberedux/UbereduxProvider.tsx
 'use client';
 import * as React from 'react';
 import { ReactNode } from 'react';

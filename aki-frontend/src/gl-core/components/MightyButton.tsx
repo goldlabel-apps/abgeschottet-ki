@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/MightyButton.tsx
+// abgeschottet-ki/next.js/src/gl-core/components/MightyButton.tsx
 'use client';
 import React from 'react';
 import {

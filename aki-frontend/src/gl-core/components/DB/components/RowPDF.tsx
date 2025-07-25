@@ -1,3 +1,4 @@
+// abgeschottet-ki/aki-frontend/src/gl-core/components/DB/components/RowPDF.tsx
 'use client';
 
 import * as React from 'react';
@@ -32,7 +33,11 @@ export default function RowPDF({ row }: { row: any }) {
   };
 
   return (
-    <ListItemButton key={id} divider onClick={handleClick}>
+    <ListItemButton 
+      key={id} 
+      divider 
+      onClick={handleClick}
+    >
       <ListItemIcon>
         <Icon icon="pdf" color="primary" />
       </ListItemIcon>

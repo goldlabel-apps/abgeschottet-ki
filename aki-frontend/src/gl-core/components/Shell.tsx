@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-frontend/src/gl-core/components/Shell.tsx
+// abgeschottet-ki/aki-frontend/src/gl-core/components/Shell.tsx
 'use client';
 
 import React from 'react';
@@ -159,7 +159,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             sx={{flexGrow:1}}
             title={<Typography color="primary">Abgeschottet KI</Typography>}
             subheader={
-              <Typography color="secondary">
+              <Typography color="secondary" variant='caption'>
                 Ringfenced AI powered Document Management for SMEs
               </Typography>
             }

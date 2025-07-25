@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/components/KI/fetchKI.ts
+// abgeschottet-ki/next.js/src/gl-core/components/KI/fetchKI.ts
 
 export async function fetchKI(
   prompt: string,

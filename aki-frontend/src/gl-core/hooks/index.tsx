@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-frontend/src/gl-core/hooks/index.tsx
+// abgeschottet-ki/aki-frontend/src/gl-core/hooks/index.tsx
 
 import { useSlice } from './useSlice';
 import { usePrompt } from './usePrompt';

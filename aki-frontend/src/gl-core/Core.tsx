@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/next.js/src/gl-core/Core.tsx
+// abgeschottet-ki/next.js/src/gl-core/Core.tsx
 'use client';
 
 import React, { useEffect, useRef } from 'react';
