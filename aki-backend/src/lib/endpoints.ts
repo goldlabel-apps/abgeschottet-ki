@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/lib/endpoints.ts
+// abgeschottet-ki/pdf-smash/src/lib/endpoints.ts
 
 export const endpoints = {
   pdf: {
@@ -8,6 +8,10 @@ export const endpoints = {
       upload: {
         title: 'Upload PDF',
         route: 'http://localhost:4000/pdf/upload',
+      },
+      read: {
+        title: 'List PDFs',
+        route: 'http://localhost:4000/pdf/read',
       },
       root: {
         title: 'PDF Root',

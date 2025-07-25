@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/ki/ki.ts
+// abgeschottet-ki/pdf-smash/src/routes/ki/ki.ts
 
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';

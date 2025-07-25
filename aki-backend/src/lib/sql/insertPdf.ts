@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/db/sql/insertPdf.ts
+// abgeschottet-ki/db/sql/insertPdf.ts
 
 
 /*

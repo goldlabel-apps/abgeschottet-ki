@@ -1,1 +1,1 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/routes/index.ts
+// abgeschottet-ki/pdf-smash/src/routes/index.ts

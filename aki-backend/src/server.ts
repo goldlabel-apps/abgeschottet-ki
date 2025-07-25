@@ -1,4 +1,4 @@
-  // /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/server.ts
+  // abgeschottet-ki/pdf-smash/src/server.ts
 import express from 'express';
 import cors from 'cors';
 import {header, endpoints} from './lib';

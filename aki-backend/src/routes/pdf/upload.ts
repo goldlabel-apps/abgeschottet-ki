@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/routes/pdf/upload.ts
+// abgeschottet-ki/aki-backend/src/routes/pdf/upload.ts
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
@@ -30,7 +30,17 @@ const upload = multer({
   },
 });
 
-// Route
+// GET route – advise to use POST instead
+createRouter.get('/', (_req: Request, res: Response) => {
+  res.status(405).json({
+    ...header,
+    severity: 'warning',
+    title: 'Please use POST to upload',
+    // no data key at all
+  });
+});
+
+// POST route – handle upload
 createRouter.post('/', upload.single('file'), (req: Request, res: Response) => {
   try {
     const f = req.file;
