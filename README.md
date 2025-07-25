@@ -1,13 +1,17 @@
 ## Abgeschottet KI
 
-> This Private repo contains a Ring-Fenced environment which runs a local LLM on macOS. It includes supporting services and a frontend built with Next.js for UI
+### Ringfenced AI powered Document Management for SMEs
 
-Ring-Fenced LLM on MacBook Air (M1, 8GB RAM)  This guide walks you through setting up a completely ring‑fenced Large Language Model (LLM) on your MacBook Air (M1) with 8GB RAM. We will use Ollama to run the lightweight Phi-3 Mini model locally. All files, prompts and responses will stay on your device.
+> This Private repo contains a Ring-Fenced environment which runs a local LLM alongside a Node front & backend
 
-## Docs
 
-- [Local LLM Setup](./docs/llm-setup-guide.md)
-- [PDF smash](./docs/pdf-smash-setup-guide.md)
+#### Test Prompts
+
+Explain what machine learning weights are in simple terms
+
+Wie könnten große Sprachmodelle deutschen Anwaltskanzleien bei der Recherche helfen? 
+
+What risks arise if companies send confidential files to a public AI service like ChatGPT?
+
 
 ![OG Image](https://live.staticflickr.com/65535/54676004619_ac1207c621_c.jpg)
-
