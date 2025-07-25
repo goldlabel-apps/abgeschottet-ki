@@ -1,14 +1,8 @@
-// abgeschottet-ki/next.js/src/gl-core/components/Feedback.tsx
 'use client';
 
 import * as React from 'react';
 import { Snackbar, Alert, IconButton } from '@mui/material';
-import {
-  useFeedback,
-  useDispatch,
-  showFeedback,
-  Icon,
-} from '../../gl-core';
+import { useFeedback, useDispatch, showFeedback, Icon } from '../../gl-core';
 
 export default function Feedback({}: any) {
   const feedback = useFeedback();
@@ -17,7 +11,6 @@ export default function Feedback({}: any) {
   React.useEffect(() => {
     if (feedback && !feedback.hidden) {
       const timer = setTimeout(() => {
-        // console.log('toggleFeedback(null)');
         dispatch(showFeedback(null));
       }, 3000);
 
@@ -53,9 +46,18 @@ export default function Feedback({}: any) {
           </IconButton>
         }
       >
-        {title}
-        
-        {description}
+        {/* Render title safely */}
+        {typeof title === 'object' ? JSON.stringify(title) : title}
+
+        {/* Render description safely */}
+        {description && (
+          <>
+            <br />
+            {typeof description === 'object'
+              ? JSON.stringify(description)
+              : description}
+          </>
+        )}
       </Alert>
     </Snackbar>
   );

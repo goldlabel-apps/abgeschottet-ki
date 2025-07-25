@@ -111,7 +111,7 @@ export default function RowPDF({ row }: { row: any }) {
             }}
           >
             <pre style={{ margin: 0, fontSize: '0.8rem' }}>
-              {JSON.stringify(row, null, 2)}
+              {JSON.stringify(row.fileNameOnDisk, null, 2)}
             </pre>
           </Box>
         </AccordionDetails>

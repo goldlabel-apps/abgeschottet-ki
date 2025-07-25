@@ -2,7 +2,7 @@
 import { TUbereduxDispatch } from '../../../../gl-core/types';
 import { setUbereduxKey } from '../../../../gl-core/cartridges/Uberedux';
 import { showFeedback } from '../../../../gl-core';
-
+import { fetchTable } from '../../DB';
 /**
  * deletePDF
  * Calls the backend to delete a PDF by ID, then shows feedback.
@@ -51,7 +51,10 @@ export const deletePDF =
         return;
       }
 
-      console.log(`[deletePDF] Deleted`, json);
+      // console.log(`[deletePDF] Deleted`, json);
+      const tableName = 'pdfs';
+      const apiUrl = `http://localhost:4000/db/read/table/${tableName}`;
+      dispatch(fetchTable(tableName, apiUrl) as any);
 
       // Optional: trigger a refresh of the PDFs list in state
       // dispatch(fetchDB('pdfs'));
