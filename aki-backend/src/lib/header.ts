@@ -1,5 +1,5 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/pdf-smash/src/lib/header.ts
-import pJSON from '../../package.json';
+import pJSON from '../../../package.json';
 
 const {version, name} = pJSON;
 

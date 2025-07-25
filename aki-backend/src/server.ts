@@ -34,5 +34,5 @@ app.all('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`pdf-smash service running on http://localhost:${PORT}`);
+  console.log(`AKI backend service running on http://localhost:${PORT}`);
 });

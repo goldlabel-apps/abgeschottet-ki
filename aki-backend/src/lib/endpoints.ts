@@ -5,10 +5,6 @@ export const endpoints = {
     title: 'Database',
     slug: 'db',
     routes: {
-      structure: {
-        title: 'Database Structure',
-        route: 'http://localhost:4000/db/structure',
-      },
       root: {
         title: 'Database Root',
         route: 'http://localhost:4000/db',

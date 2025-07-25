@@ -1,6 +1,5 @@
 {
-  "version": "2.0.2",
-  "name": "pdf-smash",
+  "name": "aki-backend",
   "type": "commonjs",
   "packageManager": "yarn@4.3.1",
   "scripts": {
