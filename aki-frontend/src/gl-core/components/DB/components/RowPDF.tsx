@@ -1,3 +1,4 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/aki-frontend/src/gl-core/components/DB/components/RowPDF.tsx
 'use client';
 
 import * as React from 'react';
@@ -31,10 +32,10 @@ export default function RowPDF({ row }: { row: any }) {
     fileNameOnDisk,
     created,
     updated,
+    thumbnail,
   } = row;
   const dispatch = useDispatch();
 
-  // convert bytes to KB/MB/GB
   const formatFileSize = (bytes?: number) => {
     if (!bytes || bytes <= 0) return '0 B';
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -62,14 +63,13 @@ export default function RowPDF({ row }: { row: any }) {
   };
 
   const handleEdit = () => {
-
-
-    dispatch(log({
-      severity: "success",
-      title: "Logging this....",
-      description: `id: ${id}`
-    }));
-
+    dispatch(
+      log({
+        severity: 'success',
+        title: 'Logging this....',
+        description: `id: ${id}`,
+      })
+    );
   };
 
   const handleViewClick = () => {
@@ -77,6 +77,17 @@ export default function RowPDF({ row }: { row: any }) {
       const url = `/pdf/uploads/${fileNameOnDisk}`;
       window.open(url, '_blank', 'noopener,noreferrer');
     }
+  };
+
+  const handleMakeThumbnail = () => {
+    dispatch(
+      log({
+        severity: 'info',
+        title: 'Make Thumbnail clicked',
+        description: `id: ${id}`,
+      })
+    );
+    // TODO: trigger your make-thumbnail logic here
   };
 
   const renderRow = (label: string, value?: any) => {
@@ -111,21 +122,19 @@ export default function RowPDF({ row }: { row: any }) {
               id={`panel-${id}-header`}
             >
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                <Box sx={{}}>
+                <Box>
                   <Icon icon="pdf" color="primary" />
                 </Box>
                 <Box>
-                  <Typography variant="body1">
-                    {label}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    {truncatedText}
-                  </Typography>
-                  {/* New info about created/updated */}
+                  <Typography variant="body1">{label}</Typography>
                   <Typography variant="caption" color="text.secondary">
                     Created {created ? moment(created).fromNow() : '–'}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ ml: 2 }}
+                  >
                     Updated {updated ? moment(updated).fromNow() : '–'}
                   </Typography>
                 </Box>
@@ -133,22 +142,32 @@ export default function RowPDF({ row }: { row: any }) {
             </AccordionSummary>
 
             <AccordionDetails>
+              <Typography variant="body1" sx={{ mb: 0.5 }}>
+                {truncatedText}
+              </Typography>
               <Divider sx={{ mb: 2 }} />
               {renderRow('Filesize', formatFileSize(filesize))}
               {renderRow('MIME Type', mimeType)}
+
+              {/* Thumbnail row or Make Thumbnail button */}
+              {thumbnail && thumbnail.trim() !== '' ? (
+                renderRow('Thumbnail', thumbnail)
+              ) : (
+                <MightyButton
+                  sx={{my:2}}
+                  variant='outlined'
+                  icon="photo"
+                  label="Thumbnail"
+                  color="primary"
+                  onClick={handleMakeThumbnail}
+                />
+              )}
             </AccordionDetails>
           </Accordion>
         </Box>
 
         {/* RIGHT: Action buttons */}
         <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
-          <MightyButton
-            mode="icon"
-            icon="edit"
-            label="Edit"
-            color="primary"
-            onClick={handleEdit}
-          />
           <MightyButton
             mode="icon"
             icon="view"
@@ -171,8 +190,8 @@ export default function RowPDF({ row }: { row: any }) {
         <DialogTitle>Delete PDF</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete <strong>{label}</strong>? This action cannot be
-            undone.
+            Are you sure you want to delete <strong>{label}</strong>? This action
+            cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
