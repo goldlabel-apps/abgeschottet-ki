@@ -1,5 +1,10 @@
 // /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/routes/pdf/thumbnail.ts
 
+/*
+  Generate a 1200px high thumbnail png of the first page of a PDF 
+  and save it to the public /png/uploads folder
+*/
+
 import { Router, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -9,6 +14,15 @@ import sharp from 'sharp'; // yarn add sharp
 import { exec } from 'child_process'; // we’ll shell out to poppler-utils
 
 const createRouter = Router();
+
+// Define the shape of a PDF row
+interface PdfRow {
+  id: number;
+  fileNameOnDisk: string;
+  filename?: string;
+  thumbnail?: string;
+  [key: string]: any;
+}
 
 // Folders
 const uploadDir = path.resolve(
@@ -76,8 +90,8 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
   }
 
   try {
-    // Fetch record
-    const row = db.prepare('SELECT * FROM pdfs WHERE id = ?').get(id);
+    // Fetch record and cast to PdfRow
+    const row = db.prepare('SELECT * FROM pdfs WHERE id = ?').get(id) as PdfRow | undefined;
     if (!row) {
       return res.status(404).json({
         ...header,
@@ -121,7 +135,7 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
       title: 'Thumbnail generated',
       data: {
         id,
-        pdf: row.filename,
+        pdf: row.filename ?? row.fileNameOnDisk,
         thumbnail: `/png/uploads/${pngFilename}`,
       },
     });
