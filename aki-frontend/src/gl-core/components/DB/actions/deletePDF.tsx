@@ -2,7 +2,7 @@
 import { TUbereduxDispatch } from '../../../../gl-core/types';
 import { setUbereduxKey } from '../../../../gl-core/cartridges/Uberedux';
 import { showFeedback } from '../../../../gl-core';
-
+import { fetchTable } from '../../DB';
 /**
  * deletePDF
  * Calls the backend to delete a PDF by ID, then shows feedback.
@@ -10,7 +10,7 @@ import { showFeedback } from '../../../../gl-core';
 export const deletePDF =
   (id: string) => async (dispatch: TUbereduxDispatch) => {
     try {
-      console.log(`[deletePDF] Start`, id);
+      // console.log(`[deletePDF] Start`, id);
 
       const res = await fetch(`http://localhost:4000/pdf/delete/${id}`, {
         method: 'DELETE',
@@ -51,13 +51,16 @@ export const deletePDF =
         return;
       }
 
-      console.log(`[deletePDF] Deleted`, json);
+      // console.log(`[deletePDF] Deleted`, json);
+      const tableName = 'pdfs';
+      const apiUrl = `http://localhost:4000/db/read/table/${tableName}`;
+      dispatch(fetchTable(tableName, apiUrl) as any);
 
       // Optional: trigger a refresh of the PDFs list in state
       // dispatch(fetchDB('pdfs'));
 
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
+      // const msg = e instanceof Error ? e.message : String(e);
       console.error(`[deletePDF] Error`, msg);
       dispatch(
         setUbereduxKey({

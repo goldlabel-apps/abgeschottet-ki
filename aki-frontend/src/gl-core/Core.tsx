@@ -54,6 +54,7 @@ export default function Core() {
       <Theme theme={themes[themeMode]}>
         <CssBaseline />
         <Feedback />
+        
         <Shell>{renderContent()}</Shell>
       </Theme>
     </Box>

@@ -1,3 +1,4 @@
+// abgeschottet-ki/aki-frontend/src/gl-core/components/Upload.tsx
 'use client';
 
 import * as React from 'react';
@@ -11,10 +12,13 @@ import {
   Alert,
 } from '@mui/material';
 import { MightyButton, showFeedback, useDispatch } from '../../gl-core';
+import { fetchTable } from './DB';
 
 export default function Upload() {
 
-  const dispatch = useDispatch();
+
+
+  const dispatch = useDispatch();  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -49,26 +53,40 @@ export default function Upload() {
       if (contentType.includes('application/json')) {
         data = await res.json();
       } else {
-        // Non-JSON response (likely a 404 HTML page)
-        throw new Error(
-          `API route ${apiUrl} was not found or the backend isn't running.`
-        );
+        dispatch(showFeedback({
+          severity: "error", 
+          title: `API route ${apiUrl}`,
+          description: "Not found or not running"
+        }));
       }
-
       if (!res.ok) {
-        throw new Error(
-          data?.error ||
-            `Upload failed with status ${res.status} from ${apiUrl}`
-        );
+        dispatch(showFeedback({
+          severity: "error", 
+          title: `Upload failed`,
+          description: `Status ${res.status} from ${apiUrl}`
+        }));
       }
-
-      console.log('data.data', data.data);
-      const {severity, title, description} = data;
-      dispatch(showFeedback({severity, title, description}))
+      // console.log('data.data', data.data);
+      const { severity, title } = data;
+      dispatch(showFeedback({ severity, title }));
       setUploading(false);
       setFile(null);
+
+      setTimeout(() => {
+        const apiUrl = `http://localhost:4000/db/read/table/pdfs`;
+        dispatch(fetchTable("pdfs", apiUrl) as any);
+      }, 500);
+
     } catch (err: any) {
-      console.error('Upload failed:', err);
+      // console.error('Upload failed:', err);
+
+      dispatch(showFeedback({
+        severity: "error", 
+        title: `Upload failed`,
+        description: `Status ${err.toString()}`,
+      }));
+
+
       setError(err.message || 'Something went wrong');
       setSnackbarOpen(true);
       setUploading(false);

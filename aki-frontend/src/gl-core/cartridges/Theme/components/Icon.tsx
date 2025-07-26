@@ -144,9 +144,13 @@ import KIIcon from '@mui/icons-material/Castle';
 import DatabaseIcon from '@mui/icons-material/Storage';
 import TablesIcon from '@mui/icons-material/BackupTable';
 import TableIcon from '@mui/icons-material/TableRows';
+import AKIIcon from '@mui/icons-material/BackHand';
+
 
 export type TIcon = {
   icon:
+    | 'aki'
+    | 'view'
     | 'more'
     | 'database'
     | 'tables'
@@ -319,9 +323,17 @@ export default function Icon({ icon, color }: TIcon) {
   if (!color) color = 'inherit';
   let iconFragment = <React.Fragment />;
   switch (icon) {
+    case 'aki':
+      iconFragment = <AKIIcon color={color} />;
+      break;
     case 'core':
       iconFragment = <CoreIcon color={color} />;
       break;
+
+    case 'view':
+      iconFragment = <ShowIcon color={color} />;
+      break;
+
 
     case 'tick':
       iconFragment = <TickIcon color={color} />;

@@ -1,25 +1,24 @@
 'use client';
 
-/*
-  RowPDF.tsx
-  This component displays a single PDF entry as a row of information
-  with action buttons for Edit, View, and Delete.
-  Delete now opens a confirm dialog; on confirm, it dispatches deletePDF(id).
-*/
-
 import * as React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Stack, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogContentText, 
-  DialogActions, 
+import moment from 'moment';
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Box,
+  Typography,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   Button,
+  Divider,
 } from '@mui/material';
-import { Icon, MightyButton, useDispatch } from '../../../../gl-core';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { log, Icon, MightyButton, useDispatch } from '../../../../gl-core';
 import { deletePDF } from '../../DB';
 
 export default function RowPDF({ row }: { row: any }) {
@@ -27,76 +26,136 @@ export default function RowPDF({ row }: { row: any }) {
     id,
     label = '(no label)',
     text = '(no text)',
+    filesize,
+    mimeType,
+    fileNameOnDisk,
+    created,
+    updated,
   } = row;
-
   const dispatch = useDispatch();
 
-  // truncate text to 100 chars with ellipsis
+  // convert bytes to KB/MB/GB
+  const formatFileSize = (bytes?: number) => {
+    if (!bytes || bytes <= 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let value = bytes;
+    let unitIndex = 0;
+    while (value >= 1024 && unitIndex < units.length - 1) {
+      value = value / 1024;
+      unitIndex++;
+    }
+    return `${value.toFixed(1)} ${units[unitIndex]}`;
+  };
+
   const truncatedText =
     typeof text === 'string' && text.length > 100
       ? text.substring(0, 100) + '…'
       : text;
 
-  // dialog state
   const [openDialog, setOpenDialog] = React.useState(false);
 
-  const handleDeleteClick = () => {
-    setOpenDialog(true);
-  };
-
-  const handleDialogCancel = () => {
-    setOpenDialog(false);
-  };
-
+  const handleDeleteClick = () => setOpenDialog(true);
+  const handleDialogCancel = () => setOpenDialog(false);
   const handleDialogConfirm = () => {
     dispatch(deletePDF(id));
     setOpenDialog(false);
   };
 
+  const handleEdit = () => {
+
+
+    dispatch(log({
+      severity: "success",
+      title: "Logging this....",
+      description: `id: ${id}`
+    }));
+
+  };
+
+  const handleViewClick = () => {
+    if (fileNameOnDisk) {
+      const url = `/pdf/uploads/${fileNameOnDisk}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  const renderRow = (label: string, value?: any) => {
+    if (value === undefined || value === null || value === '') return null;
+    return (
+      <Box sx={{ display: 'flex', mb: 1 }}>
+        <Typography sx={{ minWidth: 140, mr: 2 }}>{label}:</Typography>
+        <Typography sx={{ fontWeight: 'bold', wordBreak: 'break-all' }}>
+          {String(value)}
+        </Typography>
+      </Box>
+    );
+  };
+
   return (
     <>
       <Box
-        key={id}
         sx={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'space-between',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          py: 1,
+          mb: 1,
+          gap: 2,
         }}
       >
-        {/* Left side: icon and text */}
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-          <Box sx={{ mt: 0.5 }}>
-            <Icon icon="pdf" color="primary" />
-          </Box>
-          <Box>
-            <Typography variant="h6">{label}</Typography>
-            <Typography variant="body2">{truncatedText}</Typography>
-          </Box>
+        {/* LEFT: The accordion itself */}
+        <Box sx={{ flex: 1 }}>
+          <Accordion sx={{ boxShadow: 0 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`panel-${id}-content`}
+              id={`panel-${id}-header`}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                <Box sx={{}}>
+                  <Icon icon="pdf" color="primary" />
+                </Box>
+                <Box>
+                  <Typography variant="body1">
+                    {label}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 0.5 }}>
+                    {truncatedText}
+                  </Typography>
+                  {/* New info about created/updated */}
+                  <Typography variant="caption" color="text.secondary">
+                    Created {created ? moment(created).fromNow() : '–'}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
+                    Updated {updated ? moment(updated).fromNow() : '–'}
+                  </Typography>
+                </Box>
+              </Box>
+            </AccordionSummary>
+
+            <AccordionDetails>
+              <Divider sx={{ mb: 2 }} />
+              {renderRow('Filesize', formatFileSize(filesize))}
+              {renderRow('MIME Type', mimeType)}
+            </AccordionDetails>
+          </Accordion>
         </Box>
 
-        {/* Right side: action buttons */}
-        <Stack direction="row" spacing={1}>
+        {/* RIGHT: Action buttons */}
+        <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
           <MightyButton
-            disabled
             mode="icon"
             icon="edit"
             label="Edit"
             color="primary"
-            onClick={() => {}}
+            onClick={handleEdit}
           />
-
           <MightyButton
-            disabled
             mode="icon"
-            icon="link"
+            icon="view"
             label="View"
             color="primary"
-            onClick={() => {}}
+            onClick={handleViewClick}
           />
-
           <MightyButton
             mode="icon"
             icon="delete"
@@ -108,17 +167,17 @@ export default function RowPDF({ row }: { row: any }) {
       </Box>
 
       {/* Confirm Dialog */}
-      <Dialog open={openDialog} onClose={handleDialogCancel}>
+      <Dialog maxWidth="xs" open={openDialog} onClose={handleDialogCancel}>
         <DialogTitle>Delete PDF</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete <strong>{label}</strong>?
-            This action cannot be undone.
+            Are you sure you want to delete <strong>{label}</strong>? This action cannot be
+            undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogCancel}>Cancel</Button>
-          <Button color="error" variant="contained" onClick={handleDialogConfirm}>
+          <Button variant="contained" onClick={handleDialogConfirm}>
             Delete
           </Button>
         </DialogActions>

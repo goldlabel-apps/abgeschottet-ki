@@ -1,21 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import { Box, CardHeader, List } from '@mui/material';
+import { Box, List } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import { Icon, useDispatch, useSlice, MightyButton } from '../../../../gl-core';
+import { Icon, useDispatch, useSlice, Upload } from '../../../../gl-core';
 import { fetchTable, RowKI, RowPDF } from '../';
 
 export default function Table() {
   const dispatch = useDispatch();
   const { db } = useSlice();
-
-  // get current route and derive tableName
   const pathname = usePathname();
   const segments = pathname.split('/').filter(Boolean);
   const tableName = segments[segments.length - 1];
 
-  // fetch data whenever tableName changes
   React.useEffect(() => {
     if (tableName) {
       const apiUrl = `http://localhost:4000/db/read/table/${tableName}`;
@@ -23,45 +20,27 @@ export default function Table() {
     }
   }, [tableName, dispatch]);
 
-  const handleReload = () => {
-    const apiUrl = `http://localhost:4000/db/read/table/${tableName}`;
-    dispatch(fetchTable(tableName, apiUrl) as any);
-  };
+  let rows: any[] = db?.tables?.[tableName]?.rows ?? [];
 
-  const rows = db?.tables?.[tableName]?.rows;
+  // sort by id descending
+  if (Array.isArray(rows)) {
+    rows = [...rows].sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+  }
 
   return (
-    <Box sx={{ p: 2 }}>
-      {/* <CardHeader
-        title={tableName}
-        action={
-          <MightyButton
-            mode="icon"
-            label="Reload"
-            color="primary"
-            variant="outlined"
-            icon="reset"
-            iconPlacement="right"
-            onClick={handleReload}
-          />
-        }
-      /> */}
-
-      {rows && Array.isArray(rows) && rows.length > 0 ? (
+    <Box>
+      {rows && rows.length > 0 ? (
         <List>
           {rows.map((row: any, index: number) => {
-            // choose which component to render based on tableName
             if (tableName === 'ki') {
-              return <RowKI key={index} row={row} />;
+              return <RowKI key={row.id ?? index} row={row} />;
             }
             if (tableName === 'pdfs') {
-              return <RowPDF key={index} row={row} />;
+              return <RowPDF key={row.id ?? index} row={row} />;
             }
-
-            // fallback rendering
             return (
               <Box
-                key={index}
+                key={row.id ?? index}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -78,7 +57,9 @@ export default function Table() {
           })}
         </List>
       ) : (
-        <Box>No data available…</Box>
+        <Box sx={{ m: 2}}>
+          No records in {tableName} table
+        </Box>
       )}
     </Box>
   );

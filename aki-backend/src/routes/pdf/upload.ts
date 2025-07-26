@@ -52,7 +52,6 @@ createRouter.get('/', (_req: Request, res: Response) => {
 
 // POST route – handle upload
 createRouter.post('/', (req: Request, res: Response) => {
-  // Check directory existence first
   if (!fs.existsSync(uploadDir)) {
     return res.status(405).json({
       ...header,
@@ -63,7 +62,6 @@ createRouter.post('/', (req: Request, res: Response) => {
   }
 
   upload.single('file')(req, res, function (err: any) {
-    // Multer-specific error
     if (err instanceof multer.MulterError) {
       return res.status(405).json({
         ...header,
@@ -71,9 +69,7 @@ createRouter.post('/', (req: Request, res: Response) => {
         title: 'Multer error: ' + err.message,
         data: { error: err },
       });
-    }
-    // General error
-    else if (err) {
+    } else if (err) {
       return res.status(405).json({
         ...header,
         severity: 'error',
@@ -82,7 +78,6 @@ createRouter.post('/', (req: Request, res: Response) => {
       });
     }
 
-    // No file received
     const f = req.file;
     if (!f) {
       return res.status(405).json({
@@ -93,27 +88,34 @@ createRouter.post('/', (req: Request, res: Response) => {
       });
     }
 
+    // ✅ Both created and updated timestamps
+    const created = Date.now();
+    const updated = created;
+
     // Build metadata
     const fileMeta = {
       label: f.originalname,
       slug: path.parse(f.originalname).name.toLowerCase().replace(/\s+/g, '-'),
       filename: f.originalname,
       filesize: f.size,
-      text: null, // we can fill this in later when OCR/processing is done
+      text: null,
       mimeType: f.mimetype,
       destination: f.destination,
       fileNameOnDisk: f.filename,
       fullPath: path.join(f.destination, f.filename),
-      rawText: null, // reserved for later
+      rawText: null,
+      created,  // ✅ epoch
+      updated,  // ✅ epoch
     };
 
     try {
-      // Insert into database
+      // ✅ Insert into database with created & updated
       const stmt = db.prepare(`
         INSERT INTO pdfs (
           label, slug, filename, filesize, text,
-          mimeType, destination, fileNameOnDisk, fullPath, rawText
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          mimeType, destination, fileNameOnDisk, fullPath, rawText,
+          created, updated
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
       const result = stmt.run(
@@ -126,10 +128,11 @@ createRouter.post('/', (req: Request, res: Response) => {
         fileMeta.destination,
         fileMeta.fileNameOnDisk,
         fileMeta.fullPath,
-        fileMeta.rawText
+        fileMeta.rawText,
+        fileMeta.created, // ✅
+        fileMeta.updated  // ✅
       );
 
-      // Add the new id to the meta
       const insertedId = result.lastInsertRowid as number;
 
       return res.json({

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { UbereduxProvider } from '../gl-core/cartridges/Uberedux';
 
 export const metadata: Metadata = {
-  title: "Abgeschottet KI",
-  description: "",
+  title: "AKI",
+  description: "Abgeschottet KI",
 };
 
 const shortcutIcon = '/svg/favicon.svg';
