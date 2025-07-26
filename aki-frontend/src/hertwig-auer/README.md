@@ -1,8 +1,10 @@
-# Prompts
+# Prompt Engineering
+
+## Prompts
 
 > Try these example prompts to see if abgeschottetKI can give a sensible answer
 
-## General legal reasoning
+### General legal reasoning
 
 Erkläre in einfachen Worten, was das Berufsgeheimnis für deutsche Rechtsanwälte bedeutet.  
 
@@ -22,7 +24,7 @@ What does the GDPR mean for a law firm in Germany that processes personal data?
 
 ---
 
-## AI in law
+### AI in law
 
 Wie könnten große Sprachmodelle deutschen Anwaltskanzleien bei der Recherche helfen?  
 
@@ -40,7 +42,7 @@ Nenne Beispiele, wie KI den Arbeitsalltag in einer Kanzlei erleichtern könnte, 
 
 Give examples of how AI could make day‑to‑day work in a law firm easier without endangering client data.
 
-## Ring‑fencing and compliance
+### Ring‑fencing and compliance
 
 Was bedeutet es technisch, ein LLM abzuschotten, damit keine Daten das interne Netzwerk verlassen?  
 
@@ -58,7 +60,7 @@ Wenn eine deutsche Kanzlei ein internes LLM einsetzt, welche rechtlichen Anforde
 
 If a German law firm uses an internal LLM, what legal requirements would it need to observe?
 
-## Directly exploring the concern you raised
+### Directly exploring the concern you raised
 
 Hilft der Ansatz eines abgeschotteten LLMs dabei, die rechtlichen Herausforderungen von deutschen Kanzleien zu lösen, die Angst haben, dass ihre Mitarbeiter sensible Daten an externe KI-Dienste wie OpenAI schicken?  
 

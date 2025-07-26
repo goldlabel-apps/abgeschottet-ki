@@ -7,6 +7,7 @@ import testRouter from './routes/test/test';
 import dbRouter from './routes/db';
 import kiRouter from './routes/ki/ki';
 import pdfRouter from './routes/pdf';
+import logRouter from './routes/log';
 
 const app = express();
 const PORT = 4000;
@@ -18,6 +19,7 @@ app.use('/test', testRouter);
 app.use('/db', dbRouter);
 app.use('/ki', kiRouter);
 app.use('/pdf', pdfRouter);
+app.use('/log', logRouter);
 
 app.all('/', (req, res) => {
   try {
