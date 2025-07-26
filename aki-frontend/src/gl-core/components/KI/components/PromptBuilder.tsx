@@ -125,23 +125,6 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
           helperText={
             !valid && value.length > 0 ? 'Must be at least 10 characters' : ' '
           }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment
-                position="end"
-                sx={{
-                  alignItems: 'flex-start',
-                  mt: 1,
-                }}
-              >
-                {value && value.length > 0 && (
-                  <IconButton onClick={handleReset(key)} edge="end">
-                    <Icon icon="close" />
-                  </IconButton>
-                )}
-              </InputAdornment>
-            ),
-          }}
         />
       </Box>
     );
@@ -156,7 +139,9 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
           aria-controls="fine-tuning-content"
           id="fine-tuning-header"
         >
-          <Typography variant="subtitle1">Fine tune your prompt</Typography>
+          <Typography variant="h6">
+            Adjust prompt
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Box display="flex" flexDirection="column" alignItems="flex-start" gap={2}>

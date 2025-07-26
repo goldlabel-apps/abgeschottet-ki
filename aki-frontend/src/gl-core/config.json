@@ -5,6 +5,11 @@
   "repo": "https://github.com/goldlabel-apps/abgeschottet-ki",
   "nav": [
     {
+      "label": "AKI",
+      "icon": "ki",
+      "route": "/ki"
+    },
+    {
       "label": "PDFs Table",
       "icon": "pdf",
       "route": "/database/table/pdfs"
@@ -17,14 +22,10 @@
 
     {
       "label": "Logs Table",
-      "icon": "doc",
-      "route": "/database/table/logs"
+      "icon": "info",
+      "route": "/database/table/log"
     },
-    {
-      "label": "AKI Test",
-      "icon": "ki",
-      "route": "/ki"
-    },
+
     {
       "label": "API",
       "icon": "api",

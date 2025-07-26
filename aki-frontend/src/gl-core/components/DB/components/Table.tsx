@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Box, List } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import { Icon, useDispatch, useSlice, Upload } from '../../../../gl-core';
-import { fetchTable, RowKI, RowPDF } from '../';
+import { fetchTable, RowKI, RowPDF, RowLog } from '../';
 
 export default function Table() {
   const dispatch = useDispatch();
@@ -37,6 +37,9 @@ export default function Table() {
             }
             if (tableName === 'pdfs') {
               return <RowPDF key={row.id ?? index} row={row} />;
+            }
+            if (tableName === 'log') {
+              return <RowLog key={row.id ?? index} row={row} />;
             }
             return (
               <Box
