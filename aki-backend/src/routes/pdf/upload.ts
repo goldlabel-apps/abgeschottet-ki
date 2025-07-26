@@ -138,7 +138,7 @@ createRouter.post('/', (req: Request, res: Response) => {
       return res.json({
         ...header,
         severity: 'success',
-        title: 'Uploaded and saved to database',
+        title: `${fileMeta.filename} uploaded`,
         data: {
           id: insertedId,
           ...fileMeta,

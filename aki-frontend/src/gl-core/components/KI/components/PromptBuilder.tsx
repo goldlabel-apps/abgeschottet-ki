@@ -4,8 +4,6 @@
 import * as React from 'react';
 import {
   TextField,
-  IconButton,
-  InputAdornment,
   Box,
   FormControl,
   InputLabel,
@@ -133,7 +131,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
   return (
     <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* Accordion for dropdowns */}
-      <Accordion sx={{boxShadow:0}}>
+      <Accordion sx={{boxShadow:0}} defaultExpanded>
         <AccordionSummary
           expandIcon={<Icon icon="down" color="primary" />}
           aria-controls="fine-tuning-content"

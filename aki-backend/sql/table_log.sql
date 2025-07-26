@@ -1,4 +1,4 @@
-CREATE TABLE "log" (
+CREATE TABLE IF NOT EXISTS "log" (
 	"id"	INTEGER,
 	"created"	INTEGER,
 	"updated"	INTEGER,

@@ -1,160 +1,139 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/routes/pdf/thumbnail.ts
+
 import { Router, Request, Response } from 'express';
-import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import { header } from '../../lib/header';
-import { db } from '../../lib/database'; // your better-sqlite3 instance
+import { db } from '../../lib/database';
+import sharp from 'sharp'; // yarn add sharp
+import { exec } from 'child_process'; // we’ll shell out to poppler-utils
 
 const createRouter = Router();
 
-// Absolute path to the Next.js public uploads folder
+// Folders
 const uploadDir = path.resolve(
   __dirname,
-  '../../../../aki-frontend/public/png/thumbnails'
+  '../../../../aki-frontend/public/pdf/uploads'
+);
+const pngDir = path.resolve(
+  __dirname,
+  '../../../../aki-frontend/public/png/uploads'
 );
 
-// Ensure the folder exists
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Ensure pngDir exists
+if (!fs.existsSync(pngDir)) {
+  fs.mkdirSync(pngDir, { recursive: true });
 }
 
-// Multer storage configuration
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (_req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
+/**
+ * Utility to render the first page of a PDF to a temp PNG using `pdftoppm` (poppler-utils)
+ */
+function renderFirstPageToPng(pdfPath: string, outPngPath: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    // poppler-utils command
+    const basename = path.join(path.dirname(outPngPath), path.parse(outPngPath).name);
+    const cmd = `pdftoppm -f 1 -l 1 -png "${pdfPath}" "${basename}"`;
+    exec(cmd, (err) => {
+      if (err) return reject(err);
 
-// Only allow PDFs
-const upload = multer({
-  storage,
-  fileFilter: (_req, file, cb) => {
-    if (file.mimetype === 'application/pdf') {
-      cb(null, true);
-    } else {
-      cb(new Error('Only PDF files are allowed'));
-    }
-  },
-});
+      // `pdftoppm` will output <basename>-1.png
+      const firstPage = `${basename}-1.png`;
+      if (!fs.existsSync(firstPage)) return reject(new Error('No output PNG found'));
+      // Resize it to 1200x630 portrait with sharp
+      sharp(firstPage)
+        .resize({ width: 1200, height: 630, fit: 'inside' })
+        .toFile(outPngPath)
+        .then(() => {
+          // cleanup temp file
+          fs.unlinkSync(firstPage);
+          resolve();
+        })
+        .catch(reject);
+    });
+  });
+}
 
-// GET route – advise to use POST instead
+// GET without id gives helpful message
 createRouter.get('/', (_req: Request, res: Response) => {
-  return res.status(405).json({
+  return res.status(400).json({
     ...header,
     severity: 'error',
-    title: 'GET method not allowed. Please use POST to upload a PDF.',
-    data: { message: 'Use POST instead of GET' },
+    title: 'Missing id',
+    data: { message: 'Use /pdf/thumbnail/:id to generate a thumbnail' },
   });
 });
 
-// POST route – handle upload
-createRouter.post('/', (req: Request, res: Response) => {
-  if (!fs.existsSync(uploadDir)) {
-    return res.status(405).json({
+// GET with id to generate thumbnail
+createRouter.get('/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json({
       ...header,
       severity: 'error',
-      title: 'Upload directory does not exist on server',
-      data: { uploadDir },
+      title: 'No id provided',
+      data: { message: 'You must supply an id parameter' },
     });
   }
 
-  upload.single('file')(req, res, function (err: any) {
-    if (err instanceof multer.MulterError) {
-      return res.status(405).json({
+  try {
+    // Fetch record
+    const row = db.prepare('SELECT * FROM pdfs WHERE id = ?').get(id);
+    if (!row) {
+      return res.status(404).json({
         ...header,
         severity: 'error',
-        title: 'Multer error: ' + err.message,
-        data: { error: err },
-      });
-    } else if (err) {
-      return res.status(405).json({
-        ...header,
-        severity: 'error',
-        title: err.message || 'Unknown upload error',
-        data: { error: err },
+        title: `No PDF record found for id=${id}`,
       });
     }
 
-    const f = req.file;
-    if (!f) {
-      return res.status(405).json({
-        ...header,
-        severity: 'error',
-        title: 'No file was received in the request',
-        data: { message: 'Expected field name "file"' },
-      });
+    // Paths
+    const pdfPath = path.join(uploadDir, row.fileNameOnDisk);
+    const pngFilename = path.parse(row.fileNameOnDisk).name + '.png';
+    const pngPath = path.join(pngDir, pngFilename);
+
+    // Update DB to indicate generating
+    db.prepare('UPDATE pdfs SET thumbnail = ? WHERE id = ?').run('generating...', id);
+
+    // If previous thumbnail exists, remove it
+    if (fs.existsSync(pngPath)) {
+      fs.unlinkSync(pngPath);
     }
 
-    // ✅ Both created and updated timestamps
-    const created = Date.now();
-    const updated = created;
-
-    // Build metadata
-    const fileMeta = {
-      label: f.originalname,
-      slug: path.parse(f.originalname).name.toLowerCase().replace(/\s+/g, '-'),
-      filename: f.originalname,
-      filesize: f.size,
-      text: null,
-      mimeType: f.mimetype,
-      destination: f.destination,
-      fileNameOnDisk: f.filename,
-      fullPath: path.join(f.destination, f.filename),
-      rawText: null,
-      created,  // ✅ epoch
-      updated,  // ✅ epoch
-    };
-
+    // Generate thumbnail
     try {
-      // ✅ Insert into database with created & updated
-      const stmt = db.prepare(`
-        INSERT INTO pdfs (
-          label, slug, filename, filesize, text,
-          mimeType, destination, fileNameOnDisk, fullPath, rawText,
-          created, updated
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      const result = stmt.run(
-        fileMeta.label,
-        fileMeta.slug,
-        fileMeta.filename,
-        fileMeta.filesize,
-        fileMeta.text,
-        fileMeta.mimeType,
-        fileMeta.destination,
-        fileMeta.fileNameOnDisk,
-        fileMeta.fullPath,
-        fileMeta.rawText,
-        fileMeta.created, // ✅
-        fileMeta.updated  // ✅
-      );
-
-      const insertedId = result.lastInsertRowid as number;
-
-      return res.json({
-        ...header,
-        severity: 'success',
-        title: 'Uploaded and saved to database',
-        data: {
-          id: insertedId,
-          ...fileMeta,
-          publicUrl: `/pdf/uploads/${f.filename}`,
-        },
-      });
-    } catch (dbErr: any) {
-      console.error('[pdf/upload] DB insert error:', dbErr);
+      await renderFirstPageToPng(pdfPath, pngPath);
+    } catch (genErr: any) {
+      console.error('[pdf/thumbnail] generation failed:', genErr);
       return res.status(500).json({
         ...header,
         severity: 'error',
-        title: 'Failed to save PDF metadata to database',
-        data: { error: dbErr.message },
+        title: 'Thumbnail generation failed',
+        data: { error: genErr.message },
       });
     }
-  });
+
+    // Update DB with final thumbnail filename
+    db.prepare('UPDATE pdfs SET thumbnail = ? WHERE id = ?').run(pngFilename, id);
+
+    return res.json({
+      ...header,
+      severity: 'success',
+      title: 'Thumbnail generated',
+      data: {
+        id,
+        pdf: row.filename,
+        thumbnail: `/png/uploads/${pngFilename}`,
+      },
+    });
+  } catch (err: any) {
+    console.error('[pdf/thumbnail] error:', err);
+    return res.status(500).json({
+      ...header,
+      severity: 'error',
+      title: 'Unexpected error while generating thumbnail',
+      data: { error: err.message },
+    });
+  }
 });
 
 export default createRouter;
