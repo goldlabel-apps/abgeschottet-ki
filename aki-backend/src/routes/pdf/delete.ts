@@ -1,4 +1,5 @@
-// abgeschottet-ki/aki-backend/src/routes/pdf/delete.ts
+// /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/routes/pdf/delete.ts
+
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
 import { db } from '../../lib/database';
@@ -10,6 +11,8 @@ const createRouter = Router();
 interface PDFRow {
   id: number;
   fileNameOnDisk: string;
+  filename?: string;
+  thumbnail?: string;
   filesize?: number;
   text?: string;
   created_at?: string;
@@ -18,6 +21,11 @@ interface PDFRow {
 const uploadDir = path.resolve(
   __dirname,
   '../../../../aki-frontend/public/pdf/uploads'
+);
+
+const pngDir = path.resolve(
+  __dirname,
+  '../../../../aki-frontend/public/png/thumbnails'
 );
 
 createRouter.get('/', (_req: Request, res: Response) => {
@@ -34,7 +42,6 @@ createRouter.delete('/:id', (req: Request, res: Response) => {
   const tableName = 'pdfs';
 
   try {
-    
     const row = db
       .prepare(`SELECT * FROM ${tableName} WHERE id = ?`)
       .get(id) as PDFRow | undefined;
@@ -48,27 +55,44 @@ createRouter.delete('/:id', (req: Request, res: Response) => {
       });
     }
 
+    // Delete the PDF file itself
     if (row.fileNameOnDisk) {
       try {
         const filePath = path.join(uploadDir, row.fileNameOnDisk);
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
-          console.log(`[pdf/delete] Deleted file: ${filePath}`);
+          console.log(`[pdf/delete] Deleted PDF file: ${filePath}`);
         } else {
-          console.warn(`[pdf/delete] File not found on disk: ${filePath}`);
+          console.warn(`[pdf/delete] PDF file not found on disk: ${filePath}`);
         }
       } catch (fileErr: any) {
-        console.error(`[pdf/delete] Error deleting file:`, fileErr);
+        console.error(`[pdf/delete] Error deleting PDF file:`, fileErr);
       }
     }
 
+    // Delete the thumbnail if one exists
+    if (row.thumbnail) {
+      try {
+        const thumbPath = path.join(pngDir, row.thumbnail);
+        if (fs.existsSync(thumbPath)) {
+          fs.unlinkSync(thumbPath);
+          console.log(`[pdf/delete] Deleted thumbnail: ${thumbPath}`);
+        } else {
+          console.warn(`[pdf/delete] Thumbnail not found on disk: ${thumbPath}`);
+        }
+      } catch (thumbErr: any) {
+        console.error(`[pdf/delete] Error deleting thumbnail:`, thumbErr);
+      }
+    }
+
+    // Remove from DB
     const info = db.prepare(`DELETE FROM ${tableName} WHERE id = ?`).run(id);
 
     if (info.changes > 0) {
       return res.json({
         ...header,
         severity: 'success',
-        title: `PDF with id: "${id}" deleted`,
+        title: `PDF with id: "${id}" and related thumbnail deleted`,
       });
     } else {
       return res.status(500).json({
