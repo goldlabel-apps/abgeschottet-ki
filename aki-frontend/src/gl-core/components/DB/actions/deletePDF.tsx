@@ -10,7 +10,7 @@ import { fetchTable } from '../../DB';
 export const deletePDF =
   (id: string) => async (dispatch: TUbereduxDispatch) => {
     try {
-      console.log(`[deletePDF] Start`, id);
+      // console.log(`[deletePDF] Start`, id);
 
       const res = await fetch(`http://localhost:4000/pdf/delete/${id}`, {
         method: 'DELETE',
@@ -60,7 +60,7 @@ export const deletePDF =
       // dispatch(fetchDB('pdfs'));
 
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
+      // const msg = e instanceof Error ? e.message : String(e);
       console.error(`[deletePDF] Error`, msg);
       dispatch(
         setUbereduxKey({

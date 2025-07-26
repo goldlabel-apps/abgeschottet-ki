@@ -131,10 +131,6 @@ export default function KI({ title = 'KI' }: any) {
 
   return (
     <Box>
-      <CardHeader
-        avatar={<Icon icon="ki" color="primary" />}
-        title={title}
-      />
       {error && (
         <Typography color="error" variant="body2" sx={{ mb: 2 }}>
           {error}

@@ -6,18 +6,22 @@ import {
     usePrompt,
     useFeedback,
     useThemeMode,
+    useSettings,
 } from './hooks';
 import {
     setKeyValue,
     updatePrompt,
     reset,
     showFeedback,
+    setSetting,
+    log,
 } from './actions';
 import {
     MightyButton,
     Upload,
     Feedback,
     Shell,
+    Settings,
 } from './components';
 import {
     DB,
@@ -41,6 +45,7 @@ export {
     useDispatch,
     useThemeMode,
     useFeedback,
+    useSettings,
     setKeyValue,
     updatePrompt,
     MightyButton,
@@ -50,4 +55,7 @@ export {
     showFeedback,
     Feedback,
     Shell,
+    Settings,
+    setSetting,
+    log,
 }

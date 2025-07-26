@@ -116,7 +116,7 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
           label={label}
           multiline
           rows={6}
-          variant="outlined" // changed from filled
+          variant="filled" // changed from filled
           fullWidth
           autoFocus={autoFocus}
           value={value}
@@ -160,26 +160,11 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
         </AccordionSummary>
         <AccordionDetails>
           <Box display="flex" flexDirection="column" alignItems="flex-start" gap={2}>
-            <FormControl sx={{ minWidth: 240 }}>
-              <InputLabel id="you-select-label">KI Persona</InputLabel>
-              <Select
-                variant="outlined" // changed from filled
-                labelId="you-select-label"
-                value={prompt?.you || youOptions[0].you}
-                onChange={handleChange('you')}
-              >
-                {youOptions.map((opt, i) => (
-                  <MenuItem key={String(i)} value={opt.you}>
-                    {opt.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
+            
             <FormControl sx={{ minWidth: 240 }}>
               <InputLabel id="me-select-label">Your Persona</InputLabel>
               <Select
-                variant="outlined" // changed from filled
+                variant="filled" // changed from filled
                 labelId="me-select-label"
                 value={prompt?.me || meOptions[0].me}
                 onChange={handleChange('me')}
@@ -193,9 +178,27 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
             </FormControl>
 
             <FormControl sx={{ minWidth: 240 }}>
+              <InputLabel id="you-select-label">KI Persona</InputLabel>
+              <Select
+                variant="filled" // changed from filled
+                labelId="you-select-label"
+                value={prompt?.you || youOptions[0].you}
+                onChange={handleChange('you')}
+              >
+                {youOptions.map((opt, i) => (
+                  <MenuItem key={String(i)} value={opt.you}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            
+
+            <FormControl sx={{ minWidth: 240 }}>
               <InputLabel id="guidelines-select-label">Extras</InputLabel>
               <Select
-                variant="outlined" // changed from filled
+                variant="filled" // changed from filled
                 labelId="guidelines-select-label"
                 value={prompt?.guidelines || guidelineOptions[0].guideline}
                 onChange={handleChange('guidelines')}

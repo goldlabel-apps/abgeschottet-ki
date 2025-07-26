@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Box, List } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import { Icon, useDispatch, useSlice } from '../../../../gl-core';
+import { Icon, useDispatch, useSlice, Upload } from '../../../../gl-core';
 import { fetchTable, RowKI, RowPDF } from '../';
 
 export default function Table() {
@@ -12,7 +12,7 @@ export default function Table() {
   const pathname = usePathname();
   const segments = pathname.split('/').filter(Boolean);
   const tableName = segments[segments.length - 1];
-  
+
   React.useEffect(() => {
     if (tableName) {
       const apiUrl = `http://localhost:4000/db/read/table/${tableName}`;
@@ -20,23 +20,27 @@ export default function Table() {
     }
   }, [tableName, dispatch]);
 
-  const rows = db?.tables?.[tableName]?.rows;
+  let rows: any[] = db?.tables?.[tableName]?.rows ?? [];
+
+  // sort by id descending
+  if (Array.isArray(rows)) {
+    rows = [...rows].sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+  }
 
   return (
-    <Box sx={{  }}>
-
-      {rows && Array.isArray(rows) && rows.length > 0 ? (
+    <Box>
+      {rows && rows.length > 0 ? (
         <List>
           {rows.map((row: any, index: number) => {
             if (tableName === 'ki') {
-              return <RowKI key={index} row={row} />;
+              return <RowKI key={row.id ?? index} row={row} />;
             }
             if (tableName === 'pdfs') {
-              return <RowPDF key={index} row={row} />;
-            };
+              return <RowPDF key={row.id ?? index} row={row} />;
+            }
             return (
               <Box
-                key={index}
+                key={row.id ?? index}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -53,7 +57,9 @@ export default function Table() {
           })}
         </List>
       ) : (
-        <Box sx={{mx: 2}}>No data yet…</Box>
+        <Box sx={{ m: 2}}>
+          No records in {tableName} table
+        </Box>
       )}
     </Box>
   );

@@ -9,6 +9,7 @@ export const initialState: any = {
   themes: config.themes,
   settings: {
     themeMode: 'light',
+    dialog: false,
     drawerOpen: true,
   },
 };

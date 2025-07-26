@@ -20,7 +20,7 @@ import {
   CardHeader,
   Typography,
 } from '@mui/material';
-import { Icon, useDispatch, reset, Upload } from '../../gl-core';
+import { Icon, useDispatch, reset, Upload, Settings } from '../../gl-core';
 
 const drawerWidth = 220;
 const defaultIcon = 'settings';
@@ -99,7 +99,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const dispatch= useDispatch();
 
 
@@ -153,17 +153,19 @@ export function Shell({ children }: { children: React.ReactNode }) {
             edge="start"
             sx={{ marginRight: 3, ...(open && { display: 'none' }) }}
           >
-            <Icon icon="right" />
+            <Icon icon="aki" />
           </IconButton>
           <CardHeader
             sx={{flexGrow:1}}
-            title={<Typography color="primary">Abgeschottet KI</Typography>}
-            subheader={
-              <Typography color="secondary" variant='caption'>
-                Ringfenced AI powered Document Management for SMEs
-              </Typography>
-            }
-            action={<Upload />}
+            title={<Typography color="primary">
+                    AKI
+                  </Typography>}
+            // subheader={
+            //   <Typography color="secondary" variant='caption'>
+            //     Abgeschottet KI is a Ringfenced AI powered Document Management for SMEs
+            //   </Typography>
+            // }
+            action={<><Upload /><Settings /></>}
           />
         </Toolbar>
       </AppBar>
@@ -171,7 +173,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton color="primary" onClick={handleDrawerClose}>
-            <Icon icon="left" />
+            <Icon icon="aki" />
           </IconButton>
         </DrawerHeader>
         <Divider />
