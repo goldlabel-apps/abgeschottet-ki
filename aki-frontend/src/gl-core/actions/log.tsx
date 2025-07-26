@@ -10,13 +10,13 @@ import { showFeedback } from '../../gl-core';
 export type TLog = {
   severity: "error" | "warning" | "info" | "success";
   title: string;
-  description: string;
+  description?: string;
 }
 
 export const log =
   (log: TLog) => async (dispatch: TUbereduxDispatch) => {
     try {
-      console.log("log", log);
+      // console.log("log", log);
       if (!log) return false;
       const {severity, title, description} = log;
       dispatch(showFeedback({ severity, title, description }));

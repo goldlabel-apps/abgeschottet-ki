@@ -15,7 +15,6 @@ import { exec } from 'child_process'; // we’ll shell out to poppler-utils
 
 const createRouter = Router();
 
-// Define the shape of a PDF row
 interface PdfRow {
   id: number;
   fileNameOnDisk: string;
@@ -31,7 +30,7 @@ const uploadDir = path.resolve(
 );
 const pngDir = path.resolve(
   __dirname,
-  '../../../../aki-frontend/public/png/uploads'
+  '../../../../aki-frontend/public/png/thumbnails'
 );
 
 // Ensure pngDir exists
@@ -40,25 +39,21 @@ if (!fs.existsSync(pngDir)) {
 }
 
 /**
- * Utility to render the first page of a PDF to a temp PNG using `pdftoppm` (poppler-utils)
+ * Render the first page of a PDF to a temp PNG using `pdftoppm` (poppler-utils)
  */
 function renderFirstPageToPng(pdfPath: string, outPngPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    // poppler-utils command
     const basename = path.join(path.dirname(outPngPath), path.parse(outPngPath).name);
     const cmd = `pdftoppm -f 1 -l 1 -png "${pdfPath}" "${basename}"`;
     exec(cmd, (err) => {
       if (err) return reject(err);
 
-      // `pdftoppm` will output <basename>-1.png
       const firstPage = `${basename}-1.png`;
       if (!fs.existsSync(firstPage)) return reject(new Error('No output PNG found'));
-      // Resize it to 1200x630 portrait with sharp
       sharp(firstPage)
-        .resize({ width: 1200, height: 630, fit: 'inside' })
+        .resize({ width: 630, height: 1200, fit: 'inside' })
         .toFile(outPngPath)
         .then(() => {
-          // cleanup temp file
           fs.unlinkSync(firstPage);
           resolve();
         })
@@ -89,46 +84,36 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
     });
   }
 
+  // Phase 1: look up the row
+  const row = db.prepare('SELECT * FROM pdfs WHERE id = ?').get(id) as PdfRow | undefined;
+  if (!row) {
+    return res.status(404).json({
+      ...header,
+      severity: 'error',
+      title: `No PDF record found for id=${id}`,
+    });
+  }
+
+  const pdfPath = path.join(uploadDir, row.fileNameOnDisk);
+  const pngFilename = path.parse(row.fileNameOnDisk).name + '.png';
+  const pngPath = path.join(pngDir, pngFilename);
+
   try {
-    // Fetch record and cast to PdfRow
-    const row = db.prepare('SELECT * FROM pdfs WHERE id = ?').get(id) as PdfRow | undefined;
-    if (!row) {
-      return res.status(404).json({
-        ...header,
-        severity: 'error',
-        title: `No PDF record found for id=${id}`,
-      });
-    }
-
-    // Paths
-    const pdfPath = path.join(uploadDir, row.fileNameOnDisk);
-    const pngFilename = path.parse(row.fileNameOnDisk).name + '.png';
-    const pngPath = path.join(pngDir, pngFilename);
-
-    // Update DB to indicate generating
+    // Mark as generating in DB
     db.prepare('UPDATE pdfs SET thumbnail = ? WHERE id = ?').run('generating...', id);
 
-    // If previous thumbnail exists, remove it
+    // Remove any previous thumbnail
     if (fs.existsSync(pngPath)) {
       fs.unlinkSync(pngPath);
     }
 
-    // Generate thumbnail
-    try {
-      await renderFirstPageToPng(pdfPath, pngPath);
-    } catch (genErr: any) {
-      console.error('[pdf/thumbnail] generation failed:', genErr);
-      return res.status(500).json({
-        ...header,
-        severity: 'error',
-        title: 'Thumbnail generation failed',
-        data: { error: genErr.message },
-      });
-    }
+    // Render first page to PNG
+    await renderFirstPageToPng(pdfPath, pngPath);
 
     // Update DB with final thumbnail filename
     db.prepare('UPDATE pdfs SET thumbnail = ? WHERE id = ?').run(pngFilename, id);
 
+    // Return success response
     return res.json({
       ...header,
       severity: 'success',
@@ -140,11 +125,13 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
       },
     });
   } catch (err: any) {
-    console.error('[pdf/thumbnail] error:', err);
+    console.error('[pdf/thumbnail] generation failed:', err);
+    // Update DB to indicate error only if generation or update failed
+    db.prepare('UPDATE pdfs SET thumbnail = ? WHERE id = ?').run('error', id);
     return res.status(500).json({
       ...header,
       severity: 'error',
-      title: 'Unexpected error while generating thumbnail',
+      title: 'Thumbnail generation failed',
       data: { error: err.message },
     });
   }

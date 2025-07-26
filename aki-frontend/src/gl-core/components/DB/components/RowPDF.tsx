@@ -17,9 +17,13 @@ import {
   DialogActions,
   Button,
   Divider,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { log, Icon, MightyButton, useDispatch } from '../../../../gl-core';
+import { Icon, MightyButton, useDispatch, makeThumbnail } from '../../../../gl-core';
 import { deletePDF } from '../../DB';
 
 export default function RowPDF({ row }: { row: any }) {
@@ -62,16 +66,6 @@ export default function RowPDF({ row }: { row: any }) {
     setOpenDialog(false);
   };
 
-  const handleEdit = () => {
-    dispatch(
-      log({
-        severity: 'success',
-        title: 'Logging this....',
-        description: `id: ${id}`,
-      })
-    );
-  };
-
   const handleViewClick = () => {
     if (fileNameOnDisk) {
       const url = `/pdf/uploads/${fileNameOnDisk}`;
@@ -80,27 +74,23 @@ export default function RowPDF({ row }: { row: any }) {
   };
 
   const handleMakeThumbnail = () => {
-    dispatch(
-      log({
-        severity: 'info',
-        title: 'Make Thumbnail clicked',
-        description: `id: ${id}`,
-      })
-    );
-    // TODO: trigger your make-thumbnail logic here
+    dispatch(makeThumbnail(id));
   };
 
   const renderRow = (label: string, value?: any) => {
     if (value === undefined || value === null || value === '') return null;
     return (
       <Box sx={{ display: 'flex', mb: 1 }}>
-        <Typography sx={{ minWidth: 140, mr: 2 }}>{label}:</Typography>
-        <Typography sx={{ fontWeight: 'bold', wordBreak: 'break-all' }}>
+        <Typography sx={{ minWidth: 120, mr: 2 }}>{label}:</Typography>
+        <Typography sx={{ fontWeight: 'bold', wordBreak: 'break-word' }}>
           {String(value)}
         </Typography>
       </Box>
     );
   };
+
+  const showThumbnail =
+    thumbnail && thumbnail.trim() !== '' && thumbnail.trim().toLowerCase() !== 'generating...';
 
   return (
     <>
@@ -146,18 +136,46 @@ export default function RowPDF({ row }: { row: any }) {
                 {truncatedText}
               </Typography>
               <Divider sx={{ mb: 2 }} />
+
+
+              {/* Thumbnail card or button */}
+              {showThumbnail ? (
+                <Card sx={{ display: 'flex', mt: 2 }}>
+                  <Grid container spacing={2}>
+                    <Grid size={{xs: 4} }>
+                      <CardMedia
+                        component="img"
+                        sx={{ width: '100%', height: 'auto' }}
+                        image={`/png/thumbnails/${thumbnail}`}
+                        alt="PDF thumbnail"
+                      />
+                    </Grid>
+                    <Grid size={{xs: 8} }>
+                      <CardContent>
+
               {renderRow('Filesize', formatFileSize(filesize))}
               {renderRow('MIME Type', mimeType)}
 
-              {/* Thumbnail row or Make Thumbnail button */}
-              {thumbnail && thumbnail.trim() !== '' ? (
-                renderRow('Thumbnail', thumbnail)
+                        {/* <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                          Thumbnail
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ wordBreak: 'break-all' }}
+                        >
+                          {thumbnail}
+                        </Typography> */}
+                      </CardContent>
+                    </Grid>
+                  </Grid>
+                </Card>
               ) : (
                 <MightyButton
-                  sx={{my:2}}
-                  variant='outlined'
+                  sx={{ my: 2 }}
+                  variant="outlined"
                   icon="photo"
-                  label="Thumbnail"
+                  label="Make Thumbnail"
                   color="primary"
                   onClick={handleMakeThumbnail}
                 />
