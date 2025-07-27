@@ -39,6 +39,7 @@ import {
   showFeedback,
   setSetting,
   log,
+  rip,
 } from './actions';
 
 export {
@@ -61,6 +62,7 @@ export {
   showFeedback,
   setSetting,
   log,
+  rip,
   MightyButton,
   Upload,
   Feedback,

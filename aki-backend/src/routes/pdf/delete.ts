@@ -102,7 +102,7 @@ createRouter.delete('/:id', (req: Request, res: Response) => {
       return res.json({
         ...header,
         severity: 'success',
-        title: `Data, PDF and related thumbnails deleted`,
+        title: `PDF, thumbnail and related data deleted`,
       });
     } else {
       return res.status(500).json({
