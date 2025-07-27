@@ -1,8 +1,10 @@
 {
-  "version": "2.2.0",
-  "name": "abgeschottet-ki",
+  "version": "2.2.1",
+  "name": "aki",
   "description": "Ringfenced AI powered Document Management for SMEs",
   "scripts": {
+    "dev": "clear && yarn start",
+    "test": "echo No tests yet",
     "start": "node start.mjs",
     "ollama": "ollama serve",
     "phi3": "ollama run phi3",
