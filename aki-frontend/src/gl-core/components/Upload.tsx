@@ -11,12 +11,10 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import { MightyButton, showFeedback, useDispatch } from '../../gl-core';
+import { MightyButton, showFeedback, useDispatch, makeThumbnail } from '../../gl-core';
 import { fetchTable } from './DB';
 
 export default function Upload() {
-
-
 
   const dispatch = useDispatch();  
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -66,15 +64,23 @@ export default function Upload() {
           description: `Status ${res.status} from ${apiUrl}`
         }));
       }
-      // console.log('data.data', data.data);
-      const { severity, title } = data;
-      dispatch(showFeedback({ severity, title }));
+
+      
+      console.log('data', data.data);
+      const id = data.data?.id;
+      if (id) dispatch(makeThumbnail(id));
+      
+      // dispatch(showFeedback({ 
+      //   severity: "warning", 
+      //   title: "PDF uploaded, making thumbnail...",
+      //   description: "Automagically "
+      // }));
+
       setUploading(false);
       setFile(null);
 
       setTimeout(() => {
-        const apiUrl = `http://localhost:4000/db/read/table/pdfs`;
-        dispatch(fetchTable("pdfs", apiUrl) as any);
+        dispatch(fetchTable("pdfs", `http://localhost:4000/db/read/table/pdfs`) as any);
       }, 500);
 
     } catch (err: any) {
@@ -117,11 +123,10 @@ export default function Upload() {
 
       {!uploading && (
         <MightyButton
-          mode="icon"
           icon="upload"
           iconPlacement='right'
-          label="Upload PDF"
-          variant="outlined"
+          label="Upload"
+          variant="contained"
           onClick={handleClick}
         />
       )}

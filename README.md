@@ -82,7 +82,7 @@ Does the approach of using a ring‑fenced LLM help solve the legal challenges f
 
 Warum ist es für deutsche Kanzleien gefährlich, ein öffentliches LLM zu verwenden, und wie unterscheidet sich ein abgeschottetes LLM in diesem Punkt?  
 
-Why is it dangerous for German law firms to use a public LLM, and how does a ring‑fenced LLM differ in this respect?
+Why is it dangerous for firms to use a public LLM, and how does a ring‑fenced LLM differ in this respect?
 
 
 

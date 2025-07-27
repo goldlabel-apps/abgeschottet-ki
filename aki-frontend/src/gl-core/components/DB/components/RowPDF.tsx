@@ -21,6 +21,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Skeleton,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Icon, MightyButton, useDispatch, makeThumbnail } from '../../../../gl-core';
@@ -74,6 +75,10 @@ export default function RowPDF({ row }: { row: any }) {
   };
 
   const handleMakeThumbnail = () => {
+    if (!id) {
+      console.warn('No ID for makeThumbnail');
+      return;
+    }
     dispatch(makeThumbnail(id));
   };
 
@@ -81,8 +86,10 @@ export default function RowPDF({ row }: { row: any }) {
     if (value === undefined || value === null || value === '') return null;
     return (
       <Box sx={{ display: 'flex', mb: 1 }}>
-        <Typography sx={{ minWidth: 120, mr: 2 }}>{label}:</Typography>
-        <Typography sx={{ fontWeight: 'bold', wordBreak: 'break-word' }}>
+        <Typography sx={{ mr: 2 }} variant="caption">
+          {label}:
+        </Typography>
+        <Typography variant="body2" sx={{ fontWeight: 'bold', wordBreak: 'break-word' }}>
           {String(value)}
         </Typography>
       </Box>
@@ -90,7 +97,13 @@ export default function RowPDF({ row }: { row: any }) {
   };
 
   const showThumbnail =
-    thumbnail && thumbnail.trim() !== '' && thumbnail.trim().toLowerCase() !== 'generating...';
+    thumbnail &&
+    thumbnail.trim() !== '' &&
+    thumbnail.trim().toLowerCase() !== 'generating...' &&
+    thumbnail.trim().toLowerCase() !== 'error';
+
+  const isErrorThumbnail =
+    thumbnail && thumbnail.trim().toLowerCase() === 'error';
 
   return (
     <>
@@ -117,16 +130,6 @@ export default function RowPDF({ row }: { row: any }) {
                 </Box>
                 <Box>
                   <Typography variant="body1">{label}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Created {created ? moment(created).fromNow() : '–'}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ ml: 2 }}
-                  >
-                    Updated {updated ? moment(updated).fromNow() : '–'}
-                  </Typography>
                 </Box>
               </Box>
             </AccordionSummary>
@@ -137,12 +140,10 @@ export default function RowPDF({ row }: { row: any }) {
               </Typography>
               <Divider sx={{ mb: 2 }} />
 
-
-              {/* Thumbnail card or button */}
               {showThumbnail ? (
                 <Card sx={{ display: 'flex', mt: 2 }}>
                   <Grid container spacing={2}>
-                    <Grid size={{xs: 4} }>
+                    <Grid xs={4}>
                       <CardMedia
                         component="img"
                         sx={{ width: '100%', height: 'auto' }}
@@ -150,49 +151,50 @@ export default function RowPDF({ row }: { row: any }) {
                         alt="PDF thumbnail"
                       />
                     </Grid>
-                    <Grid size={{xs: 8} }>
+                    <Grid xs={8}>
                       <CardContent>
-
-              {renderRow('Filesize', formatFileSize(filesize))}
-              {renderRow('MIME Type', mimeType)}
-
-                        {/* <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                          Thumbnail
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ wordBreak: 'break-all' }}
-                        >
-                          {thumbnail}
-                        </Typography> */}
+                        <Box sx={{ mb: 2 }}>
+                          <Typography variant="caption" color="text.secondary">
+                            Created {created ? moment(created).fromNow() : '–'}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ ml: 2 }}
+                          >
+                            Updated {updated ? moment(updated).fromNow() : '–'}
+                          </Typography>
+                        </Box>
+                        {renderRow('Size', formatFileSize(filesize))}
+                        {renderRow('Type', mimeType)}
+                        <pre>row: {JSON.stringify(row, null, 2)}</pre>
                       </CardContent>
                     </Grid>
                   </Grid>
                 </Card>
               ) : (
-                <MightyButton
-                  sx={{ my: 2 }}
-                  variant="outlined"
-                  icon="photo"
-                  label="Make Thumbnail"
-                  color="primary"
-                  onClick={handleMakeThumbnail}
-                />
+                <Box sx={{ mt: 2 }}>
+                  {isErrorThumbnail && (
+                    <Box sx={{ mb: 2 }}>
+                      <Skeleton variant="rectangular" width="100%" height={120} />
+                    </Box>
+                  )}
+                  <MightyButton
+                    sx={{ my: 2 }}
+                    variant="outlined"
+                    icon="photo"
+                    label="Generate Thumbnail"
+                    color="primary"
+                    onClick={handleMakeThumbnail}
+                  />
+                </Box>
               )}
             </AccordionDetails>
           </Accordion>
         </Box>
 
         {/* RIGHT: Action buttons */}
-        <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
-          <MightyButton
-            mode="icon"
-            icon="view"
-            label="View"
-            color="primary"
-            onClick={handleViewClick}
-          />
+        <Stack direction="row" spacing={1} sx={{ pt: 1, mr: 1 }}>
           <MightyButton
             mode="icon"
             icon="delete"
