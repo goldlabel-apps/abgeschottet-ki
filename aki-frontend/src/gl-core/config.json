@@ -23,11 +23,6 @@
       "label": "Logs",
       "icon": "info",
       "route": "/database/table/log"
-    },
-    {
-      "label": "API",
-      "icon": "api",
-      "url": "http://localhost:4000/"
     }
   ],
   "themes": {

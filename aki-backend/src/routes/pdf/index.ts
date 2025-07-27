@@ -1,11 +1,12 @@
-// abgeschottet-ki/aki-backend/src/routes/pdf/index.ts
+// aki/aki-backend/src/routes/pdf/index.ts
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
+import { endpoints } from '../../lib';
 import uploadRouter from './upload';
 import readRouter from './read';
 import deleteRouter from './delete';
 import thumbnailRouter from './thumbnail';
-import { endpoints } from '../../lib';
+import ripRouter from './rip';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/upload', uploadRouter);
 router.use('/read', readRouter);
 router.use('/delete', deleteRouter);
 router.use('/thumbnail', thumbnailRouter);
+router.use('/rip', ripRouter);
 
 export default router;

@@ -40,6 +40,7 @@ export default function Settings() {
   const handleClose = () => {
     dispatch(setSetting('dialog', false));
   };
+  
 
   return (
     <>
@@ -73,6 +74,25 @@ export default function Settings() {
             {JSON.stringify(settings, null, 2)}
           </pre> */}
 
+
+          <ListItemButton onClick={() => {
+            if (typeof window !== 'undefined') {
+              window.open('http://localhost:4000/', '_blank');
+            }
+          }}>
+            <ListItemIcon
+              sx={{
+                mr: 2,
+                justifyContent: 'center',
+              }}
+            >
+              <Icon icon={"api"} color="primary" />
+            </ListItemIcon>
+            <ListItemText 
+              primary={"API"}
+              secondary={"The AKI programatic interface"}
+            />
+          </ListItemButton>
 
 
           <ListItemButton onClick={handleReset}>

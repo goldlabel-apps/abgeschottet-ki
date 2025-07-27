@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/routes/log/index.ts
+// aki/aki-backend/src/routes/log/index.ts
 
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
