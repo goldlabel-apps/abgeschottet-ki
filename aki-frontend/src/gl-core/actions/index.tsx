@@ -6,8 +6,9 @@ import {showFeedback} from './showFeedback';
 import {setSetting} from './setSetting';
 import {log} from './log';
 import {makeThumbnail} from './makeThumbnail';
-
+import {rip} from './rip';
 export {
+    rip,
     setKeyValue,
     updatePrompt,
     reset,

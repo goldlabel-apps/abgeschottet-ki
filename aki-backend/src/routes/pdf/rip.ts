@@ -1,11 +1,14 @@
 // aki/aki-backend/src/routes/pdf/rip.ts
+
 import { Router, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
+import { promisify } from 'util';
+import { exec as execCb } from 'child_process';
 import { header } from '../../lib/header';
 import { db } from '../../lib/database';
 
+const exec = promisify(execCb);
 const createRouter = Router();
 
 interface PdfRow {
@@ -16,62 +19,36 @@ interface PdfRow {
   [key: string]: any;
 }
 
-// Paths
 const uploadDir = path.resolve(
   __dirname,
   '../../../../aki-frontend/public/pdf/uploads'
 );
 
-// ensure uploadDir exists (should already)
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-/**
- * Run pdftotext to extract embedded text
- */
-function extractTextLayer(pdfPath: string, outPath: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const cmd = `pdftotext "${pdfPath}" "${outPath}"`;
-    exec(cmd, (err) => {
-      if (err) return reject(err);
-      if (!fs.existsSync(outPath)) return resolve('');
-      const txt = fs.readFileSync(outPath, 'utf-8').trim();
-      resolve(txt);
-    });
-  });
+async function extractTextLayer(pdfPath: string, outPath: string): Promise<string> {
+  const cmd = `pdftotext "${pdfPath}" "${outPath}"`;
+  await exec(cmd);
+  if (!fs.existsSync(outPath)) return '';
+  const txt = await fs.promises.readFile(outPath, 'utf-8');
+  return txt.trim();
 }
 
-/**
- * Run tesseract OCR on the PDF (requires conversion to images)
- * This will be slower but works for scanned docs
- */
-function extractTextViaOCR(pdfPath: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    // tesseract can work directly on PDFs in many installs:
-    // but to be safe, convert first page(s) to tif or png, then OCR.
-    // Here we just call tesseract directly and let it do multi-page pdfs.
-    const tempBase = path.join(
-      path.dirname(pdfPath),
-      `ocr-temp-${Date.now()}`
-    );
-    const cmd = `tesseract "${pdfPath}" "${tempBase}" -l deu+eng pdf`;
-    // Note: using -l deu+eng to support German/English OCR
-    exec(cmd, (err) => {
-      if (err) return reject(err);
-      const txtFile = `${tempBase}.txt`;
-      if (!fs.existsSync(txtFile)) return resolve('');
-      const txt = fs.readFileSync(txtFile, 'utf-8').trim();
-      // cleanup
-      try {
-        fs.unlinkSync(txtFile);
-      } catch {}
-      resolve(txt);
-    });
-  });
+async function extractTextViaOCR(pdfPath: string): Promise<string> {
+  const tempBase = path.join(path.dirname(pdfPath), `ocr-temp-${Date.now()}`);
+  const cmd = `tesseract "${pdfPath}" "${tempBase}" -l deu+eng pdf`;
+  await exec(cmd);
+  const txtFile = `${tempBase}.txt`;
+  if (!fs.existsSync(txtFile)) return '';
+  const txt = await fs.promises.readFile(txtFile, 'utf-8');
+  try {
+    await fs.promises.unlink(txtFile);
+  } catch {}
+  return txt.trim();
 }
 
-// GET without id gives helpful message
 createRouter.get('/', (_req: Request, res: Response) => {
   return res.status(400).json({
     ...header,
@@ -81,9 +58,9 @@ createRouter.get('/', (_req: Request, res: Response) => {
   });
 });
 
-// GET with id to rip text
 createRouter.get('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
+
   if (!id) {
     return res.status(400).json({
       ...header,
@@ -93,7 +70,6 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
     });
   }
 
-  // Phase 1: look up the row
   const row = db.prepare('SELECT * FROM pdfs WHERE id = ?').get(id) as PdfRow | undefined;
   if (!row) {
     return res.status(404).json({
@@ -114,29 +90,27 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
   }
 
   try {
-    // Mark as processing in DB
     db.prepare('UPDATE pdfs SET rawText = ? WHERE id = ?').run('extracting...', id);
 
-    // Temp txt path for pdftotext
     const tmpTxt = path.join(uploadDir, `temp-${id}-${Date.now()}.txt`);
     let rawText = '';
+    let usedFallback = false;
 
-    // Try direct text extraction first
     try {
       rawText = await extractTextLayer(pdfPath, tmpTxt);
     } catch (e) {
-      console.warn('[pdf/rip] text layer extraction failed, falling back to OCR', e);
+      console.warn('[pdf/rip] text layer extraction failed, will attempt OCR', e);
     } finally {
       if (fs.existsSync(tmpTxt)) {
         try {
-          fs.unlinkSync(tmpTxt);
+          await fs.promises.unlink(tmpTxt);
         } catch {}
       }
     }
 
-    // If no text found, try OCR
     if (!rawText || rawText.length < 5) {
       console.log('[pdf/rip] No text layer found, attempting OCR...');
+      usedFallback = true;
       try {
         rawText = await extractTextViaOCR(pdfPath);
       } catch (e) {
@@ -144,8 +118,22 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
       }
     }
 
-    // Update DB
-    db.prepare('UPDATE pdfs SET rawText = ? WHERE id = ?').run(rawText || '', id);
+    db.prepare('UPDATE pdfs SET rawText = ? WHERE id = ?').run(rawText || '[ERROR] No text ripped', id);
+
+    if (rawText.length === 0){
+      return res.json({
+      ...header,
+      severity: 'error',
+      title: 'Text extraction failed',
+      data: {
+        id,
+        pdf: row.filename ?? row.fileNameOnDisk,
+        textLength: rawText.length,
+        usedOCR: usedFallback,
+        preview: rawText.slice(0, 200),
+      },
+    });
+    }
 
     return res.json({
       ...header,
@@ -155,6 +143,7 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
         id,
         pdf: row.filename ?? row.fileNameOnDisk,
         textLength: rawText.length,
+        usedOCR: usedFallback,
         preview: rawText.slice(0, 200),
       },
     });

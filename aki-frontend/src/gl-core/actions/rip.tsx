@@ -1,52 +1,57 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-frontend/src/gl-core/actions/thumbnail.tsx
+// /Users/goldlabel/GitHub/aki/aki-frontend/src/gl-core/actions/rip.tsx
 import { TUbereduxDispatch } from '../../gl-core/types';
 import { setUbereduxKey } from '../../gl-core/cartridges/Uberedux';
 import { 
   showFeedback, 
-  rip,
+  log,
 } from '../../gl-core';
 import {
   fetchTable,
 } from '../components/DB';
 
 /**
- * Calls the generate thumbnail endpoint
- * http://localhost:4000/pdf/thumbnail/23
+ * Calls the ripText endpoint
+ * http://localhost:4000/pdf/rip/23
  */
 
-export const makeThumbnail =
+export const rip =
   (id: number) => async (dispatch: TUbereduxDispatch) => {
     try {
+      // console.log("rip", id)
 
-      const res = await fetch(`http://localhost:4000/pdf/thumbnail/${id}`, {
+      const res = await fetch(`http://localhost:4000/pdf/rip/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      // Parse the JSON response
       const data = await res.json();
-
-      dispatch(rip(id));
-      dispatch(fetchTable("pdfs", `http://localhost:4000/db/read/table/pdfs`) as any);
+      
+      const { severity, title, description } = data;
+      const resData = data.data;
+      
+      if (!resData) console.log("resData", resData);
 
       // dispatch(showFeedback({ 
-      //   severity: "info", 
-      //   title: `Ready to rip? ${id}`,
-      //   description: 'also - move to pdfs/:id'
+      //   severity, 
+      //   title,
+      //   description,
       // }));
 
-      // setTimeout(() => {
-      //   window.location.href = `/pdfs/${id}`;
-      // }, 100)
+      // dispatch(log({ 
+      //   severity: "success", 
+      //   title: `Ripped ${id}`
+      // }));
+
+      dispatch(fetchTable("pdfs", `http://localhost:4000/db/read/table/pdfs`) as any);
 
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
 
       dispatch(showFeedback({ 
         severity: "error", 
-        title: "Thumbnail error", 
+        title: "Rip error", 
         description: msg
       }));
       

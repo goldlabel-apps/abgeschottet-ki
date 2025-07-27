@@ -11,6 +11,7 @@ import {
   Feedback,
   Theme,
   Shell,
+  FilePDF,
 } from '../gl-core';
 import { Dashboard } from './components/Dashboard';
 import { DB, Table, initDB } from './components/DB';
@@ -30,7 +31,6 @@ export default function Core() {
     }
   }, [db, dispatch]);
 
-  // pick which content to render based on current pathname
   const renderContent = () => {
     if (!pathname) return null;
     const path = pathname.toLowerCase();
@@ -39,9 +39,18 @@ export default function Core() {
     if (matchTable) {
       return <Table />;
     }
+
+    if (path.startsWith('/pdfs/')) {
+      const parts = path.split('/');
+      const id = parseInt(parts[2], 10);
+      const row = db?.tables?.pdfs?.rows?.find((r: any) => r.id === id);
+      return row ? <FilePDF data={row} /> : <Box sx={{ m: 4 }}>PDF not found.</Box>;
+    }
+
     if (path.startsWith('/database')) {
       return <DB />;
     }
+
     if (path.startsWith('/ki')) {
       return <KI />;
     }
@@ -54,7 +63,6 @@ export default function Core() {
       <Theme theme={themes[themeMode]}>
         <CssBaseline />
         <Feedback />
-        
         <Shell>{renderContent()}</Shell>
       </Theme>
     </Box>
