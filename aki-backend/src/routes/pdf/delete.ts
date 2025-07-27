@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/routes/pdf/delete.ts
+// aki/aki-backend/src/routes/pdf/delete.ts
 
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';

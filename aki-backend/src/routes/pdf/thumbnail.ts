@@ -1,4 +1,4 @@
-// /Users/goldlabel/GitHub/abgeschottet-ki/aki-backend/src/routes/pdf/thumbnail.ts
+// aki/aki-backend/src/routes/pdf/thumbnail.ts
 
 /*
   Generate a 1200px high thumbnail png of the first page of a PDF 
