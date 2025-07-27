@@ -36,7 +36,7 @@ export default function Table() {
               return <RowKI key={row.id ?? index} row={row} />;
             }
             if (tableName === 'pdfs') {
-              return <RowPDF key={row.id ?? index} row={row} />;
+              return <RowPDF key={row.id ?? index} data={row} />;
             }
             if (tableName === 'log') {
               return <RowLog key={row.id ?? index} row={row} />;

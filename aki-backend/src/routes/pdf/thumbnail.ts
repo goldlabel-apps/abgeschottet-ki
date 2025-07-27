@@ -2,7 +2,7 @@
 
 /*
   Generate a 1200px high thumbnail png of the first page of a PDF 
-  and save it to the public /png/uploads folder
+  and save it to the public /png/thumbnails folder
 */
 
 import { Router, Request, Response } from 'express';
@@ -11,7 +11,7 @@ import path from 'path';
 import { header } from '../../lib/header';
 import { db } from '../../lib/database';
 import sharp from 'sharp'; // yarn add sharp
-import { exec } from 'child_process'; // we’ll shell out to poppler-utils
+import { spawn } from 'child_process';
 
 const createRouter = Router();
 
@@ -44,17 +44,41 @@ if (!fs.existsSync(pngDir)) {
 function renderFirstPageToPng(pdfPath: string, outPngPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const basename = path.join(path.dirname(outPngPath), path.parse(outPngPath).name);
-    const cmd = `pdftoppm -f 1 -l 1 -png "${pdfPath}" "${basename}"`;
-    exec(cmd, (err) => {
-      if (err) return reject(err);
+
+    const args = ['-f', '1', '-l', '1', '-png', pdfPath, basename];
+    const pdftoppm = spawn('pdftoppm', args);
+
+    let stderr = '';
+    pdftoppm.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    pdftoppm.on('close', (code) => {
+      if (code !== 0) {
+        console.error('pdftoppm failed with code', code);
+        console.error('stderr:', stderr);
+        return reject(new Error(`pdftoppm exited with code ${code}: ${stderr}`));
+      }
 
       const firstPage = `${basename}-1.png`;
-      if (!fs.existsSync(firstPage)) return reject(new Error('No output PNG found'));
+      if (!fs.existsSync(firstPage)) {
+        console.error('Expected PNG not found at:', firstPage);
+        return reject(new Error('No output PNG found'));
+      }
+
       sharp(firstPage)
         .resize({ width: 630, height: 1200, fit: 'inside' })
         .toFile(outPngPath)
         .then(() => {
-          fs.unlinkSync(firstPage);
+          try {
+            fs.unlinkSync(firstPage);
+          } catch (unlinkErr) {
+            if (unlinkErr instanceof Error) {
+              console.warn('Failed to delete temp image:', unlinkErr.message);
+            } else {
+              console.warn('Failed to delete temp image:', unlinkErr);
+            }
+          }
           resolve();
         })
         .catch(reject);
@@ -99,6 +123,15 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
   const pngPath = path.join(pngDir, pngFilename);
 
   try {
+    // Check PDF exists and is not empty
+    if (!fs.existsSync(pdfPath)) {
+      throw new Error(`PDF file not found at ${pdfPath}`);
+    }
+    const stats = fs.statSync(pdfPath);
+    if (stats.size < 100) {
+      throw new Error('PDF file appears to be empty or invalid');
+    }
+
     // Mark as generating in DB
     db.prepare('UPDATE pdfs SET thumbnail = ? WHERE id = ?').run('generating...', id);
 
@@ -121,18 +154,22 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
       data: {
         id,
         pdf: row.filename ?? row.fileNameOnDisk,
-        thumbnail: `/png/uploads/${pngFilename}`,
+        thumbnail: `/png/thumbnails/${pngFilename}`,
       },
     });
-  } catch (err: any) {
-    console.error('[pdf/thumbnail] generation failed:', err);
-    // Update DB to indicate error only if generation or update failed
-    db.prepare('UPDATE pdfs SET thumbnail = ? WHERE id = ?').run('error', id);
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err);
+    const errorEntry = `[ERROR] ${errorMessage}`;
+
+    console.error('[pdf/thumbnail] generation failed:', errorMessage);
+    db.prepare('UPDATE pdfs SET thumbnail = ? WHERE id = ?').run(errorEntry, id);
+
     return res.status(500).json({
       ...header,
       severity: 'error',
       title: 'Thumbnail generation failed',
-      data: { error: err.message },
+      data: { error: errorMessage },
     });
   }
 });
