@@ -1,4 +1,5 @@
-![OG Image](https://live.staticflickr.com/65535/54676004619_ac1207c621_c.jpg)
+![AKI Testimonial](https://live.staticflickr.com/65535/54679640252_e024743596_o.jpg)
+
 # AKI
 ## Abgeschottet KI
 ### Ringfenced AI powered Document Management for SMEs
