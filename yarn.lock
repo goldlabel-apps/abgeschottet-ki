@@ -1637,14 +1637,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abgeschottet-ki@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "abgeschottet-ki@workspace:."
-  dependencies:
-    open: "npm:^10.2.0"
-  languageName: unknown
-  linkType: soft
-
 "accepts@npm:^2.0.0":
   version: 2.0.0
   resolution: "accepts@npm:2.0.0"
@@ -1760,6 +1752,14 @@ __metadata:
     redux-persist: "npm:^6.0.0"
     typescript: "npm:^5"
     yarn: "npm:^1.22.22"
+  languageName: unknown
+  linkType: soft
+
+"aki@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "aki@workspace:."
+  dependencies:
+    open: "npm:^10.2.0"
   languageName: unknown
   linkType: soft
 

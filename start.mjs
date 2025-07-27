@@ -4,7 +4,7 @@ import { exec } from 'child_process';
 import open from 'open'; // yarn add open
 
 // Absolute path to your project root
-const projectPath = '/Users/goldlabel/GitHub/abgeschottet-ki';
+const projectPath = '/Users/goldlabel/GitHub/aki';
 
 // Helper: run a command in a new Terminal window/tab with proper cwd
 function runInNewTerminal(command) {
@@ -26,11 +26,11 @@ function runInNewTerminal(command) {
 runInNewTerminal('yarn ollama');
 runInNewTerminal('yarn phi3');
 runInNewTerminal('yarn frontend');
-runInNewTerminal('yarn backend'); // <--- added pdf-smash service
+runInNewTerminal('yarn backend');
 
 // Open browser after a delay
 setTimeout(() => {
   const targetUrl = 'http://localhost:1975/database/table/pdfs';
-  console.log(`Frontend opening ${targetUrl} in default browser...`);
+  console.log(`aki-frontend open on ${targetUrl}`);
   open(targetUrl);
-}, 4000);
+}, 5000);

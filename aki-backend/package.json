@@ -1,12 +1,12 @@
 {
   "name": "aki-backend",
-  "type": "commonjs",
-  "packageManager": "yarn@4.3.1",
   "scripts": {
+    "test": "echo no tests",
     "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/server.js"
   },
+  "packageManager": "yarn@4.3.1",
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.17",
