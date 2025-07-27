@@ -70,16 +70,26 @@ createRouter.delete('/:id', (req: Request, res: Response) => {
       }
     }
 
-    // Delete the thumbnail if one exists
+    // Delete the thumbnail if one exists, including variants with -1 and -01 suffixes
     if (row.thumbnail) {
       try {
-        const thumbPath = path.join(pngDir, row.thumbnail);
-        if (fs.existsSync(thumbPath)) {
-          fs.unlinkSync(thumbPath);
-          console.log(`[pdf/delete] Deleted thumbnail: ${thumbPath}`);
-        } else {
-          console.warn(`[pdf/delete] Thumbnail not found on disk: ${thumbPath}`);
-        }
+        const baseName = path.parse(row.thumbnail).name; // e.g. "1753640842589-Rechnung_SV_Gomelskyy"
+        const ext = path.parse(row.thumbnail).ext;       // e.g. ".png"
+
+        const thumbPaths = [
+          path.join(pngDir, row.thumbnail),             // original thumbnail file
+          path.join(pngDir, `${baseName}-1${ext}`),     // variant with -1
+          path.join(pngDir, `${baseName}-01${ext}`),    // variant with -01
+        ];
+
+        thumbPaths.forEach((thumbPath) => {
+          if (fs.existsSync(thumbPath)) {
+            fs.unlinkSync(thumbPath);
+            console.log(`[pdf/delete] Deleted thumbnail: ${thumbPath}`);
+          } else {
+            console.warn(`[pdf/delete] Thumbnail not found on disk: ${thumbPath}`);
+          }
+        });
       } catch (thumbErr: any) {
         console.error(`[pdf/delete] Error deleting thumbnail:`, thumbErr);
       }
@@ -92,7 +102,7 @@ createRouter.delete('/:id', (req: Request, res: Response) => {
       return res.json({
         ...header,
         severity: 'success',
-        title: `PDF with id: "${id}" and related thumbnail deleted`,
+        title: `Data, PDF and related thumbnails deleted`,
       });
     } else {
       return res.status(500).json({

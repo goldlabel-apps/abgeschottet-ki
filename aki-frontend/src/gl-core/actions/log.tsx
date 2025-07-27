@@ -19,14 +19,15 @@ export const log =
       // console.log("log", log);
       if (!log) return false;
       const {severity, title, description} = log;
-      dispatch(showFeedback({ severity, title, description }));
 
-      const res = await fetch(`http://localhost:4000/pdf/delete/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // const res = await fetch(`http://localhost:4000/pdf/delete/${id}`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      // });
+
+      // update log table
 
 
     } catch (e: unknown) {

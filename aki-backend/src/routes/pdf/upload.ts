@@ -3,113 +3,101 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { header } from '../../lib/header';
-import { db } from '../../lib/database'; // your better-sqlite3 instance
+import { db } from '../../lib/database';
 
 const createRouter = Router();
 
-// Absolute path to the Next.js public uploads folder
 const uploadDir = path.resolve(
   __dirname,
   '../../../../aki-frontend/public/pdf/uploads'
 );
 
-// Ensure the folder exists
+// Ensure uploadDir exists on server startup
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Multer storage configuration
+// Multer storage config
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, uploadDir);
-  },
+  destination: (_req, _file, cb) => cb(null, uploadDir),
   filename: (_req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    // Use timestamp + sanitized original name
+    const timestamp = Date.now();
+    // Remove unsafe chars from filename to avoid filesystem issues
+    const safeName = file.originalname.replace(/[^\w.-]/g, '_');
+    cb(null, `${timestamp}-${safeName}`);
   },
 });
 
-// Only allow PDFs
+// Allow only PDFs
 const upload = multer({
   storage,
   fileFilter: (_req, file, cb) => {
-    if (file.mimetype === 'application/pdf') {
-      cb(null, true);
-    } else {
-      cb(new Error('Only PDF files are allowed'));
-    }
+    if (file.mimetype === 'application/pdf') cb(null, true);
+    else cb(new Error('Only PDF files are allowed'));
   },
 });
 
-// GET route – advise to use POST instead
+// GET method not allowed (POST only)
 createRouter.get('/', (_req: Request, res: Response) => {
   return res.status(405).json({
     ...header,
     severity: 'error',
-    title: 'GET method not allowed. Please use POST to upload a PDF.',
-    data: { message: 'Use POST instead of GET' },
+    title: 'GET method not allowed. Use POST to upload a PDF.',
+    data: { message: 'Please use POST instead of GET' },
   });
 });
 
-// POST route – handle upload
+// POST upload handler
 createRouter.post('/', (req: Request, res: Response) => {
-  if (!fs.existsSync(uploadDir)) {
-    return res.status(405).json({
-      ...header,
-      severity: 'error',
-      title: 'Upload directory does not exist on server',
-      data: { uploadDir },
-    });
-  }
-
-  upload.single('file')(req, res, function (err: any) {
-    if (err instanceof multer.MulterError) {
-      return res.status(405).json({
+  upload.single('file')(req, res, async (err: any) => {
+    if (err) {
+      // Handle multer errors and others
+      const errorMsg = err.message || 'Unknown upload error';
+      return res.status(400).json({
         ...header,
         severity: 'error',
-        title: 'Multer error: ' + err.message,
-        data: { error: err },
-      });
-    } else if (err) {
-      return res.status(405).json({
-        ...header,
-        severity: 'error',
-        title: err.message || 'Unknown upload error',
-        data: { error: err },
+        title: 'Upload error',
+        data: { error: errorMsg },
       });
     }
 
-    const f = req.file;
-    if (!f) {
-      return res.status(405).json({
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({
         ...header,
         severity: 'error',
-        title: 'No file was received in the request',
+        title: 'No file received',
         data: { message: 'Expected field name "file"' },
       });
     }
 
-    // ✅ Both created and updated timestamps
+    // Build slug safely: lowercase, replace non-alphanumeric with dashes, trim dashes
+    const baseName = path.parse(file.originalname).name;
+    const slug = baseName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
     const created = Date.now();
     const updated = created;
 
-    // Build metadata
     const fileMeta = {
-      label: f.originalname,
-      slug: path.parse(f.originalname).name.toLowerCase().replace(/\s+/g, '-'),
-      filename: f.originalname,
-      filesize: f.size,
+      label: file.originalname,
+      slug,
+      filename: file.originalname,
+      filesize: file.size,
       text: null,
-      mimeType: f.mimetype,
-      destination: f.destination,
-      fileNameOnDisk: f.filename,
-      fullPath: path.join(f.destination, f.filename),
+      mimeType: file.mimetype,
+      destination: file.destination,
+      fileNameOnDisk: file.filename,
+      fullPath: path.join(file.destination, file.filename),
       rawText: null,
-      created,  // ✅ epoch
-      updated,  // ✅ epoch
+      created,
+      updated,
     };
 
     try {
-      // ✅ Insert into database with created & updated
       const stmt = db.prepare(`
         INSERT INTO pdfs (
           label, slug, filename, filesize, text,
@@ -129,8 +117,8 @@ createRouter.post('/', (req: Request, res: Response) => {
         fileMeta.fileNameOnDisk,
         fileMeta.fullPath,
         fileMeta.rawText,
-        fileMeta.created, // ✅
-        fileMeta.updated  // ✅
+        fileMeta.created,
+        fileMeta.updated
       );
 
       const insertedId = result.lastInsertRowid as number;
@@ -142,16 +130,24 @@ createRouter.post('/', (req: Request, res: Response) => {
         data: {
           id: insertedId,
           ...fileMeta,
-          publicUrl: `/pdf/uploads/${f.filename}`,
+          publicUrl: `/pdf/uploads/${file.filename}`,
         },
       });
-    } catch (dbErr: any) {
-      console.error('[pdf/upload] DB insert error:', dbErr);
+    } catch (dbErr: unknown) {
+      const errorMessage =
+        dbErr instanceof Error
+          ? dbErr.message
+          : typeof dbErr === 'string'
+          ? dbErr
+          : JSON.stringify(dbErr);
+
+      console.error('[pdf/upload] DB insert error:', errorMessage);
+
       return res.status(500).json({
         ...header,
         severity: 'error',
         title: 'Failed to save PDF metadata to database',
-        data: { error: dbErr.message },
+        data: { error: errorMessage },
       });
     }
   });

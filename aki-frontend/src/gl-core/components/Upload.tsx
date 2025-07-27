@@ -66,7 +66,7 @@ export default function Upload() {
       }
 
       
-      console.log('data', data.data);
+      // console.log('data', data.data);
       const id = data.data?.id;
       if (id) dispatch(makeThumbnail(id));
       

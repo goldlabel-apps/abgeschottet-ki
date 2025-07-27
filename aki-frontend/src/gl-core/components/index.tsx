@@ -5,6 +5,7 @@ import {DB} from './DB';
 import Feedback from './Feedback';
 import {Shell} from './Shell';
 import Settings from './Settings';
+import FilePDF from './FilePDF';
 
 export{
     Shell,
@@ -13,4 +14,5 @@ export{
     DB,
     Feedback,
     Settings,
+    FilePDF,
 }
