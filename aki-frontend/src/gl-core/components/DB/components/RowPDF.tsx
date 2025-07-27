@@ -1,3 +1,4 @@
+// /Users/goldlabel/GitHub/abgeschottet-ki/aki-frontend/src/gl-core/components/DB/components/RowPDF.tsx
 'use client';
 
 import * as React from 'react';
@@ -16,9 +17,13 @@ import {
   DialogActions,
   Button,
   Divider,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { log, Icon, MightyButton, useDispatch } from '../../../../gl-core';
+import { Icon, MightyButton, useDispatch, makeThumbnail } from '../../../../gl-core';
 import { deletePDF } from '../../DB';
 
 export default function RowPDF({ row }: { row: any }) {
@@ -31,10 +36,10 @@ export default function RowPDF({ row }: { row: any }) {
     fileNameOnDisk,
     created,
     updated,
+    thumbnail,
   } = row;
   const dispatch = useDispatch();
 
-  // convert bytes to KB/MB/GB
   const formatFileSize = (bytes?: number) => {
     if (!bytes || bytes <= 0) return '0 B';
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -61,17 +66,6 @@ export default function RowPDF({ row }: { row: any }) {
     setOpenDialog(false);
   };
 
-  const handleEdit = () => {
-
-
-    dispatch(log({
-      severity: "success",
-      title: "Logging this....",
-      description: `id: ${id}`
-    }));
-
-  };
-
   const handleViewClick = () => {
     if (fileNameOnDisk) {
       const url = `/pdf/uploads/${fileNameOnDisk}`;
@@ -79,17 +73,24 @@ export default function RowPDF({ row }: { row: any }) {
     }
   };
 
+  const handleMakeThumbnail = () => {
+    dispatch(makeThumbnail(id));
+  };
+
   const renderRow = (label: string, value?: any) => {
     if (value === undefined || value === null || value === '') return null;
     return (
       <Box sx={{ display: 'flex', mb: 1 }}>
-        <Typography sx={{ minWidth: 140, mr: 2 }}>{label}:</Typography>
-        <Typography sx={{ fontWeight: 'bold', wordBreak: 'break-all' }}>
+        <Typography sx={{ minWidth: 120, mr: 2 }}>{label}:</Typography>
+        <Typography sx={{ fontWeight: 'bold', wordBreak: 'break-word' }}>
           {String(value)}
         </Typography>
       </Box>
     );
   };
+
+  const showThumbnail =
+    thumbnail && thumbnail.trim() !== '' && thumbnail.trim().toLowerCase() !== 'generating...';
 
   return (
     <>
@@ -111,21 +112,19 @@ export default function RowPDF({ row }: { row: any }) {
               id={`panel-${id}-header`}
             >
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                <Box sx={{}}>
+                <Box>
                   <Icon icon="pdf" color="primary" />
                 </Box>
                 <Box>
-                  <Typography variant="body1">
-                    {label}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    {truncatedText}
-                  </Typography>
-                  {/* New info about created/updated */}
+                  <Typography variant="body1">{label}</Typography>
                   <Typography variant="caption" color="text.secondary">
                     Created {created ? moment(created).fromNow() : '–'}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ ml: 2 }}
+                  >
                     Updated {updated ? moment(updated).fromNow() : '–'}
                   </Typography>
                 </Box>
@@ -133,22 +132,60 @@ export default function RowPDF({ row }: { row: any }) {
             </AccordionSummary>
 
             <AccordionDetails>
+              <Typography variant="body1" sx={{ mb: 0.5 }}>
+                {truncatedText}
+              </Typography>
               <Divider sx={{ mb: 2 }} />
+
+
+              {/* Thumbnail card or button */}
+              {showThumbnail ? (
+                <Card sx={{ display: 'flex', mt: 2 }}>
+                  <Grid container spacing={2}>
+                    <Grid size={{xs: 4} }>
+                      <CardMedia
+                        component="img"
+                        sx={{ width: '100%', height: 'auto' }}
+                        image={`/png/thumbnails/${thumbnail}`}
+                        alt="PDF thumbnail"
+                      />
+                    </Grid>
+                    <Grid size={{xs: 8} }>
+                      <CardContent>
+
               {renderRow('Filesize', formatFileSize(filesize))}
               {renderRow('MIME Type', mimeType)}
+
+                        {/* <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                          Thumbnail
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ wordBreak: 'break-all' }}
+                        >
+                          {thumbnail}
+                        </Typography> */}
+                      </CardContent>
+                    </Grid>
+                  </Grid>
+                </Card>
+              ) : (
+                <MightyButton
+                  sx={{ my: 2 }}
+                  variant="outlined"
+                  icon="photo"
+                  label="Make Thumbnail"
+                  color="primary"
+                  onClick={handleMakeThumbnail}
+                />
+              )}
             </AccordionDetails>
           </Accordion>
         </Box>
 
         {/* RIGHT: Action buttons */}
         <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
-          <MightyButton
-            mode="icon"
-            icon="edit"
-            label="Edit"
-            color="primary"
-            onClick={handleEdit}
-          />
           <MightyButton
             mode="icon"
             icon="view"
@@ -171,8 +208,8 @@ export default function RowPDF({ row }: { row: any }) {
         <DialogTitle>Delete PDF</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete <strong>{label}</strong>? This action cannot be
-            undone.
+            Are you sure you want to delete <strong>{label}</strong>? This action
+            cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

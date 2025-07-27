@@ -16,8 +16,6 @@ export const setSetting =
       // provide defaults if settings are missing
       const currentSettings = state?.redux.settings;
 
-      console.log("currentSettings", currentSettings)
-
       // build a new settings object with the updated or new key
       const updatedSettings = {
         ...currentSettings,
@@ -25,12 +23,12 @@ export const setSetting =
       };
 
       // persist back to store
-      // dispatch(
-      //   setUbereduxKey({
-      //     key: 'settings',
-      //     value: updatedSettings,
-      //   })
-      // );
+      dispatch(
+        setUbereduxKey({
+          key: 'settings',
+          value: updatedSettings,
+        })
+      );
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       dispatch(

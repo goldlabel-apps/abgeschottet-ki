@@ -11,6 +11,7 @@ import {
 import {
     setKeyValue,
     updatePrompt,
+    makeThumbnail,
     reset,
     showFeedback,
     setSetting,
@@ -58,4 +59,5 @@ export {
     Settings,
     setSetting,
     log,
+    makeThumbnail,
 }

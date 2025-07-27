@@ -4,8 +4,6 @@
 import * as React from 'react';
 import {
   TextField,
-  IconButton,
-  InputAdornment,
   Box,
   FormControl,
   InputLabel,
@@ -125,23 +123,6 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
           helperText={
             !valid && value.length > 0 ? 'Must be at least 10 characters' : ' '
           }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment
-                position="end"
-                sx={{
-                  alignItems: 'flex-start',
-                  mt: 1,
-                }}
-              >
-                {value && value.length > 0 && (
-                  <IconButton onClick={handleReset(key)} edge="end">
-                    <Icon icon="close" />
-                  </IconButton>
-                )}
-              </InputAdornment>
-            ),
-          }}
         />
       </Box>
     );
@@ -150,13 +131,15 @@ export default function PromptBuilder({ onSubmit }: PromptBuilderProps) {
   return (
     <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* Accordion for dropdowns */}
-      <Accordion sx={{boxShadow:0}}>
+      <Accordion sx={{boxShadow:0}} defaultExpanded>
         <AccordionSummary
           expandIcon={<Icon icon="down" color="primary" />}
           aria-controls="fine-tuning-content"
           id="fine-tuning-header"
         >
-          <Typography variant="subtitle1">Fine tune your prompt</Typography>
+          <Typography variant="h6">
+            Adjust prompt
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Box display="flex" flexDirection="column" alignItems="flex-start" gap={2}>

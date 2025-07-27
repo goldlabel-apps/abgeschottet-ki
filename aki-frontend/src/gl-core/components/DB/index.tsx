@@ -2,6 +2,8 @@ import DB from './DB';
 import Table from './components/Table';
 import RowKI from './components/RowKI';
 import RowPDF from './components/RowPDF';
+import RowLog from './components/RowLog';
+
 import {initDB} from './actions/initDB';
 import {fetchSchema} from './actions/fetchSchema';
 import {
@@ -18,4 +20,5 @@ export{
     deletePDF,
     RowPDF,
     RowKI,
+    RowLog,
 };

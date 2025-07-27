@@ -40,7 +40,7 @@ export default function DB({ mode = 'default' }: TDB) {
     <Box sx={{ p: 2 }}>
       <CardHeader
         avatar={<Icon icon="database" color="primary" />}
-        title="Database"
+        title="Tables"
         action={<MightyButton 
                   mode="icon"
                   label="Reload"
@@ -71,7 +71,7 @@ export default function DB({ mode = 'default' }: TDB) {
                         No schema info available.
                       </Typography>
                     )}
-                    {schemaArray.slice(0, 5).map(([_, field]) => (
+                    {schemaArray.map(([_, field]) => (
                       <Typography
                         key={field.cid}
                         variant="body2"
@@ -81,15 +81,7 @@ export default function DB({ mode = 'default' }: TDB) {
                         {field.pk ? ' (PK)' : ''} {field.notnull ? ' NOT NULL' : ''}
                       </Typography>
                     ))}
-                    {schemaArray.length > 5 && (
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ mt: 1, display: 'block' }}
-                      >
-                        …more fields
-                      </Typography>
-                    )}
+                
                   </CardContent>
                 </CardActionArea>
               </Card>

@@ -7,9 +7,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
+  ListItemButton,
+  ListItemIcon,
   Box,
-  Typography
+  Typography,
+  ListItemText,
 } from '@mui/material';
 import {
   useSettings,
@@ -17,6 +19,7 @@ import {
   Icon,
   setSetting,
   MightyButton,
+  reset,
 } from '../../gl-core';
 
 export default function Settings() {
@@ -24,8 +27,14 @@ export default function Settings() {
   const { dialog } = settings; // boolean controlling open/close
   const dispatch = useDispatch();
 
+  const handleReset = () => {
+    dispatch(reset());
+    handleClose();
+  }
+
   const handleOpen = () => {
     dispatch(setSetting('dialog', true));
+    
   };
 
   const handleClose = () => {
@@ -50,23 +59,47 @@ export default function Settings() {
         <DialogTitle>
           <Box display="flex" alignItems="center" gap={1}>
             <Icon icon="settings" />
-            <Typography variant="h6">Settings</Typography>
+            <Typography variant="h6">
+              Settings
+            </Typography>
           </Box>
         </DialogTitle>
 
-        <DialogContent dividers>
-          <Typography variant="body2" gutterBottom>
+        <DialogContent>
+          <Typography variant="body2" gutterBottom sx={{mb: 2}}>
             Here you can configure application preferences.
           </Typography>
-          <pre style={{ fontSize: '0.8rem', background: '#f5f5f5', padding: '8px', borderRadius: '4px' }}>
+          {/* <pre style={{ fontSize: '0.8rem', background: '#f5f5f5', padding: '8px', borderRadius: '4px' }}>
             {JSON.stringify(settings, null, 2)}
-          </pre>
+          </pre> */}
+
+
+
+          <ListItemButton onClick={handleReset}>
+            <ListItemIcon
+              sx={{
+                mr: 2,
+                justifyContent: 'center',
+              }}
+            >
+              <Icon icon={"reset"} color="primary" />
+            </ListItemIcon>
+            <ListItemText 
+              primary={"Reset to Factory Settings"}
+              secondary={"Reset. Restart. Clean slate"}
+            />
+          </ListItemButton>
+
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleClose} color="primary" variant="contained">
-            Close
-          </Button>
+          <MightyButton 
+            label="OK"
+            variant="contained"
+            icon="tick"
+            iconPlacement='right'
+            onClick={handleClose}
+          />
         </DialogActions>
       </Dialog>
     </>
