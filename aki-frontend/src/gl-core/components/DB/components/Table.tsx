@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Box, List } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import { Icon, useDispatch, useSlice, Upload } from '../../../../gl-core';
+import { Icon, useDispatch, useSlice, FilePDF } from '../../../../gl-core';
 import { fetchTable, RowKI, RowPDF, RowLog } from '../';
 
 export default function Table() {
@@ -36,7 +36,7 @@ export default function Table() {
               return <RowKI key={row.id ?? index} row={row} />;
             }
             if (tableName === 'pdfs') {
-              return <RowPDF key={row.id ?? index} data={row} />;
+              return <FilePDF key={row.id ?? index} data={row} />;
             }
             if (tableName === 'log') {
               return <RowLog key={row.id ?? index} row={row} />;

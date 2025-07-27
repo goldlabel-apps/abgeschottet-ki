@@ -14,6 +14,7 @@ export type TMightyButton = {
   label?: string | undefined;
   variant?: 'contained' | 'outlined' | 'text' | undefined;
   sx?: any;
+  size?: string;
   color?: any;
   icon?: string | undefined;
   fullWidth?: boolean;

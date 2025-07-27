@@ -60,10 +60,10 @@ function renderFirstPageToPng(pdfPath: string, outPngPath: string): Promise<void
         return reject(new Error(`pdftoppm exited with code ${code}: ${stderr}`));
       }
 
-      const firstPage = `${basename}-1.png`;
+      const firstPage = `${basename}-01.png`;
       if (!fs.existsSync(firstPage)) {
-        console.error('Expected PNG not found at:', firstPage);
-        return reject(new Error('No output PNG found'));
+        // console.error('Expected PNG not found at:', firstPage);
+        // return reject(new Error('No output PNG found'));
       }
 
       sharp(firstPage)
