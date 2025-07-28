@@ -1,1 +1,0 @@
-// abgeschottet-ki/pdf-smash/src/routes/index.ts

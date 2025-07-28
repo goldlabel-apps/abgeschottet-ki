@@ -5,7 +5,7 @@ import {header, endpoints} from './lib';
 
 import testRouter from './routes/test/test';
 import dbRouter from './routes/db';
-import kiRouter from './routes/ki/ki';
+import kiRouter from './routes/ki';
 import pdfRouter from './routes/pdf';
 import logRouter from './routes/log';
 

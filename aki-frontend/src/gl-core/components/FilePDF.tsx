@@ -18,6 +18,7 @@ import {
   useDispatch,
   MightyButton,
   rip,
+  summarise,
 } from '../../gl-core';
 import { deletePDF } from '../components/DB';
 
@@ -32,6 +33,7 @@ interface RowPDFProps {
     updated?: number | string;
     createdAt?: string;
     rawText?: string | null;
+    summary?: string | null;
     [key: string]: any;
   };
 }
@@ -41,17 +43,21 @@ export default function FilePDF({ data }: RowPDFProps) {
   const router = useRouter();
 
   const handleDelete = () => {
-    dispatch(deletePDF(data?.id as any));
+    if (data?.id){
+      dispatch(deletePDF(data?.id as any));
+    }
   };
 
   const handleRip = () => {
-    dispatch(rip(data?.id as any));
+    if (data?.id){
+      dispatch(rip(data?.id as any));
+    }
   };
 
-  // Placeholder for summarise handler (implement as needed)
   const handleSummarise = () => {
-    // e.g. dispatch(summarise(data?.id));
-    console.log('Summarise clicked for id:', data?.id);
+    if (data?.id){
+      dispatch(summarise(data.id))
+    }
   };
 
   const hasErrorThumbnail =
@@ -69,11 +75,15 @@ export default function FilePDF({ data }: RowPDFProps) {
   const hasRawText = rawText.trim().length > 0;
   const rawTextIsError = rawText.startsWith('[ERROR]');
 
+  const summary = data?.summary ?? '';
+  const hasSummary = summary.trim().length > 0;
+  const summaryIsError = summary.startsWith('[ERROR]');
+
   return (
     <Card sx={{ mb: 1 }}>
       <Grid container spacing={2}>
 
-        <Grid size={{xs:12}}>
+        <Grid size={{ xs: 12 }}>
           <MightyButton
             mode="icon"
             label="Delete"
@@ -147,6 +157,23 @@ export default function FilePDF({ data }: RowPDFProps) {
             px: 2,
           }}
         >
+          {/* Summary field */}
+          {hasSummary ? (
+            summaryIsError ? (
+              <Alert severity="error" sx={{ mb: 1 }}>
+                {summary.replace(/^\[ERROR\]\s*/, '')}
+              </Alert>
+            ) : (
+              <Alert severity="success" sx={{ mb: 1 }}>
+                {summary}
+              </Alert>
+            )
+          ) : (
+            <Alert severity="warning" sx={{ mb: 1 }}>
+              No summary available
+            </Alert>
+          )}
+
           <Typography variant="caption" color="text.secondary" sx={{ mb: 2 }}>
             Updated {data?.updated ? moment(data.updated).fromNow() : 'Unknown'}
           </Typography>
@@ -157,7 +184,6 @@ export default function FilePDF({ data }: RowPDFProps) {
             </Alert>
           ) : (
             <>
-              {/* Show "Extract rawText" button if no raw text */}
               {!hasRawText && (
                 <MightyButton
                   icon="pdf"
@@ -167,8 +193,6 @@ export default function FilePDF({ data }: RowPDFProps) {
                   sx={{ my: 2, alignSelf: 'flex-start' }}
                 />
               )}
-
-              {/* Show "Summarise" button if thumbnail and rawText exist */}
               {isValidThumbnail && hasRawText && (
                 <MightyButton
                   icon="ki"

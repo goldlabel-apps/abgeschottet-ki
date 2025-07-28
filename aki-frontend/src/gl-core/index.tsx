@@ -40,6 +40,7 @@ import {
   setSetting,
   log,
   rip,
+  summarise,
 } from './actions';
 
 export {
@@ -70,4 +71,5 @@ export {
   Settings,
   Icon,
   FilePDF,
+  summarise,
 };
