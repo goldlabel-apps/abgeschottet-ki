@@ -198,8 +198,19 @@ export default function FilePDF({ data }: RowPDFProps) {
               </Box>
             )
           ) : (
-            <Alert severity="warning" sx={{ mb: 1 }}>
-              No summary available
+            <Alert severity="error" sx={{ mb: 1 }}>
+              <Typography variant="body2">
+                  Summary not yet created
+              </Typography>
+              
+              <MightyButton
+                  icon="ki"
+                  variant="contained"
+                  label="Create Summary"
+                  onClick={handleSummarise}
+                  sx={{ my: 2, alignSelf: 'flex-start' }}
+                  disabled={isFetching}
+                />
             </Alert>
           )}
 
@@ -223,16 +234,7 @@ export default function FilePDF({ data }: RowPDFProps) {
                   disabled={isFetching}
                 />
               )}
-              {isValidThumbnail && hasRawText && !hasSummary && (
-                <MightyButton
-                  icon="ki"
-                  variant="outlined"
-                  label="Summarise"
-                  onClick={handleSummarise}
-                  sx={{ my: 2, alignSelf: 'flex-start' }}
-                  disabled={isFetching}
-                />
-              )}
+              
             </>
           )}
         </Grid>
