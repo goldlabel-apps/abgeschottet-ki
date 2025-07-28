@@ -12,6 +12,7 @@ import {
   Alert,
   ButtonBase,
   Link as MuiLink,
+  LinearProgress,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import {
@@ -22,7 +23,6 @@ import {
 } from '../../gl-core';
 import { deletePDF } from '../components/DB';
 import { useKIBus } from '../../gl-core/hooks/useKIBus';
-import { AddBox } from '@mui/icons-material';
 
 interface RowPDFProps {
   data?: {
@@ -45,6 +45,17 @@ export default function FilePDF({ data }: RowPDFProps) {
   const router = useRouter();
   const kiBus = useKIBus();
   const kiBusEntry = data?.id ? kiBus?.[data.id] : null;
+  const isFetching = kiBusEntry?.fetching === true;
+
+  const [analysing, setAnalysing] = React.useState(false);
+  const [localSummary, setLocalSummary] = React.useState(data?.summary ?? '');
+
+  React.useEffect(() => {
+    if (data?.summary && analysing) {
+      setAnalysing(false);
+      setLocalSummary(data.summary);
+    }
+  }, [data?.summary, analysing]);
 
   const handleDelete = () => {
     if (data?.id) {
@@ -59,9 +70,12 @@ export default function FilePDF({ data }: RowPDFProps) {
   };
 
   const handleSummarise = () => {
-    if (data?.id) {
-      dispatch(summarise(data.id));
+    if (!data?.id) return;
+    if (localSummary) {
+      setLocalSummary('');
     }
+    setAnalysing(true);
+    dispatch(summarise(data.id));
   };
 
   const hasErrorThumbnail =
@@ -79,33 +93,31 @@ export default function FilePDF({ data }: RowPDFProps) {
   const hasRawText = rawText.trim().length > 0;
   const rawTextIsError = rawText.startsWith('[ERROR]');
 
-  const summary = data?.summary ?? '';
-  const hasSummary = summary.trim().length > 0;
+  const summary = localSummary.trim();
+  const hasSummary = summary.length > 0;
   const summaryIsError = summary.startsWith('[ERROR]');
 
   return (
     <Card sx={{ mb: 1 }}>
+      {isFetching && <LinearProgress />}
       <Grid container spacing={2}>
         <Grid size={{ xs: 12 }}>
-
           <CardHeader 
-            title={<Typography
-                      variant="h6"
-                    >
-                      {data?.label ?? 'Untitled PDF'}
-                    </Typography>}
-            action={<>
-                    <MightyButton
-                      mode="icon"
-                      label="Delete"
-                      icon="delete"
-                      onClick={handleDelete}
-                    />
-                  </>}
+            title={
+              <Typography variant="h6">
+                {data?.label ?? 'Untitled PDF'}
+              </Typography>
+            }
+            action={
+              <MightyButton
+                mode="icon"
+                label="Delete"
+                icon="delete"
+                onClick={handleDelete}
+                disabled={isFetching}
+              />
+            }
           />
-
-          
-          
         </Grid>
 
         {hasErrorThumbnail ? (
@@ -169,14 +181,20 @@ export default function FilePDF({ data }: RowPDFProps) {
             px: 2,
           }}
         >
-          {hasSummary ? (
+          {analysing ? (
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Analysing...
+            </Typography>
+          ) : hasSummary ? (
             summaryIsError ? (
               <Alert severity="error" sx={{ mb: 1 }}>
                 {summary.replace(/^\[ERROR\]\s*/, '')}
               </Alert>
             ) : (
               <Box sx={{ mb: 1 }}>
-                <Typography variant="body2">{summary}</Typography>
+                <Typography variant="body2">
+                  {summary}
+                </Typography>
               </Box>
             )
           ) : (
@@ -202,28 +220,21 @@ export default function FilePDF({ data }: RowPDFProps) {
                   label="Extract rawText"
                   onClick={handleRip}
                   sx={{ my: 2, alignSelf: 'flex-start' }}
+                  disabled={isFetching}
                 />
               )}
-              {isValidThumbnail && hasRawText && (
+              {isValidThumbnail && hasRawText && !hasSummary && (
                 <MightyButton
                   icon="ki"
                   variant="outlined"
                   label="Summarise"
                   onClick={handleSummarise}
                   sx={{ my: 2, alignSelf: 'flex-start' }}
+                  disabled={isFetching}
                 />
               )}
             </>
           )}
-
-          {/* {kiBusEntry && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="caption" fontWeight="bold">
-                kiBus entry:
-              </Typography>
-              <pre>{JSON.stringify(kiBusEntry, null, 2)}</pre>
-            </Box>
-          )} */}
         </Grid>
       </Grid>
     </Card>

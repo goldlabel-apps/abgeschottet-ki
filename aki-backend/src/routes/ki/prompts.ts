@@ -5,10 +5,10 @@ You are a lawyer with 20 years of experience specialising in traffic law.
 `;
 
 export const pleaseSummarise = `
-Below is the full text of a legal document related to a car accident. Read it carefully and write a concise summary in plain language. Your summary should:
-- Be tweet-length (max 280 characters)
-- Convey the key point of the document
-- Start directly with a sentence (do not begin with "Summary:" or similar)
+You will be given the full text of a legal document related to a car accident. Identify what kind of document it is (e.g. invoice, settlement, police report) and briefly describe its purpose. Your response must:
+- Be in plain language
+- Fit within 280 characters
+- Start directly with a sentence (no headings or labels)
 
 Document:
 `;

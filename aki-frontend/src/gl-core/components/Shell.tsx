@@ -160,12 +160,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
             title={<Typography color="primary">
                     AKI
                   </Typography>}
-            // subheader={
-            //   <Typography color="secondary" variant='caption'>
-            //     Abgeschottet KI is a Ringfenced AI powered Document Management for SMEs
-            //   </Typography>
-            // }
-            action={<><Upload /><Settings /></>}
+            action={<>
+                      <Settings />
+                      <Upload />
+                    </>}
           />
         </Toolbar>
       </AppBar>
