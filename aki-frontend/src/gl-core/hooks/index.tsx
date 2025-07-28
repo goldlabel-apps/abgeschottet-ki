@@ -5,6 +5,7 @@ import { usePrompt } from './usePrompt';
 import { useFeedback } from './useFeedback';
 import { useThemeMode } from './useThemeMode';
 import { useSettings } from './useSettings';
+import { useKIBus } from './useKIBus';
 
 export {
     useSlice,
@@ -12,4 +13,5 @@ export {
     useFeedback,
     useThemeMode,
     useSettings,
+    useKIBus,
 }

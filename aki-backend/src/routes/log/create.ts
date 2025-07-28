@@ -1,4 +1,5 @@
 // aki/aki-backend/src/routes/log/create.ts
+
 import { Router, Request, Response } from 'express';
 import { header } from '../../lib/header';
 import { db } from '../../lib/database';
@@ -22,9 +23,9 @@ createRouter.get('/', (_req: Request, res: Response) => {
         severity: 'info',
         title: 'Some title',
         description: 'Some description',
-        data: { foo: 'bar' }
-      }
-    }
+        data: { foo: 'bar' },
+      },
+    },
   });
 });
 
@@ -46,7 +47,18 @@ createRouter.post('/', (req: Request, res: Response) => {
 
     const now = Date.now();
 
-    // Prepare and run the insert statement
+    // Safely prepare the `data` field
+    let safeData: string | null = null;
+    try {
+      if (typeof data === 'object' && data !== null) {
+        safeData = JSON.stringify(data);
+      } else if (typeof data === 'string') {
+        safeData = JSON.stringify({ message: data });
+      }
+    } catch (e) {
+      safeData = JSON.stringify({ error: 'Unserializable data' });
+    }
+
     const stmt = db.prepare(
       `INSERT INTO ${tableName} (created, updated, severity, title, description, data)
        VALUES (?, ?, ?, ?, ?, ?)`
@@ -58,21 +70,19 @@ createRouter.post('/', (req: Request, res: Response) => {
       severity,
       title,
       description,
-      data ? JSON.stringify(data) : null
+      safeData
     );
-
-    const lastInsertRowid = info.lastInsertRowid;
 
     return res.json({
       ...header,
       severity: 'success',
       title: `${title} log saved`,
       data: {
-        id: lastInsertRowid,
+        id: info.lastInsertRowid,
       },
     });
   } catch (err: any) {
-    console.error(`[log/create] Error:`, err);
+    console.error('[log/create] Error:', err);
     return res.status(500).json({
       ...header,
       severity: 'error',

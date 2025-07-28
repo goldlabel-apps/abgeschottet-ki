@@ -10,8 +10,7 @@ import {
 } from '../components/DB';
 
 /**
- * Calls the ripText endpoint
- * http://localhost:4000/pdf/rip/23
+ * Calls the ripText endpoint with :id
  */
 
 export const rip =
