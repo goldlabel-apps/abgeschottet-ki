@@ -9,6 +9,7 @@ import { showFeedback } from './showFeedback';
 import { summarise } from './summarise';
 import { updatePrompt } from './updatePrompt';
 import { setKIBus } from './setKIBus';
+import { cancelOperation } from './cancelOperation';
 
 export {
   log,
@@ -21,4 +22,5 @@ export {
   summarise,
   updatePrompt,
   setKIBus,
+  cancelOperation,
 };

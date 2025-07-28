@@ -43,6 +43,7 @@ import {
   rip,
   summarise,
   setKIBus,
+  cancelOperation,
 } from './actions';
 
 export {
@@ -76,4 +77,5 @@ export {
   summarise,
   setKIBus,
   useKIBus,
+  cancelOperation,
 };
