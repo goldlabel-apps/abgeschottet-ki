@@ -50,6 +50,8 @@ export default function FilePDF({ data }: RowPDFProps) {
   const [analysing, setAnalysing] = React.useState(false);
   const [localSummary, setLocalSummary] = React.useState(data?.summary ?? '');
 
+  const hasTriggeredSummary = React.useRef(false);
+
   React.useEffect(() => {
     if (data?.summary && analysing) {
       setAnalysing(false);
@@ -96,6 +98,21 @@ export default function FilePDF({ data }: RowPDFProps) {
   const summary = localSummary.trim();
   const hasSummary = summary.length > 0;
   const summaryIsError = summary.startsWith('[ERROR]');
+
+  // Automatically trigger summarise when rawText becomes available
+  React.useEffect(() => {
+    const canSummarise =
+      data?.id &&
+      !data.summary &&
+      typeof data.rawText === 'string' &&
+      data.rawText.trim().length > 0 &&
+      !data.rawText.startsWith('[ERROR]');
+
+    if (canSummarise && !hasTriggeredSummary.current && !analysing && !kiBusEntry?.fetching) {
+      hasTriggeredSummary.current = true;
+      handleSummarise();
+    }
+  }, [data?.id, data?.summary, data?.rawText, analysing, kiBusEntry]);
 
   return (
     <Card sx={{ mb: 1 }}>
@@ -200,17 +217,17 @@ export default function FilePDF({ data }: RowPDFProps) {
           ) : (
             <Alert severity="error" sx={{ mb: 1 }}>
               <Typography variant="body2">
-                  Summary not yet created
+                Summary not yet created
               </Typography>
-              
+
               <MightyButton
-                  icon="ki"
-                  variant="contained"
-                  label="Create Summary"
-                  onClick={handleSummarise}
-                  sx={{ my: 2, alignSelf: 'flex-start' }}
-                  disabled={isFetching}
-                />
+                icon="ki"
+                variant="contained"
+                label="Create Summary"
+                onClick={handleSummarise}
+                sx={{ my: 2, alignSelf: 'flex-start' }}
+                disabled={isFetching}
+              />
             </Alert>
           )}
 
@@ -234,7 +251,6 @@ export default function FilePDF({ data }: RowPDFProps) {
                   disabled={isFetching}
                 />
               )}
-              
             </>
           )}
         </Grid>

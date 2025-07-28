@@ -37,14 +37,14 @@ export const setKIBus = (
         })
       );
 
-      dispatch(showFeedback({
-        severity: 'info',
-        title: 'KI Bus updated',
-        description: `Updated KI state for PDF ID ${id}`,
-      }));
+      // dispatch(showFeedback({
+      //   severity: 'info',
+      //   title: 'KI Bus updated',
+      //   description: `Updated KI state for PDF ID ${id}`,
+      // }));
 
       dispatch(log({
-        severity: 'info',
+        severity: 'success',
         title: 'KI Bus update',
         description: `KI Bus updated for ID ${id}`,
         data: value,

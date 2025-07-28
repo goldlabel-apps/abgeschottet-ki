@@ -5,10 +5,11 @@ You are a lawyer with 20 years of experience specialising in traffic law.
 `;
 
 export const pleaseSummarise = `
-You will be given the full text of a legal document related to a car accident. Identify what kind of document it is (e.g. invoice, settlement, police report) and briefly describe its purpose. Your response must:
-- Be in plain language
-- Fit within 280 characters
-- Start directly with a sentence (no headings or labels)
+You will be given the text of a legal document about a car accident. Summarise in one short, plain English sentence, what the document concerns.
+
+Guidelines:
+
+- Keep the response very short, under 140 characters.
 
 Document:
 `;
