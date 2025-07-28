@@ -20,6 +20,7 @@ import {
   MightyButton,
   rip,
   summarise,
+  cancelOperation,
 } from '../../gl-core';
 import { deletePDF } from '../components/DB';
 import { useKIBus } from '../../gl-core/hooks/useKIBus';
@@ -49,7 +50,6 @@ export default function FilePDF({ data }: RowPDFProps) {
 
   const [analysing, setAnalysing] = React.useState(false);
   const [localSummary, setLocalSummary] = React.useState(data?.summary ?? '');
-
   const hasTriggeredSummary = React.useRef(false);
 
   React.useEffect(() => {
@@ -60,30 +60,28 @@ export default function FilePDF({ data }: RowPDFProps) {
   }, [data?.summary, analysing]);
 
   const handleDelete = () => {
-    if (data?.id) {
-      dispatch(deletePDF(data.id as any));
-    }
+    if (data?.id) dispatch(deletePDF(data.id));
   };
 
   const handleRip = () => {
-    if (data?.id) {
-      dispatch(rip(data.id as any));
-    }
+    if (data?.id) dispatch(rip(data.id));
   };
 
   const handleSummarise = () => {
     if (!data?.id) return;
-    if (localSummary) {
-      setLocalSummary('');
-    }
+    if (localSummary) setLocalSummary('');
     setAnalysing(true);
     dispatch(summarise(data.id));
+  };
+
+  const handleCancel = () => {
+    if (data?.id) dispatch(cancelOperation(data.id));
   };
 
   const hasErrorThumbnail =
     typeof data?.thumbnail === 'string' && data.thumbnail.startsWith('[ERROR]');
   const errorMessage = hasErrorThumbnail
-    ? data!.thumbnail!.replace(/^\[ERROR\]\s*/, '')
+    ? data.thumbnail.replace(/^\[ERROR\]\s*/, '')
     : null;
   const isValidThumbnail =
     typeof data?.thumbnail === 'string' && !hasErrorThumbnail;
@@ -99,7 +97,6 @@ export default function FilePDF({ data }: RowPDFProps) {
   const hasSummary = summary.length > 0;
   const summaryIsError = summary.startsWith('[ERROR]');
 
-  // Automatically trigger summarise when rawText becomes available
   React.useEffect(() => {
     const canSummarise =
       data?.id &&
@@ -119,20 +116,31 @@ export default function FilePDF({ data }: RowPDFProps) {
       {isFetching && <LinearProgress />}
       <Grid container spacing={2}>
         <Grid size={{ xs: 12 }}>
-          <CardHeader 
+          <CardHeader
             title={
               <Typography variant="h6">
                 {data?.label ?? 'Untitled PDF'}
               </Typography>
             }
             action={
-              <MightyButton
-                mode="icon"
-                label="Delete"
-                icon="delete"
-                onClick={handleDelete}
-                disabled={isFetching}
-              />
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                {isFetching && (
+                  <MightyButton
+                    mode="icon"
+                    label="Cancel"
+                    icon="cancel"
+                    onClick={handleCancel}
+                    disabled={!isFetching}
+                  />
+                )}
+                <MightyButton
+                  mode="icon"
+                  label="Delete"
+                  icon="delete"
+                  onClick={handleDelete}
+                  disabled={isFetching}
+                />
+              </Box>
             }
           />
         </Grid>
@@ -173,11 +181,7 @@ export default function FilePDF({ data }: RowPDFProps) {
                   component="img"
                   image={thumbnailUrl}
                   alt={`Thumbnail for ${data?.label ?? data?.filename}`}
-                  sx={{
-                    objectFit: 'contain',
-                    m: 1,
-                    alignSelf: 'flex-start',
-                  }}
+                  sx={{ objectFit: 'contain', m: 1, alignSelf: 'flex-start' }}
                 />
               </ButtonBase>
             </Box>
@@ -209,9 +213,7 @@ export default function FilePDF({ data }: RowPDFProps) {
               </Alert>
             ) : (
               <Box sx={{ mb: 1 }}>
-                <Typography variant="body2">
-                  {summary}
-                </Typography>
+                <Typography variant="body2">{summary}</Typography>
               </Box>
             )
           ) : (
@@ -219,7 +221,6 @@ export default function FilePDF({ data }: RowPDFProps) {
               <Typography variant="body2">
                 Summary not yet created
               </Typography>
-
               <MightyButton
                 icon="ki"
                 variant="contained"
@@ -240,18 +241,16 @@ export default function FilePDF({ data }: RowPDFProps) {
               {rawText.replace(/^\[ERROR\]\s*/, '')}
             </Alert>
           ) : (
-            <>
-              {!hasRawText && (
-                <MightyButton
-                  icon="pdf"
-                  variant="contained"
-                  label="Extract rawText"
-                  onClick={handleRip}
-                  sx={{ my: 2, alignSelf: 'flex-start' }}
-                  disabled={isFetching}
-                />
-              )}
-            </>
+            !hasRawText && (
+              <MightyButton
+                icon="pdf"
+                variant="contained"
+                label="Extract rawText"
+                onClick={handleRip}
+                sx={{ my: 2, alignSelf: 'flex-start' }}
+                disabled={isFetching}
+              />
+            )
           )}
         </Grid>
       </Grid>
