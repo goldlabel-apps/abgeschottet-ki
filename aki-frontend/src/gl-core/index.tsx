@@ -29,6 +29,7 @@ import {
   useFeedback,
   useThemeMode,
   useSettings,
+  useKIBus,
 } from './hooks';
 
 import {
@@ -41,6 +42,7 @@ import {
   log,
   rip,
   summarise,
+  setKIBus,
 } from './actions';
 
 export {
@@ -72,4 +74,6 @@ export {
   Icon,
   FilePDF,
   summarise,
+  setKIBus,
+  useKIBus,
 };

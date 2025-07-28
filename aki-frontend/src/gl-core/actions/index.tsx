@@ -8,6 +8,7 @@ import { setSetting } from './setSetting';
 import { showFeedback } from './showFeedback';
 import { summarise } from './summarise';
 import { updatePrompt } from './updatePrompt';
+import { setKIBus } from './setKIBus';
 
 export {
   log,
@@ -19,4 +20,5 @@ export {
   showFeedback,
   summarise,
   updatePrompt,
+  setKIBus,
 };

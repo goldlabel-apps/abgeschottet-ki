@@ -3,12 +3,12 @@
 import * as React from 'react';
 import moment from 'moment';
 import {
-  AppBar,
-  Toolbar,
+  Box,
   Typography,
   Grid,
   Card,
   CardMedia,
+  CardHeader,
   Alert,
   ButtonBase,
   Link as MuiLink,
@@ -21,6 +21,8 @@ import {
   summarise,
 } from '../../gl-core';
 import { deletePDF } from '../components/DB';
+import { useKIBus } from '../../gl-core/hooks/useKIBus';
+import { AddBox } from '@mui/icons-material';
 
 interface RowPDFProps {
   data?: {
@@ -41,22 +43,24 @@ interface RowPDFProps {
 export default function FilePDF({ data }: RowPDFProps) {
   const dispatch = useDispatch();
   const router = useRouter();
+  const kiBus = useKIBus();
+  const kiBusEntry = data?.id ? kiBus?.[data.id] : null;
 
   const handleDelete = () => {
-    if (data?.id){
-      dispatch(deletePDF(data?.id as any));
+    if (data?.id) {
+      dispatch(deletePDF(data.id as any));
     }
   };
 
   const handleRip = () => {
-    if (data?.id){
-      dispatch(rip(data?.id as any));
+    if (data?.id) {
+      dispatch(rip(data.id as any));
     }
   };
 
   const handleSummarise = () => {
-    if (data?.id){
-      dispatch(summarise(data.id))
+    if (data?.id) {
+      dispatch(summarise(data.id));
     }
   };
 
@@ -82,29 +86,26 @@ export default function FilePDF({ data }: RowPDFProps) {
   return (
     <Card sx={{ mb: 1 }}>
       <Grid container spacing={2}>
-
         <Grid size={{ xs: 12 }}>
-          <MightyButton
-            mode="icon"
-            label="Delete"
-            icon="delete"
-            onClick={handleDelete}
+
+          <CardHeader 
+            title={<Typography
+                      variant="h6"
+                    >
+                      {data?.label ?? 'Untitled PDF'}
+                    </Typography>}
+            action={<>
+                    <MightyButton
+                      mode="icon"
+                      label="Delete"
+                      icon="delete"
+                      onClick={handleDelete}
+                    />
+                  </>}
           />
-          <MuiLink
-            component="button"
-            onClick={() => router.push(`/pdfs/${data?.id}`)}
-            underline="hover"
-            sx={{ cursor: 'pointer' }}
-          >
-            <Typography
-              variant="h6"
-              noWrap
-              sx={{ flexGrow: 1, userSelect: 'text' }}
-              title={data?.label}
-            >
-              {data?.label ?? 'Untitled PDF'}
-            </Typography>
-          </MuiLink>
+
+          
+          
         </Grid>
 
         {hasErrorThumbnail ? (
@@ -121,25 +122,36 @@ export default function FilePDF({ data }: RowPDFProps) {
               flexShrink: 0,
               display: 'flex',
               justifyContent: 'center',
+              alignItems: 'flex-start',
               p: 2,
             }}
           >
-            <Card sx={{ width: '100%', aspectRatio: '3 / 4' }}>
+            <Box sx={{ width: '100%', aspectRatio: '3 / 4' }}>
               <ButtonBase
                 component="a"
                 href={pdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                sx={{ width: '100%', height: '100%' }}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                }}
               >
                 <CardMedia
                   component="img"
                   image={thumbnailUrl}
                   alt={`Thumbnail for ${data?.label ?? data?.filename}`}
-                  sx={{ objectFit: 'contain', m: 1 }}
+                  sx={{
+                    objectFit: 'contain',
+                    m: 1,
+                    alignSelf: 'flex-start',
+                  }}
                 />
               </ButtonBase>
-            </Card>
+            </Box>
           </Grid>
         ) : null}
 
@@ -157,16 +169,15 @@ export default function FilePDF({ data }: RowPDFProps) {
             px: 2,
           }}
         >
-          {/* Summary field */}
           {hasSummary ? (
             summaryIsError ? (
               <Alert severity="error" sx={{ mb: 1 }}>
                 {summary.replace(/^\[ERROR\]\s*/, '')}
               </Alert>
             ) : (
-              <Alert severity="success" sx={{ mb: 1 }}>
-                {summary}
-              </Alert>
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="body2">{summary}</Typography>
+              </Box>
             )
           ) : (
             <Alert severity="warning" sx={{ mb: 1 }}>
@@ -204,6 +215,15 @@ export default function FilePDF({ data }: RowPDFProps) {
               )}
             </>
           )}
+
+          {/* {kiBusEntry && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="caption" fontWeight="bold">
+                kiBus entry:
+              </Typography>
+              <pre>{JSON.stringify(kiBusEntry, null, 2)}</pre>
+            </Box>
+          )} */}
         </Grid>
       </Grid>
     </Card>

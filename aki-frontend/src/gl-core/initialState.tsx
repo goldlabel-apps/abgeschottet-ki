@@ -7,6 +7,27 @@ export const initialState: any = {
   vs: pJSON.version,
   created_at: Date.now(),
   themes: config.themes,
+  kiBus: {
+    128: {
+      lastFetched: 12342434,
+      fetching: false,
+      fetched: true,
+      error: null,
+      data: {
+        title: "128 Data",
+      }
+    },
+    129: {
+      lastFetched: Date.now(),
+      fetching: true,
+      fetched: false,
+      error: null,
+      data: {
+        foo: "bar",
+      }
+    },
+
+  },
   settings: {
     themeMode: 'light',
     dialog: false,

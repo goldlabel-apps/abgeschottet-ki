@@ -1,6 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../../lib/database'; // your better-sqlite3 instance
 import { header } from '../../lib/header';
+import {
+  kiLawyer,
+  pleaseSummarise,
+} from './prompts';
 
 const createRouter = Router();
 
@@ -34,9 +38,9 @@ createRouter.get('/:id', async (req: Request, res: Response) => {
     }
 
     const prompt = `
-The following is the full text of a car accident-related legal document. Read the text carefully and create a short summary with these guidelines - The \`summary\` field must be a short, tweet-length (max 280 characters) summary of the document content.
-
-${row.rawText}
+      ${kiLawyer}
+      ${pleaseSummarise}
+      ${row.rawText}
     `.trim();
 
     // POST to LLM API for streaming response
