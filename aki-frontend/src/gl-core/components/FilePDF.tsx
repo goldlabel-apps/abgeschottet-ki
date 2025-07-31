@@ -51,7 +51,22 @@ export default function FilePDF({ data }: RowPDFProps) {
   const [analysing, setAnalysing] = React.useState(false);
   const [localSummary, setLocalSummary] = React.useState(data?.summary ?? '');
   const [showFullSummary, setShowFullSummary] = React.useState(false);
+  const [analysisStart, setAnalysisStart] = React.useState<number | null>(null);
+  const [elapsed, setElapsed] = React.useState(0);
   const hasTriggeredSummary = React.useRef(false);
+
+  React.useEffect(() => {
+    if (analysing) {
+      setAnalysisStart(Date.now());
+      const interval = setInterval(() => {
+        setElapsed(Math.floor((Date.now() - (analysisStart ?? Date.now())) / 1000));
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setElapsed(0);
+      setAnalysisStart(null);
+    }
+  }, [analysing]);
 
   React.useEffect(() => {
     if (data?.summary && analysing) {
@@ -208,7 +223,7 @@ export default function FilePDF({ data }: RowPDFProps) {
         >
           {analysing ? (
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Analysing...
+              Analysing... {elapsed}s
             </Typography>
           ) : hasSummary ? (
             summaryIsError ? (
@@ -247,10 +262,6 @@ export default function FilePDF({ data }: RowPDFProps) {
               />
             </Alert>
           ) : null}
-
-          {/* <Typography variant="caption" color="text.secondary" sx={{ mb: 2 }}>
-            Updated {data?.updated ? moment(data.updated).fromNow() : 'Unknown'}
-          </Typography> */}
 
           {rawTextIsError ? (
             <Alert severity="error" sx={{ mb: 2 }}>
