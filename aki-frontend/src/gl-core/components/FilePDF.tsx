@@ -50,6 +50,7 @@ export default function FilePDF({ data }: RowPDFProps) {
 
   const [analysing, setAnalysing] = React.useState(false);
   const [localSummary, setLocalSummary] = React.useState(data?.summary ?? '');
+  const [showFullSummary, setShowFullSummary] = React.useState(false);
   const hasTriggeredSummary = React.useRef(false);
 
   React.useEffect(() => {
@@ -111,11 +112,14 @@ export default function FilePDF({ data }: RowPDFProps) {
     }
   }, [data?.id, data?.summary, data?.rawText, analysing, kiBusEntry]);
 
+  const truncatedSummary =
+    summary.length > 480 ? summary.slice(0, 480).trimEnd() + '…' : summary;
+
   return (
     <Card sx={{ mb: 1 }}>
       {isFetching && <LinearProgress />}
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12 }}>
+        <Grid size={12}>
           <CardHeader
             title={
               <Typography variant="h6">
@@ -213,10 +217,22 @@ export default function FilePDF({ data }: RowPDFProps) {
               </Alert>
             ) : (
               <Box sx={{ mb: 1 }}>
-                <Typography variant="body2">{summary}</Typography>
+                <Typography variant="body2" paragraph>
+                  {showFullSummary ? summary : truncatedSummary}
+                  {summary.length > 480 && (
+                    <MuiLink
+                      component="button"
+                      variant="body2"
+                      onClick={() => setShowFullSummary(!showFullSummary)}
+                      sx={{ ml: 1 }}
+                    >
+                      {showFullSummary ? 'less' : 'more'}
+                    </MuiLink>
+                  )}
+                </Typography>
               </Box>
             )
-          ) : (
+          ) : !analysing ? (
             <Alert severity="error" sx={{ mb: 1 }}>
               <Typography variant="body2">
                 Summary not yet created
@@ -230,11 +246,11 @@ export default function FilePDF({ data }: RowPDFProps) {
                 disabled={isFetching}
               />
             </Alert>
-          )}
+          ) : null}
 
-          <Typography variant="caption" color="text.secondary" sx={{ mb: 2 }}>
+          {/* <Typography variant="caption" color="text.secondary" sx={{ mb: 2 }}>
             Updated {data?.updated ? moment(data.updated).fromNow() : 'Unknown'}
-          </Typography>
+          </Typography> */}
 
           {rawTextIsError ? (
             <Alert severity="error" sx={{ mb: 2 }}>

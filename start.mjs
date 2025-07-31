@@ -24,7 +24,7 @@ function runInNewTerminal(command) {
 
 // Start each process in its own Terminal window/tab
 runInNewTerminal('yarn ollama');
-runInNewTerminal('yarn phi3');
+runInNewTerminal('yarn codellama');
 runInNewTerminal('yarn frontend');
 runInNewTerminal('yarn backend');
 
