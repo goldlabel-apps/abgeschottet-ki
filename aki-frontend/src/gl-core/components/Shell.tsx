@@ -99,7 +99,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const dispatch= useDispatch();
 
 
@@ -160,10 +160,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
             title={<Typography color="primary">
                     AKI
                   </Typography>}
-            action={<>
-                      <Settings />
-                      <Upload />
-                    </>}
+            action={<Box sx={{display: "flex"}}>
+                      <Box sx={{mr:1}}><Settings /></Box>
+                      <Box><Upload /></Box>
+                    </Box>}
           />
         </Toolbar>
       </AppBar>

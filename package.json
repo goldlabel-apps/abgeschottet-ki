@@ -8,6 +8,7 @@
     "start": "node start.mjs",
     "ollama": "ollama serve",
     "phi3": "ollama run phi3",
+    "codellama": "ollama run codellama",
     "frontend": "cd ./aki-frontend && yarn dev",
     "backend": "cd ./aki-backend && yarn dev"
   },

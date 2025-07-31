@@ -6,6 +6,12 @@
 
 > This Private repo contains a Ring-Fenced environment which runs on a local LLM alongside a Node front & backend
 
+```
+[GIN] 2025/07/29 - 16:27:52 | 200 |          1m2s |       127.0.0.1 | POST     "/api/generate"
+time=2025-07-29T16:28:09.214+02:00 level=WARN source=runner.go:128 msg="truncating input prompt" limit=4096 prompt=6280 keep=4 new=4096
+```
+
+
 #### Test Prompts
 
 > Some simple propmts to try giving the LLM. Try these example prompts to see if AKI can give a sensible answer
@@ -77,8 +83,6 @@ If a German law firm uses an internal LLM, what legal requirements would it need
 Hilft der Ansatz eines abgeschotteten LLMs dabei, die rechtlichen Herausforderungen von deutschen Kanzleien zu lösen, die Angst haben, dass ihre Mitarbeiter sensible Daten an externe KI-Dienste wie OpenAI schicken?  
 
 Does the approach of using a ring‑fenced LLM help solve the legal challenges faced by German law firms that are afraid their employees might send sensitive data to external AI services like OpenAI?
-
-
 
 Warum ist es für deutsche Kanzleien gefährlich, ein öffentliches LLM zu verwenden, und wie unterscheidet sich ein abgeschottetes LLM in diesem Punkt?  
 
