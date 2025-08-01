@@ -1,7 +1,6 @@
 {
   "name": "aki-backend",
   "scripts": {
-    "test": "echo no tests",
     "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/server.js"

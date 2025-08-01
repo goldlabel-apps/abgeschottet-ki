@@ -24,7 +24,10 @@ function runInNewTerminal(command) {
 
 // Start each process in its own Terminal window/tab
 runInNewTerminal('yarn ollama');
-runInNewTerminal('yarn codellama');
+
+// Control which model to use
+// runInNewTerminal('yarn codellama');
+runInNewTerminal('yarn phi3');
 runInNewTerminal('yarn frontend');
 runInNewTerminal('yarn backend');
 

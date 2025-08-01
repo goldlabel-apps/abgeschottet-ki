@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import Database from 'better-sqlite3';
 
 export function initDB(db: Database.Database) {
@@ -11,10 +10,22 @@ export function initDB(db: Database.Database) {
     console.log(`[initDB] Database did not exist. Creating tables…`);
 
     db.exec(`
-      CREATE TABLE pdfs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      CREATE TABLE IF NOT EXISTS "pdfs" (
+        "id"	INTEGER,
+        "created"	INTEGER,
+        "updated"	INTEGER,
+        "label"	TEXT,
+        "slug"	TEXT,
+        "filename"	TEXT NOT NULL,
+        "filesize"	INTEGER NOT NULL,
+        "text"	TEXT,
+        "mimeType"	TEXT,
+        "destination"	TEXT,
+        "thumbnail"	TEXT,
+        "fileNameOnDisk"	TEXT,
+        "fullPath"	TEXT,
+        "rawText"	BLOB DEFAULT NULL,
+        PRIMARY KEY("id" AUTOINCREMENT)
       );
     `);
 

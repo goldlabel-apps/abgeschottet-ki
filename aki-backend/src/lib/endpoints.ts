@@ -1,28 +1,14 @@
 // abgeschottet-ki/pdf-smash/src/lib/endpoints.ts
 
 export const endpoints = {
-  log: {
-    title: 'Log',
-    slug: 'log',
-    routes: {
-      update: {
-        title: 'Update Log',
-        route: 'http://localhost:4000/log/update',
-      },
-      create: {
-        title: 'Create Log',
-        route: 'http://localhost:4000/log/create',
-      },
-      root: {
-        title: 'Log Root',
-        route: 'http://localhost:4000/log',
-      },
-    },
-  },
   pdf: {
-    title: 'PDF',
+    title: 'PDF Management',
     slug: 'pdf',
     routes: {
+      table: {
+        title: 'Manages pdf table in aki.db',
+        route: 'http://localhost:4000/pdf/table',
+      },
       upload: {
         title: 'Upload PDF',
         route: 'http://localhost:4000/pdf/upload',
@@ -38,6 +24,24 @@ export const endpoints = {
       root: {
         title: 'PDF Root',
         route: 'http://localhost:4000/pdf',
+      },
+    },
+  },
+  log: {
+    title: 'Log',
+    slug: 'log',
+    routes: {
+      update: {
+        title: 'Update Log',
+        route: 'http://localhost:4000/log/update',
+      },
+      create: {
+        title: 'Create Log',
+        route: 'http://localhost:4000/log/create',
+      },
+      root: {
+        title: 'Log Root',
+        route: 'http://localhost:4000/log',
       },
     },
   },

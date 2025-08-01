@@ -100,10 +100,10 @@ createRouter.post('/', (req: Request, res: Response) => {
     try {
       const stmt = db.prepare(`
         INSERT INTO pdfs (
-          label, slug, filename, filesize, text,
+          label, slug, filename, filesize,
           mimeType, destination, fileNameOnDisk, fullPath, rawText,
           created, updated
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
       const result = stmt.run(
@@ -111,7 +111,6 @@ createRouter.post('/', (req: Request, res: Response) => {
         fileMeta.slug,
         fileMeta.filename,
         fileMeta.filesize,
-        fileMeta.text,
         fileMeta.mimeType,
         fileMeta.destination,
         fileMeta.fileNameOnDisk,

@@ -1,7 +1,8 @@
+// aki/aki-frontend/src/gl-core/components/FilePDF.tsx
 'use client';
 
 import * as React from 'react';
-import moment from 'moment';
+// import moment from 'moment';
 import {
   Box,
   Typography,
@@ -51,21 +52,25 @@ export default function FilePDF({ data }: RowPDFProps) {
   const [analysing, setAnalysing] = React.useState(false);
   const [localSummary, setLocalSummary] = React.useState(data?.summary ?? '');
   const [showFullSummary, setShowFullSummary] = React.useState(false);
-  const [analysisStart, setAnalysisStart] = React.useState<number | null>(null);
   const [elapsed, setElapsed] = React.useState(0);
-  const hasTriggeredSummary = React.useRef(false);
+  const startRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+
     if (analysing) {
-      setAnalysisStart(Date.now());
-      const interval = setInterval(() => {
-        setElapsed(Math.floor((Date.now() - (analysisStart ?? Date.now())) / 1000));
+      startRef.current = Date.now();
+      interval = setInterval(() => {
+        if (startRef.current) {
+          setElapsed(Math.floor((Date.now() - startRef.current) / 1000));
+        }
       }, 1000);
-      return () => clearInterval(interval);
     } else {
       setElapsed(0);
-      setAnalysisStart(null);
+      startRef.current = null;
     }
+
+    return () => clearInterval(interval);
   }, [analysing]);
 
   React.useEffect(() => {
@@ -112,20 +117,6 @@ export default function FilePDF({ data }: RowPDFProps) {
   const summary = localSummary.trim();
   const hasSummary = summary.length > 0;
   const summaryIsError = summary.startsWith('[ERROR]');
-
-  React.useEffect(() => {
-    const canSummarise =
-      data?.id &&
-      !data.summary &&
-      typeof data.rawText === 'string' &&
-      data.rawText.trim().length > 0 &&
-      !data.rawText.startsWith('[ERROR]');
-
-    if (canSummarise && !hasTriggeredSummary.current && !analysing && !kiBusEntry?.fetching) {
-      hasTriggeredSummary.current = true;
-      handleSummarise();
-    }
-  }, [data?.id, data?.summary, data?.rawText, analysing, kiBusEntry]);
 
   const truncatedSummary =
     summary.length > 480 ? summary.slice(0, 480).trimEnd() + '…' : summary;
@@ -248,14 +239,12 @@ export default function FilePDF({ data }: RowPDFProps) {
               </Box>
             )
           ) : !analysing ? (
-            <Alert severity="error" sx={{ mb: 1 }}>
-              <Typography variant="body2">
-                Summary not yet created
-              </Typography>
+            <Alert severity="success" sx={{ mb: 1 }}>
+              <Typography variant="body2">Analyse/Summarise</Typography>
               <MightyButton
+                label="Run"
                 icon="ki"
                 variant="contained"
-                label="Create Summary"
                 onClick={handleSummarise}
                 sx={{ my: 2, alignSelf: 'flex-start' }}
                 disabled={isFetching}

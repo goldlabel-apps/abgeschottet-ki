@@ -7,6 +7,7 @@ import readRouter from './read';
 import deleteRouter from './delete';
 import thumbnailRouter from './thumbnail';
 import ripRouter from './rip';
+import tableRouter from './table';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/read', readRouter);
 router.use('/delete', deleteRouter);
 router.use('/thumbnail', thumbnailRouter);
 router.use('/rip', ripRouter);
+router.use('/table', tableRouter);
 
 export default router;
